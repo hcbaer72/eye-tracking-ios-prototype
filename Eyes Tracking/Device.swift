@@ -184,20 +184,20 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return Int(6.7 * 25.4)
         }
     }
-    var pointSizeInMeters: Double {
-        let diagonalSizeInMillimeters = diagonalSizeInInches * 25.4
-        let diagonalSizeInPoints =  widthInPoints^2 * heightInPoints^2
-        fatalError()
-    }
+//    var pointSizeInMeters: Double {
+//        let diagonalSizeInMillimeters = diagonalSizeInInches * 25.4
+//        let diagonalSizeInPoints =  widthInPoints^2 * heightInPoints^2
+//        fatalError()
+//    }
     
-    var cDevice: HBDevice {
-        return HBDevice(widthInPixels: Int32(widthInPoints * pixelsPerPoint),
-                        heightInPixels: Int32(heightInPoints * pixelsPerPoint),
-                        widthInPoints: Int32(widthInPoints),
-                        heightInPoints: Int32(heightInPoints),
-                        pixelsPerPoint: Int32(pixelsPerPoint)
-        )
-    }
+//    var cDevice: HBDevice {
+//        return HBDevice(widthInPixels: Int32(widthInPoints * pixelsPerPoint),
+//                        heightInPixels: Int32(heightInPoints * pixelsPerPoint),
+//                        widthInPoints: Int32(widthInPoints),
+//                        heightInPoints: Int32(heightInPoints),
+//                        pixelsPerPoint: Int32(pixelsPerPoint)
+//        )
+//    }
     var meterHeight: Float {
         switch self {
         case .iPad10_2: return 0.24

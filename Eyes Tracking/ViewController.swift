@@ -11,8 +11,10 @@ import SceneKit
 import ARKit
 import WebKit
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
+
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
+   // private var device: Device = .iPad10_9
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
@@ -22,7 +24,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
-    private var device: Device = .iPad10_9
     var faceNode: SCNNode = SCNNode()
     
     var eyeLNode: SCNNode = {
@@ -56,10 +57,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     // actual physical size of iPhoneX screen
     
-    let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
+   // var screenWidth = self.device.meterWidth
+   // var screenHeight: self.device.meterHeight
+    
+    let phoneScreenSize = CGSize(width: 0.21, height: 0.28)
     
     // actual point size of iPhoneX screen
-    let phoneScreenPointSize = CGSize(width: 375, height: 812)
+    let phoneScreenPointSize = CGSize(width: 1024, height: 1366)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -153,7 +157,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
-        let heightCompensation: CGFloat = 312
+        let heightCompensation: CGFloat = 600
         
         DispatchQueue.main.async {
 
