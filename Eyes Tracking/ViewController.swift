@@ -22,6 +22,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
+    private var device: Device = .iPad10_9
     var faceNode: SCNNode = SCNNode()
     
     var eyeLNode: SCNNode = {
@@ -54,7 +55,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
     // actual physical size of iPhoneX screen
-    let phoneScreenSize = CGSize(width: 0.0623908297, height: 0.135096943231532)
+    
+    let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
     
     // actual point size of iPhoneX screen
     let phoneScreenPointSize = CGSize(width: 375, height: 812)
