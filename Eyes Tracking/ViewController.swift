@@ -10,6 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 import WebKit
+import SwiftUI
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
@@ -21,6 +22,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionXLabel: UILabel!
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
+    
+    
     
     var faceNode: SCNNode = SCNNode()
     
@@ -77,9 +80,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }
+    let contentView = UIHostingController(rootView: ContentView())
     
     override func viewDidLoad() {
+
         super.viewDidLoad()
+        addChild(contentView)
+        view.addSubview(contentView.view)
+        
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         
