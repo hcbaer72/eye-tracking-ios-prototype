@@ -99,16 +99,17 @@
                                                 </stackView>
                                             </subviews>
                                         </stackView>
-                                        <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W9c-Gg-veJ">
-                                            <rect key="frame" x="811" y="8" width="197" height="128"/>
+                                        <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W9c-Gg-veJ">
+                                            <rect key="frame" x="690" y="8" width="468" height="144"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="96" id="8NY-RG-No7"/>
-                                                <constraint firstAttribute="width" secondItem="W9c-Gg-veJ" secondAttribute="height" multiplier="3:4" id="GTL-RY-QyZ" userLabel="aspect = 4:4"/>
+                                                <constraint firstAttribute="width" constant="385" id="8NY-RG-No7" userLabel="width = 110"/>
+                                                <constraint firstAttribute="width" secondItem="W9c-Gg-veJ" secondAttribute="height" multiplier="3:4" constant="277" id="GTL-RY-QyZ" userLabel="aspect = 6:4"/>
                                             </constraints>
                                         </arscnView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="W9c-Gg-veJ" secondAttribute="bottom" constant="24" id="eae-ws-Har"/>
+                                        <constraint firstAttribute="bottom" secondItem="W9c-Gg-veJ" secondAttribute="bottom" constant="8" id="eae-ws-Har"/>
+                                        <constraint firstAttribute="trailing" secondItem="W9c-Gg-veJ" secondAttribute="trailing" constant="64" id="ia3-xR-Yju"/>
                                     </constraints>
                                 </view>
                                 <constraints>
