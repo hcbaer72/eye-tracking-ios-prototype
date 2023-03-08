@@ -56,10 +56,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     // actual physical size of iPhoneX screen
     
-    let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
+  //  let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
+    let phoneScreenSize = CGSize(width: 0.178, height: 0.245)
     
     // actual point size of iPhoneX screen
-    let phoneScreenPointSize = CGSize(width: 375, height: 812)
+    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -76,6 +77,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     var eyeLookAtPositionYs: [CGFloat] = []
     
+    var REyeLookAtPositionXs: [CGFloat] = []
+    
+    var LEyeLookAtPositionXs: [CGFloat] = []
+    
+    var REyeLookAtPositionYs: [CGFloat] = []
+    
+    var LEyeLookAtPositionYs: [CGFloat] = []
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }
@@ -90,10 +99,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.layer.cornerRadius = 28
         eyePositionIndicatorCenterView.layer.cornerRadius = 4
         
-        blurBarView.layer.cornerRadius = 36
-        blurBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        webView.layer.cornerRadius = 16
-        webView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+       // blurBarView.layer.cornerRadius = 36
+       // blurBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+       // webView.layer.cornerRadius = 16
+       // webView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -153,7 +162,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
-        let heightCompensation: CGFloat = 312
+        let heightCompensation: CGFloat = 350
         
         DispatchQueue.main.async {
 
@@ -178,7 +187,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 10
+            let smoothThresholdNumber: Int = 8
             self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
             self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
             self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
@@ -186,8 +195,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
             let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
+            //            let smoothREyeLookAtPositionX = self.REyeLookAtPositionXs.average!
+            //            let smoothLEyeLookAtPositionX = self.LEyeLookAtPositionXs.average!
+            //            let smoothREyeLookAtPositionY = self.REyeLookAtPositionYs.average!
+            //            let smoothLEyeLookAtPositionY = self.LEyeLookAtPositionYs.average!
             
             // update indicator position
+            //            // KL ammendment to lateral borders of screen for accuracy
+            //            if smoothEyeLookAtPositionX < 0 {
+            //                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothREyeLookAtPositionX, y: smoothREyeLookAtPositionY)
+            //            }
+            //            if smoothEyeLookAtPositionX > 500 {
+            //                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothLEyeLookAtPositionX, y: smoothLEyeLookAtPositionY)
+            //            }
+            //            else {
             self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
             
             // update eye look at labels values
