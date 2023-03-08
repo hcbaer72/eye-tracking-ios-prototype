@@ -13,7 +13,6 @@ import WebKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
-    @IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
     @IBOutlet weak var eyePositionIndicatorCenterView: UIView!
@@ -54,16 +53,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeLNode: SCNNode = SCNNode()
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
-    // actual physical size of iPhoneX screen
-    
-  //  let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
     let phoneScreenSize = CGSize(width: 0.178, height: 0.245)
-    
-    // actual point size of iPhoneX screen
     let phoneScreenPointSize = CGSize(width: 820, height: 1180)
     
     var virtualPhoneNode: SCNNode = SCNNode()
-    
     var virtualScreenNode: SCNNode = {
         
         let screenGeometry = SCNPlane(width: 1, height: 1)
@@ -74,15 +67,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }()
     
     var eyeLookAtPositionXs: [CGFloat] = []
-    
     var eyeLookAtPositionYs: [CGFloat] = []
     
     var REyeLookAtPositionXs: [CGFloat] = []
-    
     var LEyeLookAtPositionXs: [CGFloat] = []
     
     var REyeLookAtPositionYs: [CGFloat] = []
-    
     var LEyeLookAtPositionYs: [CGFloat] = []
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -92,17 +82,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        webView.load(URLRequest(url: URL(string: "https://www.apple.com")!))
+
         
         // Setup Design Elements
         eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
         sceneView.layer.cornerRadius = 28
         eyePositionIndicatorCenterView.layer.cornerRadius = 4
-        
-       // blurBarView.layer.cornerRadius = 36
-       // blurBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-       // webView.layer.cornerRadius = 16
-       // webView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -151,6 +136,36 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         update(withFaceAnchor: faceAnchor)
     }
+    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+            guard let faceAnchor = anchor as? ARFaceAnchor, let device = renderer.device else { return nil}
+            let faceGeometry = ARSCNFaceGeometry(device: device)
+            let node = SCNNode(geometry: faceGeometry)
+            node.geometry?.firstMaterial?.fillMode = .lines
+            return node
+            
+        }
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let faceAnchor = anchor as? ARFaceAnchor, let faceGeometry = node.geometry as? ARSCNFaceGeometry else {
+            return }
+                faceNode.transform = node.transform
+               
+                update(withFaceAnchor: faceAnchor)
+            
+            
+            var leftEyeTransform: simd_float4x4 { get {
+                return faceAnchor.leftEyeTransform }
+        
+                
+            }
+            //print("Left Eye: \(faceAnchor.leftEyeTransform)")
+            
+            for x in 0..<1220 {
+                let child = node.childNode(withName: "\(x)", recursively: false)
+                child?.position = SCNVector3(faceAnchor.geometry.vertices[x])
+            }
+            
+            faceGeometry.update(from: faceAnchor.geometry)
+        }
     
     // MARK: - update(ARFaceAnchor)
     
@@ -169,20 +184,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
             
             let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-            
             let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
             
             for result in phoneScreenEyeRHitTestResults {
                 
                 eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                
                 eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
             }
             
             for result in phoneScreenEyeLHitTestResults {
                 
                 eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                
                 eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
             }
             
@@ -195,25 +207,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
             let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
-            //            let smoothREyeLookAtPositionX = self.REyeLookAtPositionXs.average!
-            //            let smoothLEyeLookAtPositionX = self.LEyeLookAtPositionXs.average!
-            //            let smoothREyeLookAtPositionY = self.REyeLookAtPositionYs.average!
-            //            let smoothLEyeLookAtPositionY = self.LEyeLookAtPositionYs.average!
-            
-            // update indicator position
-            //            // KL ammendment to lateral borders of screen for accuracy
-            //            if smoothEyeLookAtPositionX < 0 {
-            //                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothREyeLookAtPositionX, y: smoothREyeLookAtPositionY)
-            //            }
-            //            if smoothEyeLookAtPositionX > 500 {
-            //                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothLEyeLookAtPositionX, y: smoothLEyeLookAtPositionY)
-            //            }
-            //            else {
+
             self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
             
             // update eye look at labels values
             self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-            
             self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
             
             // Calculate distance of the eyes to the camera
@@ -234,9 +232,4 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        update(withFaceAnchor: faceAnchor)
-    }
 }

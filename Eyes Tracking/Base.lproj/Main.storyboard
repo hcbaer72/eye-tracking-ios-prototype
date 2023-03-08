@@ -11,32 +11,24 @@
         <scene sceneID="tXr-a1-R10">
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="Eyes_Tracking" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="75x-hB-b3v">
+                    <view key="view" contentMode="scaleToFill" id="75x-hB-b3v">
                         <rect key="frame" x="0.0" y="0.0" width="1180" height="820"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <wkWebView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="saK-eH-dzW">
-                                <rect key="frame" x="0.0" y="-8" width="1180" height="808"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <wkWebViewConfiguration key="configuration">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                            </wkWebView>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W9c-Gg-veJ">
-                                <rect key="frame" x="703" y="495" width="468" height="305"/>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W9c-Gg-veJ">
+                                <rect key="frame" x="44" y="24" width="1146" height="787"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="468" id="8NY-RG-No7" userLabel="width = 110"/>
-                                    <constraint firstAttribute="width" secondItem="W9c-Gg-veJ" secondAttribute="height" multiplier="3:4" constant="239.25" id="GTL-RY-QyZ" userLabel="aspect = 6:4"/>
+                                    <constraint firstAttribute="width" constant="1146" id="8NY-RG-No7" userLabel="width = 110"/>
+                                    <constraint firstAttribute="width" secondItem="W9c-Gg-veJ" secondAttribute="height" multiplier="3:4" constant="555.75" id="GTL-RY-QyZ" userLabel="aspect = 6:4"/>
                                 </constraints>
                             </arscnView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vT5-6S-UTW">
-                                <rect key="frame" x="293" y="610" width="386" height="181"/>
+                            <visualEffectView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vT5-6S-UTW">
+                                <rect key="frame" x="44" y="630" width="490" height="181"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="KW7-5O-3pA">
-                                    <rect key="frame" x="0.0" y="0.0" width="386" height="181"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="490" height="181"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" alignment="top" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="Aaq-uW-sX7">
+                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="44" translatesAutoresizingMaskIntoConstraints="NO" id="Aaq-uW-sX7">
                                             <rect key="frame" x="108" y="47" width="171" height="87.5"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="uQR-ic-rNg">
@@ -111,10 +103,14 @@
                                             </constraints>
                                         </stackView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Aaq-uW-sX7" firstAttribute="centerY" secondItem="KW7-5O-3pA" secondAttribute="centerY" id="khY-sT-ruL"/>
+                                        <constraint firstItem="Aaq-uW-sX7" firstAttribute="leading" secondItem="KW7-5O-3pA" secondAttribute="leading" constant="108" id="uec-XB-FdU"/>
+                                    </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="130" id="dF0-1e-9bJ" userLabel="height = 150"/>
-                                    <constraint firstAttribute="width" constant="260" id="z4U-Xj-09J"/>
+                                    <constraint firstAttribute="height" constant="181" id="dF0-1e-9bJ" userLabel="height = 150"/>
+                                    <constraint firstAttribute="width" constant="490" id="z4U-Xj-09J"/>
                                 </constraints>
                                 <blurEffect style="dark"/>
                             </visualEffectView>
@@ -163,18 +159,14 @@
                         <viewLayoutGuide key="safeArea" id="9i0-fu-tQr"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="vT5-6S-UTW" secondAttribute="trailing" constant="492" id="2SB-gQ-Lv1"/>
-                            <constraint firstAttribute="trailing" secondItem="W9c-Gg-veJ" secondAttribute="trailing" constant="9" id="FSL-kk-qpB"/>
-                            <constraint firstItem="W9c-Gg-veJ" firstAttribute="bottom" secondItem="saK-eH-dzW" secondAttribute="bottom" id="HuG-Sp-2LC"/>
+                            <constraint firstAttribute="trailing" secondItem="vT5-6S-UTW" secondAttribute="trailing" constant="646" id="2SB-gQ-Lv1"/>
+                            <constraint firstAttribute="trailing" secondItem="W9c-Gg-veJ" secondAttribute="trailing" constant="-10" id="FSL-kk-qpB"/>
                             <constraint firstItem="Wol-sx-K7a" firstAttribute="centerX" secondItem="75x-hB-b3v" secondAttribute="centerX" id="Huc-TB-BkR"/>
                             <constraint firstItem="Wol-sx-K7a" firstAttribute="leading" secondItem="9i0-fu-tQr" secondAttribute="leading" constant="526" id="LtS-56-lrP"/>
-                            <constraint firstItem="saK-eH-dzW" firstAttribute="top" secondItem="75x-hB-b3v" secondAttribute="topMargin" constant="-32" id="MFB-O4-zJA"/>
-                            <constraint firstItem="saK-eH-dzW" firstAttribute="leading" secondItem="9i0-fu-tQr" secondAttribute="leading" id="SgB-QE-Bvl"/>
                             <constraint firstItem="Wol-sx-K7a" firstAttribute="centerY" secondItem="75x-hB-b3v" secondAttribute="centerY" id="ZYK-RP-cx2"/>
-                            <constraint firstItem="vT5-6S-UTW" firstAttribute="leading" secondItem="75x-hB-b3v" secondAttribute="leading" constant="436" id="bjE-73-Gct"/>
-                            <constraint firstItem="Wol-sx-K7a" firstAttribute="centerX" secondItem="saK-eH-dzW" secondAttribute="centerX" id="cpQ-o7-k69"/>
-                            <constraint firstAttribute="bottom" secondItem="vT5-6S-UTW" secondAttribute="bottom" constant="20" id="fhr-Jr-BHz"/>
-                            <constraint firstAttribute="bottom" secondItem="W9c-Gg-veJ" secondAttribute="bottom" constant="20" id="yfw-8J-9Bb"/>
+                            <constraint firstItem="vT5-6S-UTW" firstAttribute="leading" secondItem="75x-hB-b3v" secondAttribute="leading" constant="44" id="bjE-73-Gct"/>
+                            <constraint firstAttribute="bottom" secondItem="vT5-6S-UTW" secondAttribute="bottom" constant="9" id="fhr-Jr-BHz"/>
+                            <constraint firstAttribute="bottom" secondItem="W9c-Gg-veJ" secondAttribute="bottom" constant="9" id="yfw-8J-9Bb"/>
                         </constraints>
                     </view>
                     <connections>
@@ -185,7 +177,6 @@
                         <outlet property="lookAtPositionXLabel" destination="zjQ-Le-hMK" id="SFk-Hq-X2t"/>
                         <outlet property="lookAtPositionYLabel" destination="5nW-i0-8sr" id="dIT-1O-eR5"/>
                         <outlet property="sceneView" destination="W9c-Gg-veJ" id="MwD-uf-Osc"/>
-                        <outlet property="webView" destination="saK-eH-dzW" id="phT-GD-Fie"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
