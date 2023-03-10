@@ -12,6 +12,7 @@ import ARKit
 import WebKit
 import SwiftUI
 import ReplayKit
+import AVFoundation
 
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
@@ -27,9 +28,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var recordButton: UIButton!
     var isRecording = false
     let screenRecorder = RPScreenRecorder.shared()
-    let contentView = UIHostingController(rootView: ContentView())
+    var url: URL?
     
-
+    
     var faceNode: SCNNode = SCNNode()
     
     var eyeLNode: SCNNode = {
@@ -92,65 +93,62 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     //added
     @IBAction func recordButtonTapped(_ sender: UIButton) {
-          if isRecording {
-              stopRecording()
-          } else {
-              startRecording()
-          }
-      }
-      
-      func startRecording() {
-          // Check if recording is available
-          guard screenRecorder.isAvailable else {
-              print("Recording is not available")
-              return
-          }
-          
-          // Start recording
-          screenRecorder.startRecording { [unowned self] error in
-              guard error == nil else {
-                  print("Error starting recording: \(error!)")
-                  return
-              }
-              
-              // Update UI
-              isRecording = true
-              recordButton.backgroundColor = .red
-              print("Recording started")
-          }
-      }
-      
-      func stopRecording() {
-          // Stop recording
-          screenRecorder.stopRecording { [unowned self] previewController, error in
-              guard error == nil else {
-                  print("Error stopping recording: \(error!)")
-                  return
-              }
-              
-              guard let previewController = previewController else {
-                  print("Preview controller is nil")
-                  return
-              }
-              
-              // Present preview controller
-              previewController.modalPresentationStyle = .fullScreen
-              present(previewController, animated: true, completion: nil)
-              
-              // Update UI
-              isRecording = false
-              recordButton.backgroundColor = .green
-              print("Recording stopped")
-          }
-      }
+        //interface builder action, wire action to event
+        //button triggers event, fires action
+        if isRecording{
+            Task{
+                do{
+                    self.url = try await stopRecording()
+                    print(self.url)
+                    
+                    //stop screen recording
+                    isRecording = false
+                    print("is recording: \(isRecording) ")
+                    
+                }
+                catch{
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        else{
+            startRecording { error in
+                if let error = error{
+                    print(error.localizedDescription)
+                    return
+                }
+                //success
+                //start screen recording
+                self.isRecording = true
+                print("is recording: \(self.isRecording) ")
+                
+                
+            }
+            
+        }
+    }
+        
+        func startRecording(enableMicrophone: Bool = false, completion: @escaping(Error?)->()) {
+            //Microphone Option
+            screenRecorder.isMicrophoneEnabled = false
+            
+            //Starting Recording
+            screenRecorder.startRecording(handler: completion)
+        }
+        
+        
+        func stopRecording()async throws->URL {
+            let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
+            
+            try await screenRecorder.stopRecording(withOutput: url)
+            
+            return url
+        }
+    
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        addChild(contentView)
-        view.addSubview(contentView.view)
-        
         
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
@@ -189,8 +187,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return
         }
 
-        button.layer.cornerRadius = button.bounds.width / 2
-        //recordButton.layer.cornerRadius = recordButton.bounds.width / 2
+ 
         
     }
     

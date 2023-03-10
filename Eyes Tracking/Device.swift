@@ -32,13 +32,13 @@ enum Device: CaseIterable {
     case iPhone13Pro
     case iPhone13ProMax
     
-    var heightInPixels: Int {
+    var heightInPixels: Float {
         heightInPoints * pixelsPerPoint
     }
-    var widthInPixels: Int {
+    var widthInPixels: Float {
         widthInPoints * pixelsPerPoint
     }
-    var heightInPoints: Int {
+    var heightInPoints: Float {
         switch self {
         case .iPadPro12_9: return 1366
         case .iPadPro11: return 1194
@@ -68,7 +68,7 @@ enum Device: CaseIterable {
         
         }
     }
-    var widthInPoints: Int {
+    var widthInPoints: Float {
         switch self {
         case .iPadPro12_9: return 1024
         case .iPadPro11: return 834
@@ -97,7 +97,7 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 428
         }
     }
-    var pixelsPerPoint: Int {
+    var pixelsPerPoint: Float {
     //2 pixels per point for ipad
     //3 pixels per point for iphone
         switch self {
