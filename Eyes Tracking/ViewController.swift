@@ -11,6 +11,7 @@ import SceneKit
 import ARKit
 import WebKit
 import SwiftUI
+import ReplayKit
 
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
@@ -23,7 +24,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionXLabel: UILabel!
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
+    @IBOutlet weak var recordButton: UIButton!
+    var isRecording = false
+    let screenRecorder = RPScreenRecorder.shared()
+    let contentView = UIHostingController(rootView: ContentView())
     
+
     var faceNode: SCNNode = SCNNode()
     
     var eyeLNode: SCNNode = {
@@ -60,10 +66,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
    // var screenWidth = self.device.meterWidth
    // var screenHeight: self.device.meterHeight
     
-    let phoneScreenSize = CGSize(width: 0.21, height: 0.28)
+    let phoneScreenSize = CGSize(width: 0.1785, height: 0.2476)
     
     // actual point size of iPhoneX screen
-    let phoneScreenPointSize = CGSize(width: 1024, height: 1366)
+    let phoneScreenPointSize = CGSize(width: 834, height: 1194)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -85,10 +91,63 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     //added
-    let contentView = UIHostingController(rootView: ContentView())
+    @IBAction func recordButtonTapped(_ sender: UIButton) {
+          if isRecording {
+              stopRecording()
+          } else {
+              startRecording()
+          }
+      }
+      
+      func startRecording() {
+          // Check if recording is available
+          guard screenRecorder.isAvailable else {
+              print("Recording is not available")
+              return
+          }
+          
+          // Start recording
+          screenRecorder.startRecording { [unowned self] error in
+              guard error == nil else {
+                  print("Error starting recording: \(error!)")
+                  return
+              }
+              
+              // Update UI
+              isRecording = true
+              recordButton.backgroundColor = .red
+              print("Recording started")
+          }
+      }
+      
+      func stopRecording() {
+          // Stop recording
+          screenRecorder.stopRecording { [unowned self] previewController, error in
+              guard error == nil else {
+                  print("Error stopping recording: \(error!)")
+                  return
+              }
+              
+              guard let previewController = previewController else {
+                  print("Preview controller is nil")
+                  return
+              }
+              
+              // Present preview controller
+              previewController.modalPresentationStyle = .fullScreen
+              present(previewController, animated: true, completion: nil)
+              
+              // Update UI
+              isRecording = false
+              recordButton.backgroundColor = .green
+              print("Recording stopped")
+          }
+      }
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         addChild(contentView)
         view.addSubview(contentView.view)
         
@@ -123,6 +182,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
+        // Set up record button
+        
+        guard let button = recordButton else {
+            print("recordButton is nil")
+            return
+        }
+
+        button.layer.cornerRadius = button.bounds.width / 2
+        //recordButton.layer.cornerRadius = recordButton.bounds.width / 2
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -165,6 +234,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeRLookAt = CGPoint()
         
         let heightCompensation: CGFloat = 600
+        //height from camera to center of screen
         
         DispatchQueue.main.async {
 
@@ -189,7 +259,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 10
+            let smoothThresholdNumber: Int = 5
+            //speed or slow down
             self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
             self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
             self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))

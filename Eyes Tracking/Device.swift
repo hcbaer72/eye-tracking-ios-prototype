@@ -98,6 +98,8 @@ enum Device: CaseIterable {
         }
     }
     var pixelsPerPoint: Int {
+    //2 pixels per point for ipad
+    //3 pixels per point for iphone
         switch self {
         case .iPadPro12_9: return 2
         case .iPadPro11: return 2
@@ -126,7 +128,7 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 3
         }
     }
-    var diagonalSizeInInches: Double {
+    var diagonalSizeInInches: Float {
         switch self {
         case .iPadPro12_9: return 12.9
         case .iPadPro11: return 11
@@ -155,33 +157,33 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 6.7
         }
     }
-    var diagonalSizeInMilliMeters: Int {
+    var diagonalSizeInMilliMeters: Float {
         switch self {
-        case .iPadPro12_9: return Int(12.9 * 25.4)
-        case .iPadPro11: return Int(11 * 25.4)
-        case .ipadPro10_5: return Int(10.5 * 25.4)
-        case .iPadPro9_7: return Int(9.7 * 25.4)
-        case .iPadMini7_9: return Int(7.9 * 25.4)
-        case .iPadAir10_5: return Int(10.5 * 25.4)
-        case .iPadAir9_7: return Int(9.7 * 25.4)
-        case .iPad10_9: return Int(10.9 * 25.4)
-        case .iPad10_2: return Int(10.2 * 25.4)
-        case .iPad9_7: return Int(9.7 * 25.4)
-        case .iPhoneXR: return Int(6.1 * 25.4)
-        case .iPhoneXS: return Int(5.8 * 25.4)
-        case .iPhoneXSMax: return Int(6.5 * 25.4)
-        case .iPhone11: return Int(6.1 * 25.4)
-        case .iPhone11Pro: return Int(5.8 * 25.4)
-        case .iPhone11ProMax: return Int(6.5 * 25.4)
-        case .iPhoneSE2: return Int(4.7 * 25.4)
-        case .iPhone12: return Int(6.1 * 25.4)
-        case .iPhone12mini: return Int(5.4 * 25.4)
-        case .iPhone12Pro: return Int(6.1 * 25.4)
-        case .iPhone12ProMax: return Int(6.7 * 25.4)
-        case .iPhone13: return Int(6.1 * 25.4)
-        case .iPhone13mini: return Int(5.4 * 25.4)
-        case .iPhone13Pro: return Int(6.1 * 25.4)
-        case .iPhone13ProMax: return Int(6.7 * 25.4)
+        case .iPadPro12_9: return Float(12.9 * 25.4)
+        case .iPadPro11: return Float(11 * 25.4)
+        case .ipadPro10_5: return Float(10.5 * 25.4)
+        case .iPadPro9_7: return Float(9.7 * 25.4)
+        case .iPadMini7_9: return Float(7.9 * 25.4)
+        case .iPadAir10_5: return Float(10.5 * 25.4)
+        case .iPadAir9_7: return Float(9.7 * 25.4)
+        case .iPad10_9: return Float(10.9 * 25.4)
+        case .iPad10_2: return Float(10.2 * 25.4)
+        case .iPad9_7: return Float(9.7 * 25.4)
+        case .iPhoneXR: return Float(6.1 * 25.4)
+        case .iPhoneXS: return Float(5.8 * 25.4)
+        case .iPhoneXSMax: return Float(6.5 * 25.4)
+        case .iPhone11: return Float(6.1 * 25.4)
+        case .iPhone11Pro: return Float(5.8 * 25.4)
+        case .iPhone11ProMax: return Float(6.5 * 25.4)
+        case .iPhoneSE2: return Float(4.7 * 25.4)
+        case .iPhone12: return Float(6.1 * 25.4)
+        case .iPhone12mini: return Float(5.4 * 25.4)
+        case .iPhone12Pro: return Float(6.1 * 25.4)
+        case .iPhone12ProMax: return Float(6.7 * 25.4)
+        case .iPhone13: return Float(6.1 * 25.4)
+        case .iPhone13mini: return Float(5.4 * 25.4)
+        case .iPhone13Pro: return Float(6.1 * 25.4)
+        case .iPhone13ProMax: return Float(6.7 * 25.4)
         }
     }
 //    var pointSizeInMeters: Double {
