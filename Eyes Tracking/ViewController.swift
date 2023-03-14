@@ -57,10 +57,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     // actual physical size of iPhoneX screen
     
   //  let phoneScreenSize = CGSize(width: self.device.meterWidth, height: self.device.meterHeight)
-    let phoneScreenSize = CGSize(width: 0.178, height: 0.245)
+    let phoneScreenSize = CGSize(width: 0.0549, height: 0.1341)
     
     // actual point size of iPhoneX screen
-    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
+    let phoneScreenPointSize = CGSize(width: 414, height: 896)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -162,7 +162,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
-        let heightCompensation: CGFloat = 350
+        let heightCompensation: CGFloat = 400
         
         DispatchQueue.main.async {
 
@@ -187,7 +187,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 8
+            let smoothThresholdNumber: Int = 5
             self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
             self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
             self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))

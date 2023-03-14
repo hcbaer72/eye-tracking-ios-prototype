@@ -210,35 +210,6 @@ enum Device: CaseIterable {
         case .iPadAir9_7: return 0.17
         case .iPad10_9: return 0.245
         case .iPad9_7: return 0.17
-        case .iPhoneXR: return 0.0621
-        case .iPhoneXS: return 0.0549
-        case .iPhoneXSMax: return 0.0621
-        case .iPhone11: return 0.0549
-        case .iPhone11Pro: return 0.0621
-        case .iPhone11ProMax: return 0.0549
-        case .iPhoneSE2: return 0.0532
-        case .iPhone12: return 0.0574
-        case .iPhone12mini: return 0.0500
-        case .iPhone12Pro: return 0.0574
-        case .iPhone12ProMax: return 0.0630
-        case .iPhone13: return 0.0574
-        case .iPhone13mini: return 0.0500
-        case .iPhone13Pro: return 0.0574
-        case .iPhone13ProMax: return 0.0630
-        }
-    }
-    var meterWidth: Float {
-        switch self {
-        case .iPad10_2: return 0.187
-        case .iPadPro12_9: return 0.21
-        case .iPadPro11: return 0.18
-        case .ipadPro10_5: return 0.14
-        case .iPadPro9_7: return 0.13
-        case .iPadMini7_9: return 0.10
-        case .iPadAir10_5: return 0.14
-        case .iPadAir9_7: return 0.13
-        case .iPad10_9: return 0.176
-        case .iPad9_7: return 0.13
         case .iPhoneXR: return 0.1341
         case .iPhoneXS: return 0.1213
         case .iPhoneXSMax: return 0.1341
@@ -254,6 +225,36 @@ enum Device: CaseIterable {
         case .iPhone13mini: return 0.1085
         case .iPhone13Pro: return 0.1241
         case .iPhone13ProMax: return 0.1366
+ 
+        }
+    }
+    var meterWidth: Float {
+        switch self {
+        case .iPad10_2: return 0.187
+        case .iPadPro12_9: return 0.21
+        case .iPadPro11: return 0.18
+        case .ipadPro10_5: return 0.14
+        case .iPadPro9_7: return 0.13
+        case .iPadMini7_9: return 0.10
+        case .iPadAir10_5: return 0.14
+        case .iPadAir9_7: return 0.13
+        case .iPad10_9: return 0.176
+        case .iPad9_7: return 0.13
+        case .iPhoneXR: return 0.0621
+        case .iPhoneXS: return 0.0549
+        case .iPhoneXSMax: return 0.0621
+        case .iPhone11: return 0.0549
+        case .iPhone11Pro: return 0.0621
+        case .iPhone11ProMax: return 0.0549
+        case .iPhoneSE2: return 0.0532
+        case .iPhone12: return 0.0574
+        case .iPhone12mini: return 0.0500
+        case .iPhone12Pro: return 0.0574
+        case .iPhone12ProMax: return 0.0630
+        case .iPhone13: return 0.0574
+        case .iPhone13mini: return 0.0500
+        case .iPhone13Pro: return 0.0574
+        case .iPhone13ProMax: return 0.0630
         }
     }
 }
