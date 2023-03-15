@@ -22,8 +22,18 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<string>true</string>
+	<key>NSAppTransportSecurity</key>
+	<dict/>
 	<key>NSCameraUsageDescription</key>
 	<string>This application will use the camera for Augmented Reality.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>external-accessory</string>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -46,5 +56,17 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>com.apple.multitasking.systemappassertions</key>
+	<string>true</string>
+	<key>com.apple.runningboard.assertions.webkit</key>
+	<string>TRUE</string>
+	<key>com.apple.webkit.allow-remote-inspection</key>
+	<string>true</string>
+	<key>com.apple.security.network.client</key>
+	<string>true</string>
+	<key>com.apple.security.scripting-targets</key>
+	<string>true</string>
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<string>true</string>
 </dict>
 </plist>

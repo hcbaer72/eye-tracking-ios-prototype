@@ -13,6 +13,7 @@ import WebKit
 import SwiftUI
 import ReplayKit
 import AVFoundation
+//import EyesTracking.GestureRecognizer
 
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
@@ -29,6 +30,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var isRecording = false
     let screenRecorder = RPScreenRecorder.shared()
     var url: URL?
+    var gestureRecognition: GestureRecognition!
     
     
     var faceNode: SCNNode = SCNNode()
@@ -131,11 +133,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         func startRecording(enableMicrophone: Bool = false, completion: @escaping(Error?)->()) {
             //Microphone Option
             screenRecorder.isMicrophoneEnabled = false
-            
+           
             //Starting Recording
             screenRecorder.startRecording(handler: completion)
         }
-        
+
         
         func stopRecording()async throws->URL {
             let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
@@ -152,6 +154,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+        // Set up gesture recognition
+        gestureRecognition = GestureRecognition(webView: webView)
+        
         
         // Setup Design Elements
         eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
@@ -190,6 +195,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
  
         
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
