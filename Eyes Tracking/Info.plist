@@ -68,5 +68,13 @@
 	<string>true</string>
 	<key>com.apple.security.files.user-selected.read-only</key>
 	<string>true</string>
+	<key>CLIENT_ID</key>
+	<string>264909506099-91592solttefhoblru1c8d6kq293asb6.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.264909506099-91592solttefhoblru1c8d6kq293asb6</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>HBeyetest</string>
 </dict>
 </plist>

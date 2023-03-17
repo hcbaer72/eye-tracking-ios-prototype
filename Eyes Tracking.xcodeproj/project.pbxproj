@@ -3,12 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		274A75AF29B9867700D14EB5 /* screenrecordextension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274A75AE29B9867700D14EB5 /* screenrecordextension.swift */; };
 		274A75B129B986D000D14EB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 274A75B029B986D000D14EB5 /* ContentView.swift */; };
+		277941E029C51A8A0055E51A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 277941DF29C51A8A0055E51A /* GoogleSignIn */; };
+		277941E229C51A8A0055E51A /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 277941E129C51A8A0055E51A /* GoogleSignInSwift */; };
+		2779422A29C5281D0055E51A /* YoutubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2779422929C5281D0055E51A /* YoutubeKit */; };
+		2779422D29C5282A0055E51A /* YoutubePlayerView in Frameworks */ = {isa = PBXBuildFile; productRef = 2779422C29C5282A0055E51A /* YoutubePlayerView */; };
 		27A65D2629C24FA4001AE0D8 /* gestureRecognitiontest2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A65D2529C24FA4001AE0D8 /* gestureRecognitiontest2.swift */; };
 		27A83F2F29BCEF4700D1CF60 /* gestureRecognition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A83F2E29BCEF4700D1CF60 /* gestureRecognition.swift */; };
 		9CD4803F29B4477000D22746 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4803E29B4477000D22746 /* Device.swift */; };
@@ -43,6 +47,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				277941E029C51A8A0055E51A /* GoogleSignIn in Frameworks */,
+				277941E229C51A8A0055E51A /* GoogleSignInSwift in Frameworks */,
+				2779422D29C5282A0055E51A /* YoutubePlayerView in Frameworks */,
+				2779422A29C5281D0055E51A /* YoutubeKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +109,12 @@
 			dependencies = (
 			);
 			name = "Eyes Tracking";
+			packageProductDependencies = (
+				277941DF29C51A8A0055E51A /* GoogleSignIn */,
+				277941E129C51A8A0055E51A /* GoogleSignInSwift */,
+				2779422929C5281D0055E51A /* YoutubeKit */,
+				2779422C29C5282A0055E51A /* YoutubePlayerView */,
+			);
 			productName = "Eyes Tracking";
 			productReference = D0E5847620C806050052967A /* Eyes Tracking.app */;
 			productType = "com.apple.product-type.application";
@@ -129,6 +143,11 @@
 				Base,
 			);
 			mainGroup = D0E5846D20C806050052967A;
+			packageReferences = (
+				277941DE29C51A8A0055E51A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				2779422829C5281D0055E51A /* XCRemoteSwiftPackageReference "YoutubeKit" */,
+				2779422B29C5282A0055E51A /* XCRemoteSwiftPackageReference "YoutubePlayerView" */,
+			);
 			productRefGroup = D0E5847720C806050052967A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -374,6 +393,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		277941DE29C51A8A0055E51A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		2779422829C5281D0055E51A /* XCRemoteSwiftPackageReference "YoutubeKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rinov/YoutubeKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+		2779422B29C5282A0055E51A /* XCRemoteSwiftPackageReference "YoutubePlayerView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mukeshydv/YoutubePlayerView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		277941DF29C51A8A0055E51A /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 277941DE29C51A8A0055E51A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		277941E129C51A8A0055E51A /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 277941DE29C51A8A0055E51A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		2779422929C5281D0055E51A /* YoutubeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2779422829C5281D0055E51A /* XCRemoteSwiftPackageReference "YoutubeKit" */;
+			productName = YoutubeKit;
+		};
+		2779422C29C5282A0055E51A /* YoutubePlayerView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2779422B29C5282A0055E51A /* XCRemoteSwiftPackageReference "YoutubePlayerView" */;
+			productName = YoutubePlayerView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D0E5846E20C806050052967A /* Project object */;
 }

@@ -13,9 +13,11 @@ import WebKit
 import SwiftUI
 import ReplayKit
 import AVFoundation
+import GoogleSignIn
+import GoogleSignInSwift
 
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GIDSignInDelegate {
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
@@ -31,6 +33,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var gestureRecognition: GestureRecognition!
     var gestureRecognizer: UITapGestureRecognizer!
     
+    //add button for google sign in
+   // let button = GIDSignInButton(frame: CGRect(<YOUR_RECT>))
+    var loginButton: GIDSignInButton!
     
     
     var faceNode: SCNNode = SCNNode()
@@ -137,7 +142,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
          //Starting Recording
          screenRecorder.startRecording(handler: completion)
         // Start collecting gesture data
-        let gestureData = GestureData(direction: "startRecording", startTime: Date(), endTime: Date())
+        let gestureData = GestureData(direction: "startRecording", startTime: Date(), endTime: Date(), element: "")
         do {
             try self.gestureRecognition.recordGestureData(gestureData: gestureData)
         } catch {
@@ -154,11 +159,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         return url
     }
     
-
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let error = error {
+            print("Google Sign-In error: \(error.localizedDescription)")
+            return
+        }
+        
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Google Sign-In Configuration
+        GIDSignIn.sharedInstance().clientID = "264909506099-91592solttefhoblru1c8d6kq293asb6.apps.googleusercontent.com"
+        GIDSignIn.sharedInstance().delegate = self
+        
+        loginButton = GIDSignInButton(frame: CGRect(x: 10, y: 10, width: 100, height: 44))
+        webView.addSubview(loginButton)
+
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         // Set up gesture recognition
@@ -198,8 +215,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             //print("recordButton is nil")
            // return
       //  }
-
- 
         
     }
     
