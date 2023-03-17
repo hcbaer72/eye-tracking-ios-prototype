@@ -13,11 +13,9 @@ import WebKit
 import SwiftUI
 import ReplayKit
 import AVFoundation
-//import EyesTracking.GestureRecognizer
 
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
-   // private var device: Device = .iPad10_9
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
@@ -31,6 +29,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let screenRecorder = RPScreenRecorder.shared()
     var url: URL?
     var gestureRecognition: GestureRecognition!
+    var gestureRecognizer: UITapGestureRecognizer!
+    
     
     
     var faceNode: SCNNode = SCNNode()
@@ -129,25 +129,32 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
         }
     }
+    
+    func startRecording(enableMicrophone: Bool = false, completion: @escaping(Error?)->()) {
+         //Microphone Option
+         screenRecorder.isMicrophoneEnabled = false
         
-        func startRecording(enableMicrophone: Bool = false, completion: @escaping(Error?)->()) {
-            //Microphone Option
-            screenRecorder.isMicrophoneEnabled = false
-           
-            //Starting Recording
-            screenRecorder.startRecording(handler: completion)
+         //Starting Recording
+         screenRecorder.startRecording(handler: completion)
+        // Start collecting gesture data
+        let gestureData = GestureData(direction: "startRecording", startTime: Date(), endTime: Date())
+        do {
+            try self.gestureRecognition.recordGestureData(gestureData: gestureData)
+        } catch {
+            print("Error recording gesture data: \(error)")
         }
+     }
 
         
-        func stopRecording()async throws->URL {
-            let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
-            
-            try await screenRecorder.stopRecording(withOutput: url)
-            
-            return url
-        }
+    func stopRecording()async throws->URL {
+        let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
+        
+        try await screenRecorder.stopRecording(withOutput: url)
+        
+        return url
+    }
     
-    
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -156,7 +163,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         // Set up gesture recognition
         gestureRecognition = GestureRecognition(webView: webView)
-        
+
         
         // Setup Design Elements
         eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
@@ -187,10 +194,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         lookAtTargetEyeRNode.position.z = 2
         // Set up record button
         
-        guard let button = recordButton else {
-            print("recordButton is nil")
-            return
-        }
+      //  guard let button = recordButton else {
+            //print("recordButton is nil")
+           // return
+      //  }
 
  
         
