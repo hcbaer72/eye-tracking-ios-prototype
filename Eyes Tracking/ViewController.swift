@@ -53,8 +53,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeLNode: SCNNode = SCNNode()
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
-    let phoneScreenSize = CGSize(width: 0.178, height: 0.245)
-    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
+    let phoneScreenSize = CGSize(width: 0.18, height: 0.24)
+    let phoneScreenPointSize = CGSize(width: 834, height: 1194)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     var virtualScreenNode: SCNNode = {
@@ -177,7 +177,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
-        let heightCompensation: CGFloat = 350
+        let heightCompensation: CGFloat = 475
         
         DispatchQueue.main.async {
 
