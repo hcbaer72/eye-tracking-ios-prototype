@@ -7,6 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C5F19E029C78F07006D29CE /* UICollectionView+Gaze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19DF29C78F07006D29CE /* UICollectionView+Gaze.swift */; };
+		9C5F19E229C78F8F006D29CE /* EyeGazeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19E129C78F8F006D29CE /* EyeGazeWindow.swift */; };
+		9C5F19E429C78FFA006D29CE /* UIEyeGazeRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19E329C78FFA006D29CE /* UIEyeGazeRecognizer.swift */; };
+		9C5F19E629C790C4006D29CE /* UIEyeGazeEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19E529C790C4006D29CE /* UIEyeGazeEvent.swift */; };
+		9C5F19E829C79101006D29CE /* UIEyeGaze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19E729C79101006D29CE /* UIEyeGaze.swift */; };
+		9C5F19EA29C79140006D29CE /* UIEyeGazeTrackingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19E929C79140006D29CE /* UIEyeGazeTrackingWindow.swift */; };
+		9C5F19EE29C791C3006D29CE /* EyeGazeTrackingInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19ED29C791C3006D29CE /* EyeGazeTrackingInterpolator.swift */; };
+		9C5F19F129C79346006D29CE /* UICollectionView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19F029C79346006D29CE /* UICollectionView+Helpers.swift */; };
+		9C5F19F329C79364006D29CE /* VectorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19F229C79364006D29CE /* VectorUtils.swift */; };
+		9C5F19F629C79500006D29CE /* InterpolableValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19F529C794FF006D29CE /* InterpolableValues.swift */; };
+		9C5F19F829C79514006D29CE /* Interpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19F729C79514006D29CE /* Interpolation.swift */; };
+		9C5F19FA29C79527006D29CE /* LowPassInterpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19F929C79527006D29CE /* LowPassInterpolation.swift */; };
+		9C5F19FC29C79539006D29CE /* PIDInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19FB29C79539006D29CE /* PIDInterpolator.swift */; };
+		9C5F19FF29C79665006D29CE /* TrackingDebugOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F19FE29C79665006D29CE /* TrackingDebugOverlayViewController.swift */; };
+		9C5F1A0C29C79679006D29CE /* PulseExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0029C79678006D29CE /* PulseExtension.swift */; };
+		9C5F1A0D29C79679006D29CE /* FormatterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0129C79678006D29CE /* FormatterExtensions.swift */; };
+		9C5F1A0E29C79679006D29CE /* TunningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0229C79678006D29CE /* TunningViewController.swift */; };
+		9C5F1A0F29C79679006D29CE /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0329C79678006D29CE /* ControlsView.swift */; };
+		9C5F1A1029C79679006D29CE /* PIDControlConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0429C79678006D29CE /* PIDControlConstants.swift */; };
+		9C5F1A1129C79679006D29CE /* Pulse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0529C79678006D29CE /* Pulse.swift */; };
+		9C5F1A1229C79679006D29CE /* TrackingDebugOverlayViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0629C79678006D29CE /* TrackingDebugOverlayViewController.storyboard */; };
+		9C5F1A1329C79679006D29CE /* TunningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0729C79678006D29CE /* TunningView.swift */; };
+		9C5F1A1429C79679006D29CE /* SingleControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0829C79678006D29CE /* SingleControlView.swift */; };
+		9C5F1A1529C79679006D29CE /* TunningWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0929C79678006D29CE /* TunningWindow.swift */; };
+		9C5F1A1629C79679006D29CE /* SingleControlDisplayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0A29C79678006D29CE /* SingleControlDisplayable.swift */; };
+		9C5F1A1729C79679006D29CE /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A0B29C79679006D29CE /* Queue.swift */; };
+		9C5F1A1929C79712006D29CE /* UIEyeGazeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A1829C79712006D29CE /* UIEyeGazeViewController.swift */; };
+		9C5F1A1B29C79742006D29CE /* UIVirtualCursorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A1A29C79742006D29CE /* UIVirtualCursorView.swift */; };
+		9C5F1A3029C797CD006D29CE /* GazeEatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A1E29C797CC006D29CE /* GazeEatingView.swift */; };
+		9C5F1A3129C797CD006D29CE /* CursorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A1F29C797CC006D29CE /* CursorView.swift */; };
+		9C5F1A3829C797CD006D29CE /* Common in Resources */ = {isa = PBXBuildFile; fileRef = 9C5F1A2629C797CC006D29CE /* Common */; };
+		9C5F1A3E29C797CD006D29CE /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5F1A2C29C797CD006D29CE /* BorderedView.swift */; };
 		9CD4803F29B4477000D22746 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4803E29B4477000D22746 /* Device.swift */; };
 		9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4804029B447A000D22746 /* Device+UIKit.swift */; };
 		D0D25B8920C80F5500A25627 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D25B8820C80F5500A25627 /* Extensions.swift */; };
@@ -18,6 +50,38 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C5F19DF29C78F07006D29CE /* UICollectionView+Gaze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Gaze.swift"; sourceTree = "<group>"; };
+		9C5F19E129C78F8F006D29CE /* EyeGazeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeGazeWindow.swift; sourceTree = "<group>"; };
+		9C5F19E329C78FFA006D29CE /* UIEyeGazeRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEyeGazeRecognizer.swift; sourceTree = "<group>"; };
+		9C5F19E529C790C4006D29CE /* UIEyeGazeEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEyeGazeEvent.swift; sourceTree = "<group>"; };
+		9C5F19E729C79101006D29CE /* UIEyeGaze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEyeGaze.swift; sourceTree = "<group>"; };
+		9C5F19E929C79140006D29CE /* UIEyeGazeTrackingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEyeGazeTrackingWindow.swift; sourceTree = "<group>"; };
+		9C5F19ED29C791C3006D29CE /* EyeGazeTrackingInterpolator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeGazeTrackingInterpolator.swift; sourceTree = "<group>"; };
+		9C5F19F029C79346006D29CE /* UICollectionView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Helpers.swift"; sourceTree = "<group>"; };
+		9C5F19F229C79364006D29CE /* VectorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorUtils.swift; sourceTree = "<group>"; };
+		9C5F19F529C794FF006D29CE /* InterpolableValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterpolableValues.swift; sourceTree = "<group>"; };
+		9C5F19F729C79514006D29CE /* Interpolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interpolation.swift; sourceTree = "<group>"; };
+		9C5F19F929C79527006D29CE /* LowPassInterpolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowPassInterpolation.swift; sourceTree = "<group>"; };
+		9C5F19FB29C79539006D29CE /* PIDInterpolator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIDInterpolator.swift; sourceTree = "<group>"; };
+		9C5F19FE29C79665006D29CE /* TrackingDebugOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TrackingDebugOverlayViewController.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/TrackingDebugOverlayViewController.swift"; sourceTree = "<group>"; };
+		9C5F1A0029C79678006D29CE /* PulseExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PulseExtension.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/PulseExtension.swift"; sourceTree = "<group>"; };
+		9C5F1A0129C79678006D29CE /* FormatterExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FormatterExtensions.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/FormatterExtensions.swift"; sourceTree = "<group>"; };
+		9C5F1A0229C79678006D29CE /* TunningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TunningViewController.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/TunningViewController.swift"; sourceTree = "<group>"; };
+		9C5F1A0329C79678006D29CE /* ControlsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControlsView.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/ControlsView.swift"; sourceTree = "<group>"; };
+		9C5F1A0429C79678006D29CE /* PIDControlConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PIDControlConstants.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/PIDControlConstants.swift"; sourceTree = "<group>"; };
+		9C5F1A0529C79678006D29CE /* Pulse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Pulse.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/Pulse.swift"; sourceTree = "<group>"; };
+		9C5F1A0629C79678006D29CE /* TrackingDebugOverlayViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = TrackingDebugOverlayViewController.storyboard; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/TrackingDebugOverlayViewController.storyboard"; sourceTree = "<group>"; };
+		9C5F1A0729C79678006D29CE /* TunningView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TunningView.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/TunningView.swift"; sourceTree = "<group>"; };
+		9C5F1A0829C79678006D29CE /* SingleControlView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SingleControlView.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/SingleControlView.swift"; sourceTree = "<group>"; };
+		9C5F1A0929C79678006D29CE /* TunningWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TunningWindow.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/TunningWindow.swift"; sourceTree = "<group>"; };
+		9C5F1A0A29C79678006D29CE /* SingleControlDisplayable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SingleControlDisplayable.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/SingleControlDisplayable.swift"; sourceTree = "<group>"; };
+		9C5F1A0B29C79679006D29CE /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Queue.swift; path = "../../../../vocable-ios/Vocable/HeadTracking/Interpolation/PulseController/Queue.swift"; sourceTree = "<group>"; };
+		9C5F1A1829C79712006D29CE /* UIEyeGazeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEyeGazeViewController.swift; sourceTree = "<group>"; };
+		9C5F1A1A29C79742006D29CE /* UIVirtualCursorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIVirtualCursorView.swift; sourceTree = "<group>"; };
+		9C5F1A1E29C797CC006D29CE /* GazeEatingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GazeEatingView.swift; sourceTree = "<group>"; };
+		9C5F1A1F29C797CC006D29CE /* CursorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CursorView.swift; sourceTree = "<group>"; };
+		9C5F1A2629C797CC006D29CE /* Common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Common; sourceTree = "<group>"; };
+		9C5F1A2C29C797CD006D29CE /* BorderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 		9CD4803E29B4477000D22746 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		9CD4804029B447A000D22746 /* Device+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Device+UIKit.swift"; sourceTree = "<group>"; };
 		D0D25B8820C80F5500A25627 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -41,6 +105,51 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9C5F19EF29C79321006D29CE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				9C5F1A2C29C797CD006D29CE /* BorderedView.swift */,
+				9C5F1A1F29C797CC006D29CE /* CursorView.swift */,
+				9C5F1A1E29C797CC006D29CE /* GazeEatingView.swift */,
+				9C5F19DF29C78F07006D29CE /* UICollectionView+Gaze.swift */,
+				9C5F19F029C79346006D29CE /* UICollectionView+Helpers.swift */,
+				9C5F19F229C79364006D29CE /* VectorUtils.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		9C5F19F429C794DA006D29CE /* Interpolation */ = {
+			isa = PBXGroup;
+			children = (
+				9C5F19F529C794FF006D29CE /* InterpolableValues.swift */,
+				9C5F19F729C79514006D29CE /* Interpolation.swift */,
+				9C5F19F929C79527006D29CE /* LowPassInterpolation.swift */,
+				9C5F19FB29C79539006D29CE /* PIDInterpolator.swift */,
+				9C5F19FD29C795D5006D29CE /* PulseController */,
+			);
+			path = Interpolation;
+			sourceTree = "<group>";
+		};
+		9C5F19FD29C795D5006D29CE /* PulseController */ = {
+			isa = PBXGroup;
+			children = (
+				9C5F19FE29C79665006D29CE /* TrackingDebugOverlayViewController.swift */,
+				9C5F1A0329C79678006D29CE /* ControlsView.swift */,
+				9C5F1A0129C79678006D29CE /* FormatterExtensions.swift */,
+				9C5F1A0429C79678006D29CE /* PIDControlConstants.swift */,
+				9C5F1A0529C79678006D29CE /* Pulse.swift */,
+				9C5F1A0029C79678006D29CE /* PulseExtension.swift */,
+				9C5F1A0B29C79679006D29CE /* Queue.swift */,
+				9C5F1A0A29C79678006D29CE /* SingleControlDisplayable.swift */,
+				9C5F1A0829C79678006D29CE /* SingleControlView.swift */,
+				9C5F1A0629C79678006D29CE /* TrackingDebugOverlayViewController.storyboard */,
+				9C5F1A0729C79678006D29CE /* TunningView.swift */,
+				9C5F1A0229C79678006D29CE /* TunningViewController.swift */,
+				9C5F1A0929C79678006D29CE /* TunningWindow.swift */,
+			);
+			path = PulseController;
+			sourceTree = "<group>";
+		};
 		D0E5846D20C806050052967A = {
 			isa = PBXGroup;
 			children = (
@@ -62,13 +171,24 @@
 			children = (
 				D0E5847920C806050052967A /* AppDelegate.swift */,
 				D0E5847D20C806050052967A /* ViewController.swift */,
-				D0D25B8820C80F5500A25627 /* Extensions.swift */,
 				9CD4803E29B4477000D22746 /* Device.swift */,
 				9CD4804029B447A000D22746 /* Device+UIKit.swift */,
 				D0E5847F20C806050052967A /* Main.storyboard */,
-				D0E5848220C806050052967A /* Assets.xcassets */,
 				D0E5848420C806050052967A /* LaunchScreen.storyboard */,
 				D0E5848720C806050052967A /* Info.plist */,
+				D0E5848220C806050052967A /* Assets.xcassets */,
+				D0D25B8820C80F5500A25627 /* Extensions.swift */,
+				9C5F19ED29C791C3006D29CE /* EyeGazeTrackingInterpolator.swift */,
+				9C5F19E129C78F8F006D29CE /* EyeGazeWindow.swift */,
+				9C5F19E729C79101006D29CE /* UIEyeGaze.swift */,
+				9C5F19E529C790C4006D29CE /* UIEyeGazeEvent.swift */,
+				9C5F19E329C78FFA006D29CE /* UIEyeGazeRecognizer.swift */,
+				9C5F1A1829C79712006D29CE /* UIEyeGazeViewController.swift */,
+				9C5F19E929C79140006D29CE /* UIEyeGazeTrackingWindow.swift */,
+				9C5F1A1A29C79742006D29CE /* UIVirtualCursorView.swift */,
+				9C5F1A2629C797CC006D29CE /* Common */,
+				9C5F19F429C794DA006D29CE /* Interpolation */,
+				9C5F19EF29C79321006D29CE /* Extensions */,
 			);
 			path = "Eyes Tracking";
 			sourceTree = "<group>";
@@ -134,6 +254,8 @@
 				D0E5848620C806050052967A /* LaunchScreen.storyboard in Resources */,
 				D0E5848320C806050052967A /* Assets.xcassets in Resources */,
 				D0E5848120C806050052967A /* Main.storyboard in Resources */,
+				9C5F1A1229C79679006D29CE /* TrackingDebugOverlayViewController.storyboard in Resources */,
+				9C5F1A3829C797CD006D29CE /* Common in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,11 +266,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C5F19FA29C79527006D29CE /* LowPassInterpolation.swift in Sources */,
+				9C5F19E829C79101006D29CE /* UIEyeGaze.swift in Sources */,
+				9C5F1A1B29C79742006D29CE /* UIVirtualCursorView.swift in Sources */,
 				D0D25B8920C80F5500A25627 /* Extensions.swift in Sources */,
+				9C5F19E629C790C4006D29CE /* UIEyeGazeEvent.swift in Sources */,
+				9C5F1A0F29C79679006D29CE /* ControlsView.swift in Sources */,
+				9C5F1A3E29C797CD006D29CE /* BorderedView.swift in Sources */,
 				D0E5847E20C806050052967A /* ViewController.swift in Sources */,
+				9C5F1A1629C79679006D29CE /* SingleControlDisplayable.swift in Sources */,
+				9C5F1A3129C797CD006D29CE /* CursorView.swift in Sources */,
+				9C5F19FC29C79539006D29CE /* PIDInterpolator.swift in Sources */,
+				9C5F1A0D29C79679006D29CE /* FormatterExtensions.swift in Sources */,
+				9C5F19F629C79500006D29CE /* InterpolableValues.swift in Sources */,
+				9C5F19F329C79364006D29CE /* VectorUtils.swift in Sources */,
 				D0E5847A20C806050052967A /* AppDelegate.swift in Sources */,
+				9C5F1A0C29C79679006D29CE /* PulseExtension.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
+				9C5F19F129C79346006D29CE /* UICollectionView+Helpers.swift in Sources */,
+				9C5F1A1329C79679006D29CE /* TunningView.swift in Sources */,
+				9C5F19E429C78FFA006D29CE /* UIEyeGazeRecognizer.swift in Sources */,
+				9C5F1A1529C79679006D29CE /* TunningWindow.swift in Sources */,
+				9C5F1A1429C79679006D29CE /* SingleControlView.swift in Sources */,
 				9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */,
+				9C5F1A1729C79679006D29CE /* Queue.swift in Sources */,
+				9C5F19EA29C79140006D29CE /* UIEyeGazeTrackingWindow.swift in Sources */,
+				9C5F1A1129C79679006D29CE /* Pulse.swift in Sources */,
+				9C5F1A3029C797CD006D29CE /* GazeEatingView.swift in Sources */,
+				9C5F19FF29C79665006D29CE /* TrackingDebugOverlayViewController.swift in Sources */,
+				9C5F19E229C78F8F006D29CE /* EyeGazeWindow.swift in Sources */,
+				9C5F1A1029C79679006D29CE /* PIDControlConstants.swift in Sources */,
+				9C5F19EE29C791C3006D29CE /* EyeGazeTrackingInterpolator.swift in Sources */,
+				9C5F19F829C79514006D29CE /* Interpolation.swift in Sources */,
+				9C5F1A0E29C79679006D29CE /* TunningViewController.swift in Sources */,
+				9C5F19E029C78F07006D29CE /* UICollectionView+Gaze.swift in Sources */,
+				9C5F1A1929C79712006D29CE /* UIEyeGazeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
