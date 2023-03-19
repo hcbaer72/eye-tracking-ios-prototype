@@ -53,8 +53,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeLNode: SCNNode = SCNNode()
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
-    let phoneScreenSize = CGSize(width: 0.18, height: 0.24)
-    let phoneScreenPointSize = CGSize(width: 834, height: 1194)
+    let phoneScreenSize = CGSize(width: 0.176, height: 0.245)
+    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     var virtualScreenNode: SCNNode = {
