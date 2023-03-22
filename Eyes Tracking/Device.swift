@@ -204,13 +204,13 @@ enum Device: CaseIterable {
         switch self {
         case .iPad10_2: return 0.24
         case .iPadPro12_9: return 0.28
-        case .iPadPro11: return 0.24
+        case .iPadPro11: return 0.2290604
         case .ipadPro10_5: return 0.19
         case .iPadPro9_7: return 0.17
         case .iPadMini7_9: return 0.14
         case .iPadAir10_5: return 0.19
         case .iPadAir9_7: return 0.17
-        case .iPad10_9: return 0.245
+        case .iPad10_9: return 0.2269145561
         case .iPad9_7: return 0.17
         case .iPhoneXR: return 0.0621
         case .iPhoneXS: return 0.0549
@@ -233,13 +233,13 @@ enum Device: CaseIterable {
         switch self {
         case .iPad10_2: return 0.187
         case .iPadPro12_9: return 0.21
-        case .iPadPro11: return 0.18
+        case .iPadPro11: return 0.15999697905
         case .ipadPro10_5: return 0.14
         case .iPadPro9_7: return 0.13
         case .iPadMini7_9: return 0.10
         case .iPadAir10_5: return 0.14
         case .iPadAir9_7: return 0.13
-        case .iPad10_9: return 0.176
+        case .iPad10_9: return 0.1573389284
         case .iPad9_7: return 0.13
         case .iPhoneXR: return 0.1341
         case .iPhoneXS: return 0.1213

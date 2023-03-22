@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BUNDLE_ID</key>
+	<string>HBeyetest</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -20,6 +22,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>GIDClientID</key>
+	<string>264909506099-1si3fdvvgnnil75169dtpa300j0dmius.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAllowsArbitraryLoads</key>
@@ -28,6 +32,10 @@
 	<dict/>
 	<key>NSCameraUsageDescription</key>
 	<string>This application will use the camera for Augmented Reality.</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.264909506099-1si3fdvvgnnil75169dtpa300j0dmius</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>external-accessory</string>
@@ -60,21 +68,13 @@
 	<string>true</string>
 	<key>com.apple.runningboard.assertions.webkit</key>
 	<string>TRUE</string>
-	<key>com.apple.webkit.allow-remote-inspection</key>
+	<key>com.apple.security.files.user-selected.read-only</key>
 	<string>true</string>
 	<key>com.apple.security.network.client</key>
 	<string>true</string>
 	<key>com.apple.security.scripting-targets</key>
 	<string>true</string>
-	<key>com.apple.security.files.user-selected.read-only</key>
+	<key>com.apple.webkit.allow-remote-inspection</key>
 	<string>true</string>
-	<key>CLIENT_ID</key>
-	<string>264909506099-91592solttefhoblru1c8d6kq293asb6.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.264909506099-91592solttefhoblru1c8d6kq293asb6</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>HBeyetest</string>
 </dict>
 </plist>
