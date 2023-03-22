@@ -17,7 +17,7 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GIDSignInDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
@@ -34,8 +34,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GI
     var gestureRecognizer: UITapGestureRecognizer!
     
     //add button for google sign in
-   // let button = GIDSignInButton(frame: CGRect(<YOUR_RECT>))
-    var loginButton: GIDSignInButton!
+    // let button = GIDSignInButton(frame: CGRect(<YOUR_RECT>))
+    // var loginButton: GIDSignInButton!
+    var loginButton = GIDSignInButton(frame: CGRect(x: 10, y: 10, width: 100, height: 44))
     
     
     var faceNode: SCNNode = SCNNode()
@@ -71,8 +72,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GI
     
     // actual physical size of iPhoneX screen
     
-   // var screenWidth = self.device.meterWidth
-   // var screenHeight: self.device.meterHeight
+    // var screenWidth = self.device.meterWidth
+    // var screenHeight: self.device.meterHeight
     
     let phoneScreenSize = CGSize(width: 0.1785, height: 0.2476)
     
@@ -136,11 +137,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GI
     }
     
     func startRecording(enableMicrophone: Bool = false, completion: @escaping(Error?)->()) {
-         //Microphone Option
-         screenRecorder.isMicrophoneEnabled = false
+        //Microphone Option
+        screenRecorder.isMicrophoneEnabled = false
         
-         //Starting Recording
-         screenRecorder.startRecording(handler: completion)
+        //Starting Recording
+        screenRecorder.startRecording(handler: completion)
         // Start collecting gesture data
         let gestureData = GestureData(direction: "startRecording", startTime: Date(), endTime: Date(), element: "")
         do {
@@ -148,9 +149,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GI
         } catch {
             print("Error recording gesture data: \(error)")
         }
-     }
-
-        
+    }
+    
+    
     func stopRecording()async throws->URL {
         let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
         
@@ -165,164 +166,159 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, GI
             return
         }
         
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Google Sign-In Configuration
-        GIDSignIn.sharedInstance().clientID = "264909506099-91592solttefhoblru1c8d6kq293asb6.apps.googleusercontent.com"
-        GIDSignIn.sharedInstance().delegate = self
-        
-        loginButton = GIDSignInButton(frame: CGRect(x: 10, y: 10, width: 100, height: 44))
-        webView.addSubview(loginButton)
-
-        webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        // Set up gesture recognition
-        gestureRecognition = GestureRecognition(webView: webView)
-
-        
-        // Setup Design Elements
-        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
-        sceneView.layer.cornerRadius = 28
-        eyePositionIndicatorCenterView.layer.cornerRadius = 4
-        
-        blurBarView.layer.cornerRadius = 36
-        blurBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        webView.layer.cornerRadius = 16
-        webView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        
-        // Set the view's delegate
-        sceneView.delegate = self
-        sceneView.session.delegate = self
-        sceneView.automaticallyUpdatesLighting = true
-        
-        // Setup Scenegraph
-        sceneView.scene.rootNode.addChildNode(faceNode)
-        sceneView.scene.rootNode.addChildNode(virtualPhoneNode)
-        virtualPhoneNode.addChildNode(virtualScreenNode)
-        faceNode.addChildNode(eyeLNode)
-        faceNode.addChildNode(eyeRNode)
-        eyeLNode.addChildNode(lookAtTargetEyeLNode)
-        eyeRNode.addChildNode(lookAtTargetEyeRNode)
-        
-        // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
-        lookAtTargetEyeLNode.position.z = 2
-        lookAtTargetEyeRNode.position.z = 2
-        // Set up record button
-        
-      //  guard let button = recordButton else {
+    }
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            // webView.addSubview(loginButton)
+            
+            webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+            webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+            // Set up gesture recognition
+            gestureRecognition = GestureRecognition(webView: webView)
+            
+            
+            // Setup Design Elements
+            eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
+            sceneView.layer.cornerRadius = 28
+            eyePositionIndicatorCenterView.layer.cornerRadius = 4
+            
+            blurBarView.layer.cornerRadius = 36
+            blurBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            webView.layer.cornerRadius = 16
+            webView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            
+            // Set the view's delegate
+            sceneView.delegate = self
+            sceneView.session.delegate = self
+            sceneView.automaticallyUpdatesLighting = true
+            
+            // Setup Scenegraph
+            sceneView.scene.rootNode.addChildNode(faceNode)
+            sceneView.scene.rootNode.addChildNode(virtualPhoneNode)
+            virtualPhoneNode.addChildNode(virtualScreenNode)
+            faceNode.addChildNode(eyeLNode)
+            faceNode.addChildNode(eyeRNode)
+            eyeLNode.addChildNode(lookAtTargetEyeLNode)
+            eyeRNode.addChildNode(lookAtTargetEyeRNode)
+            
+            // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
+            lookAtTargetEyeLNode.position.z = 2
+            lookAtTargetEyeRNode.position.z = 2
+            // Set up record button
+            
+            //  guard let button = recordButton else {
             //print("recordButton is nil")
-           // return
-      //  }
-        
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        guard ARFaceTrackingConfiguration.isSupported else { return }
-        let configuration = ARFaceTrackingConfiguration()
-        configuration.isLightEstimationEnabled = true
-        
-        // Run the view's session
-        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Pause the view's session
-        sceneView.session.pause()
-    }
-
-    // MARK: - ARSCNViewDelegate
-    
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        
-        update(withFaceAnchor: faceAnchor)
-    }
-    
-    // MARK: - update(ARFaceAnchor)
-    
-    func update(withFaceAnchor anchor: ARFaceAnchor) {
-        
-        eyeRNode.simdTransform = anchor.rightEyeTransform
-        eyeLNode.simdTransform = anchor.leftEyeTransform
-        
-        var eyeLLookAt = CGPoint()
-        var eyeRLookAt = CGPoint()
-        
-        let heightCompensation: CGFloat = 600
-        //height from camera to center of screen
-        
-        DispatchQueue.main.async {
-
-            // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
-            
-            let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-            
-            let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
-            
-            for result in phoneScreenEyeRHitTestResults {
-                
-                eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                
-                eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-            }
-            
-            for result in phoneScreenEyeLHitTestResults {
-                
-                eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                
-                eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-            }
-            
-            // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 5
-            //speed or slow down
-            self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
-            self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
-            self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
-            self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
-            
-            let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
-            let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
-            
-            // update indicator position
-            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
-            
-            // update eye look at labels values
-            self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-            
-            self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
-            
-            // Calculate distance of the eyes to the camera
-            let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
-            let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
-            
-            // Average distance from two eyes
-            let distance = (distanceL.length() + distanceR.length()) / 2
-            
-            // Update distance label value
-            self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
+            // return
+            //  }
             
         }
         
+        
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            
+            // Create a session configuration
+            guard ARFaceTrackingConfiguration.isSupported else { return }
+            let configuration = ARFaceTrackingConfiguration()
+            configuration.isLightEstimationEnabled = true
+            
+            // Run the view's session
+            sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+        }
+        
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            
+            // Pause the view's session
+            sceneView.session.pause()
+        }
+        
+        // MARK: - ARSCNViewDelegate
+        
+        func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+            
+            faceNode.transform = node.transform
+            guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+            
+            update(withFaceAnchor: faceAnchor)
+        }
+        
+        // MARK: - update(ARFaceAnchor)
+        
+        func update(withFaceAnchor anchor: ARFaceAnchor) {
+            
+            eyeRNode.simdTransform = anchor.rightEyeTransform
+            eyeLNode.simdTransform = anchor.leftEyeTransform
+            
+            var eyeLLookAt = CGPoint()
+            var eyeRLookAt = CGPoint()
+            
+            let heightCompensation: CGFloat = 600
+            //height from camera to center of screen
+            
+            DispatchQueue.main.async {
+                
+                // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
+                
+                let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
+                
+                let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+                
+                for result in phoneScreenEyeRHitTestResults {
+                    
+                    eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                for result in phoneScreenEyeLHitTestResults {
+                    
+                    eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                // Add the latest position and keep up to 8 recent position to smooth with.
+                let smoothThresholdNumber: Int = 5
+                //speed or slow down
+                self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
+                self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
+                self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
+                self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
+                
+                let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
+                let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
+                
+                // update indicator position
+                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+                
+                // update eye look at labels values
+                self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
+                
+                self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
+                
+                // Calculate distance of the eyes to the camera
+                let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
+                let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
+                
+                // Average distance from two eyes
+                let distance = (distanceL.length() + distanceR.length()) / 2
+                
+                // Update distance label value
+                self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
+                
+            }
+            
+        }
+        
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+        }
+        
+        func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+            faceNode.transform = node.transform
+            guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+            update(withFaceAnchor: faceAnchor)
+        }
     }
-    
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        update(withFaceAnchor: faceAnchor)
-    }
-}
+
