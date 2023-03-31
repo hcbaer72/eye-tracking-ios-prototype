@@ -5,6 +5,17 @@
 
 import Foundation
 
+
+//heightInPixels
+//widthInPixels
+//heightInPoints
+//widthInPoints
+//pixelsPerPoint
+//diagonalSizeInInches
+//diagonalSizeInMilliMeters
+
+
+
 enum Device: CaseIterable {
     case iPadPro12_9
     case iPadPro11
@@ -32,13 +43,13 @@ enum Device: CaseIterable {
     case iPhone13Pro
     case iPhone13ProMax
     
-    var heightInPixels: Int {
+    var heightInPixels: Double {
         heightInPoints * pixelsPerPoint
     }
-    var widthInPixels: Int {
+    var widthInPixels: Double {
         widthInPoints * pixelsPerPoint
     }
-    var heightInPoints: Int {
+    var heightInPoints: Double {
         switch self {
         case .iPadPro12_9: return 1366
         case .iPadPro11: return 1194
@@ -68,7 +79,7 @@ enum Device: CaseIterable {
         
         }
     }
-    var widthInPoints: Int {
+    var widthInPoints: Double {
         switch self {
         case .iPadPro12_9: return 1024
         case .iPadPro11: return 834
@@ -97,7 +108,7 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 428
         }
     }
-    var pixelsPerPoint: Int {
+    var pixelsPerPoint: Double {
         switch self {
         case .iPadPro12_9: return 2
         case .iPadPro11: return 2
@@ -155,38 +166,38 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 6.7
         }
     }
-    var diagonalSizeInMilliMeters: Int {
+    var diagonalSizeInMilliMeters: Double {
         switch self {
-        case .iPadPro12_9: return Int(12.9 * 25.4)
-        case .iPadPro11: return Int(11 * 25.4)
-        case .ipadPro10_5: return Int(10.5 * 25.4)
-        case .iPadPro9_7: return Int(9.7 * 25.4)
-        case .iPadMini7_9: return Int(7.9 * 25.4)
-        case .iPadAir10_5: return Int(10.5 * 25.4)
-        case .iPadAir9_7: return Int(9.7 * 25.4)
-        case .iPad10_9: return Int(10.9 * 25.4)
-        case .iPad10_2: return Int(10.2 * 25.4)
-        case .iPad9_7: return Int(9.7 * 25.4)
-        case .iPhoneXR: return Int(6.1 * 25.4)
-        case .iPhoneXS: return Int(5.8 * 25.4)
-        case .iPhoneXSMax: return Int(6.5 * 25.4)
-        case .iPhone11: return Int(6.1 * 25.4)
-        case .iPhone11Pro: return Int(5.8 * 25.4)
-        case .iPhone11ProMax: return Int(6.5 * 25.4)
-        case .iPhoneSE2: return Int(4.7 * 25.4)
-        case .iPhone12: return Int(6.1 * 25.4)
-        case .iPhone12mini: return Int(5.4 * 25.4)
-        case .iPhone12Pro: return Int(6.1 * 25.4)
-        case .iPhone12ProMax: return Int(6.7 * 25.4)
-        case .iPhone13: return Int(6.1 * 25.4)
-        case .iPhone13mini: return Int(5.4 * 25.4)
-        case .iPhone13Pro: return Int(6.1 * 25.4)
-        case .iPhone13ProMax: return Int(6.7 * 25.4)
+        case .iPadPro12_9: return Double(12.9 * 25.4)
+        case .iPadPro11: return Double(11 * 25.4)
+        case .ipadPro10_5: return Double(10.5 * 25.4)
+        case .iPadPro9_7: return Double(9.7 * 25.4)
+        case .iPadMini7_9: return Double(7.9 * 25.4)
+        case .iPadAir10_5: return Double(10.5 * 25.4)
+        case .iPadAir9_7: return Double(9.7 * 25.4)
+        case .iPad10_9: return Double(10.9 * 25.4)
+        case .iPad10_2: return Double(10.2 * 25.4)
+        case .iPad9_7: return Double(9.7 * 25.4)
+        case .iPhoneXR: return Double(6.1 * 25.4)
+        case .iPhoneXS: return Double(5.8 * 25.4)
+        case .iPhoneXSMax: return Double(6.5 * 25.4)
+        case .iPhone11: return Double(6.1 * 25.4)
+        case .iPhone11Pro: return Double(5.8 * 25.4)
+        case .iPhone11ProMax: return Double(6.5 * 25.4)
+        case .iPhoneSE2: return Double(4.7 * 25.4)
+        case .iPhone12: return Double(6.1 * 25.4)
+        case .iPhone12mini: return Double(5.4 * 25.4)
+        case .iPhone12Pro: return Double(6.1 * 25.4)
+        case .iPhone12ProMax: return Double(6.7 * 25.4)
+        case .iPhone13: return Double(6.1 * 25.4)
+        case .iPhone13mini: return Double(5.4 * 25.4)
+        case .iPhone13Pro: return Double(6.1 * 25.4)
+        case .iPhone13ProMax: return Double(6.7 * 25.4)
         }
     }
     var pointSizeInMeters: Double {
         let diagonalSizeInMillimeters = diagonalSizeInInches * 25.4
-        let diagonalSizeInPoints =  widthInPoints^2 * heightInPoints^2
+        let diagonalSizeInPoints =  pow(widthInPoints, 2) * pow(heightInPoints, 2)
         fatalError()
     }
     
@@ -198,7 +209,7 @@ enum Device: CaseIterable {
 //                        pixelsPerPoint: Int32(pixelsPerPoint)
 //        )
 //    }
-    var meterHeight: Float {
+    var meterHeight: Double {
         switch self {
         case .iPad10_2: return 0.24
         case .iPadPro12_9: return 0.28
@@ -227,7 +238,7 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 0.0630
         }
     }
-    var meterWidth: Float {
+    var meterWidth: Double {
         switch self {
         case .iPad10_2: return 0.187
         case .iPadPro12_9: return 0.21
