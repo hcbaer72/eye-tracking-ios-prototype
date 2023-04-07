@@ -69,8 +69,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
 
     
-    let phoneScreenSize = CGSize(width: 0.1573389284, height: 0.2269145561)
-    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
+    let phoneScreenSize = CGSize(width: 0.15999697905, height: 0.2290604)
+    let phoneScreenPointSize = CGSize(width: 834, height: 1194)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -183,7 +183,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var eyeLLookAt = CGPoint()
             var eyeRLookAt = CGPoint()
             
-            let heightCompensation: CGFloat = 350
+            let heightCompensation: CGFloat = 550
             //height from camera to center of screen
             
             DispatchQueue.main.async {
