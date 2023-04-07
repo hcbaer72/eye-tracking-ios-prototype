@@ -9,13 +9,9 @@
 import UIKit
 import SceneKit
 import ARKit
-import WebKit
 import SwiftUI
 import ReplayKit
 import AVFoundation
-import GoogleSignIn
-import GoogleSignInSwift
-
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet var sceneView: ARSCNView!
@@ -31,13 +27,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var isRecording = false
     let screenRecorder = RPScreenRecorder.shared()
     var url: URL?
-    
-    
-
-    var loginButton = GIDSignInButton(frame: CGRect(x: 10, y: 10, width: 100, height: 44))
+    let minZ: Float = 0.1
+    let maxZ: Float = 3.0
+    let defaultZ: Float = 2.0
     var faceNode: SCNNode = SCNNode()
-    
-    
+//    var calibrationViewController: CalibrationViewController
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//            if let calibrationVC = segue.destination as? CalibrationViewController {
+//                self.calibrationViewController = calibrationVC
+//            }
+//        }
+//
+////        override func viewDidLoad() {
+////            super.viewDidLoad()
+////
+//            // Add the dot layers to the main view
+////            for dotLayer in self.calibrationViewController.dotLayers ?? [] {
+////                self.view.layer.addSublayer(dotLayer)
+//////            }
+//        }
+//
     var eyeLNode: SCNNode = {
         let geometry = SCNCone(topRadius: 0.005, bottomRadius: 0, height: 0.2)
         geometry.radialSegmentCount = 3
@@ -69,8 +78,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
 
     
-    let phoneScreenSize = CGSize(width: 0.15999697905, height: 0.2290604)
-    let phoneScreenPointSize = CGSize(width: 834, height: 1194)
+    let phoneScreenSize = CGSize(width: 0.1573389284, height: 0.2269145561)
+    let phoneScreenPointSize = CGSize(width: 820, height: 1180)
     
     var virtualPhoneNode: SCNNode = SCNNode()
     
@@ -118,18 +127,32 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         eyeRNode.addChildNode(lookAtTargetEyeRNode)
         
         // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
-        lookAtTargetEyeLNode.position.z = 2
-        lookAtTargetEyeRNode.position.z = 2
+     
+        lookAtTargetEyeLNode.position.z = defaultZ
+        lookAtTargetEyeRNode.position.z = defaultZ
+        mySliderLeye.value = normalZ(defaultZ)
+        mySliderReye.value = normalZ(defaultZ)
  
         mySliderLeye.addTarget(self, action: #selector(mySliderLeyeValueChanged(_:)), for: .valueChanged)
         mySliderReye.addTarget(self, action: #selector(mySliderReyeValueChanged(_:)), for: .valueChanged)
     }
     @objc func mySliderLeyeValueChanged(_ sender: UISlider) {
-        lookAtTargetEyeLNode.position.z = sender.value
+        lookAtTargetEyeLNode.position.z = zFromNormal(sender.value)
         print("Slider value changed to \(sender.value)")
     }
     @objc func mySliderReyeValueChanged(_ sender: UISlider) {
-        lookAtTargetEyeRNode.position.z = sender.value
+        lookAtTargetEyeRNode.position.z = zFromNormal(sender.value)
+    }
+    func normalZ(_ value: Float) -> Float {
+        let offset = minZ
+        let adjustedValue = value - offset
+        let domainWidth = maxZ - minZ
+        return adjustedValue / domainWidth
+    }
+    func zFromNormal(_ value: Float) -> Float {
+        let domainWidth = maxZ - minZ
+        let adjustedValue = value * domainWidth
+        return adjustedValue + minZ
     }
     
             
@@ -183,7 +206,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var eyeLLookAt = CGPoint()
             var eyeRLookAt = CGPoint()
             
-            let heightCompensation: CGFloat = 550
+            let heightCompensation: CGFloat = 350
             //height from camera to center of screen
             
             DispatchQueue.main.async {
@@ -191,20 +214,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
                 
                 let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-                
                 let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
-                
                 for result in phoneScreenEyeRHitTestResults {
-                    
                     eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                    
                     eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
                 }
                 
                 for result in phoneScreenEyeLHitTestResults {
-                    
                     eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                    
                     eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
                 }
                 
@@ -215,7 +232,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
                 self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
                 self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
-                
                 let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
                 let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
                 
@@ -238,7 +254,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
                 
             }
-            
         }
         
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {

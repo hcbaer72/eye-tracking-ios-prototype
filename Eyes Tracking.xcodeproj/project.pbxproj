@@ -13,6 +13,7 @@
 		2779422A29C5281D0055E51A /* YoutubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2779422929C5281D0055E51A /* YoutubeKit */; };
 		2779422D29C5282A0055E51A /* YoutubePlayerView in Frameworks */ = {isa = PBXBuildFile; productRef = 2779422C29C5282A0055E51A /* YoutubePlayerView */; };
 		9C1A858D29DE62F70035727D /* CalibrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1A858C29DE62F70035727D /* CalibrationViewController.swift */; };
+		9C1A859029E0ACB40035727D /* CodableCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 9C1A858F29E0ACB40035727D /* CodableCSV */; };
 		9CD4803F29B4477000D22746 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4803E29B4477000D22746 /* Device.swift */; };
 		9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4804029B447A000D22746 /* Device+UIKit.swift */; };
 		D0D25B8920C80F5500A25627 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D25B8820C80F5500A25627 /* Extensions.swift */; };
@@ -47,6 +48,7 @@
 				277941E229C51A8A0055E51A /* GoogleSignInSwift in Frameworks */,
 				2779422D29C5282A0055E51A /* YoutubePlayerView in Frameworks */,
 				2779422A29C5281D0055E51A /* YoutubeKit in Frameworks */,
+				9C1A859029E0ACB40035727D /* CodableCSV in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +110,7 @@
 				277941E129C51A8A0055E51A /* GoogleSignInSwift */,
 				2779422929C5281D0055E51A /* YoutubeKit */,
 				2779422C29C5282A0055E51A /* YoutubePlayerView */,
+				9C1A858F29E0ACB40035727D /* CodableCSV */,
 			);
 			productName = "Eyes Tracking";
 			productReference = D0E5847620C806050052967A /* Eyes Tracking.app */;
@@ -143,6 +146,7 @@
 				277941DE29C51A8A0055E51A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				2779422829C5281D0055E51A /* XCRemoteSwiftPackageReference "YoutubeKit" */,
 				2779422B29C5282A0055E51A /* XCRemoteSwiftPackageReference "YoutubePlayerView" */,
+				9C1A858E29E0ACB40035727D /* XCRemoteSwiftPackageReference "CodableCSV" */,
 			);
 			productRefGroup = D0E5847720C806050052967A /* Products */;
 			projectDirPath = "";
@@ -415,6 +419,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		9C1A858E29E0ACB40035727D /* XCRemoteSwiftPackageReference "CodableCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dehesa/CodableCSV.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.7;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -437,6 +449,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2779422B29C5282A0055E51A /* XCRemoteSwiftPackageReference "YoutubePlayerView" */;
 			productName = YoutubePlayerView;
+		};
+		9C1A858F29E0ACB40035727D /* CodableCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9C1A858E29E0ACB40035727D /* XCRemoteSwiftPackageReference "CodableCSV" */;
+			productName = CodableCSV;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
