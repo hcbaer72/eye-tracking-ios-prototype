@@ -13,10 +13,13 @@ import Foundation
 //pixelsPerPoint
 //diagonalSizeInInches
 //diagonalSizeInMilliMeters
+//pointSizeInMeters
+//meterHeight
+//meterWidth
 
 
 
-enum Device: CaseIterable {
+enum Device: String, CaseIterable {
     case iPadPro12_9
     case iPadPro11
     case ipadPro10_5
@@ -43,13 +46,13 @@ enum Device: CaseIterable {
     case iPhone13Pro
     case iPhone13ProMax
     
-    var heightInPixels: Double {
+    public var heightInPixels: Double {
         heightInPoints * pixelsPerPoint
     }
-    var widthInPixels: Double {
+    public var widthInPixels: Double {
         widthInPoints * pixelsPerPoint
     }
-    var heightInPoints: Double {
+    public var heightInPoints: Double {
         switch self {
         case .iPadPro12_9: return 1366
         case .iPadPro11: return 1194
@@ -79,6 +82,16 @@ enum Device: CaseIterable {
         
         }
     }
+    
+    var heightCompensation: Double {
+        if self == .iPad10_9 {
+            return widthInPoints * 0.5
+        } else {
+            return heightInPoints * 0.5
+        }
+    }
+    
+    
     var widthInPoints: Double {
         switch self {
         case .iPadPro12_9: return 1024
@@ -209,7 +222,7 @@ enum Device: CaseIterable {
 //                        pixelsPerPoint: Int32(pixelsPerPoint)
 //        )
 //    }
-    var meterHeight: Double {
+   public var meterHeight: Double {
         switch self {
         case .iPad10_2: return 0.24
         case .iPadPro12_9: return 0.28
@@ -238,7 +251,7 @@ enum Device: CaseIterable {
         case .iPhone13ProMax: return 0.0630
         }
     }
-    var meterWidth: Double {
+    public var meterWidth: Double {
         switch self {
         case .iPad10_2: return 0.187
         case .iPadPro12_9: return 0.21
@@ -268,4 +281,5 @@ enum Device: CaseIterable {
         }
     }
 }
+
 
