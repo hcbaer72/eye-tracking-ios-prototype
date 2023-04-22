@@ -213,7 +213,13 @@ enum Device: String, CaseIterable {
         let diagonalSizeInPoints =  pow(widthInPoints, 2) * pow(heightInPoints, 2)
         fatalError()
     }
-    
+    var phoneScreenSize: CGSize {
+                return CGSize(width: meterWidth, height: meterHeight)
+            }
+            
+    var phoneScreenPointSize: CGSize {
+                return CGSize(width: widthInPoints, height: heightInPoints)
+            }
 //    var cDevice: HBDevice {
 //        return HBDevice(widthInPixels: Int32(widthInPoints * pixelsPerPoint),
 //                        heightInPixels: Int32(heightInPoints * pixelsPerPoint),
@@ -279,6 +285,7 @@ enum Device: String, CaseIterable {
         case .iPhone13Pro: return 0.1241
         case .iPhone13ProMax: return 0.1366
         }
+
     }
 }
 

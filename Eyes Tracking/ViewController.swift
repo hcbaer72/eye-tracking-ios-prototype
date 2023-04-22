@@ -29,7 +29,7 @@ import SwiftUI
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
-    @IBOutlet weak var webView: WKWebView!
+    //@IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var eyePositionIndicatorView: UIView!
     @IBOutlet weak var eyePositionIndicatorCenterView: UIView!
@@ -39,11 +39,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var distanceLabel: UILabel!
     
     @IBOutlet weak var deviceButton: UIButton!
+    var webView: WKWebView!
     
+    //var device: Device?
     //set device measures:
     var device: Device = .iPadPro11
-    
 
+   // var phoneScreenSize: CGSize = CGSize.zero
+    //var phoneScreenPointSize: CGSize = CGSize.zero
+
+    @IBAction func showDeviceList() {
+            print("Button pressed!")
+           let deviceList = DeviceList()
+           deviceList.onDeviceSelected = { [weak self] device in
+               // Handle the selected device here
+               print("Selected device: \(device)")
+               self?.device = device
+                   // Update your UI to reflect the selected device
+                   self?.sceneView.scene.rootNode.addChildNode(self?.virtualPhoneNode ?? SCNNode())
+               
+           }
+           present(deviceList, animated: true, completion: nil)
+       }
+    
     
     var faceNode: SCNNode = SCNNode()
     
@@ -77,8 +95,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
     ////****
-    var phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
-    var phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
+   // var phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
+    //var phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
+    //phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
+    //phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
     
     var virtualPhoneNode: SCNNode = SCNNode()
     var virtualScreenNode: SCNNode = {
@@ -103,21 +123,39 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         return UIStatusBarStyle.lightContent
     }
     
-    let contentView = UIHostingController(rootView: ContentView())
-    
+   // let contentView = UIHostingController(rootView: ContentView())
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addChild(contentView)
-        view.addSubview(contentView.view)
-                
+
+        // Create a parent container view
+        let containerView = UIView(frame: view.bounds)
+
+        // Load the web view
+        webView = WKWebView(frame: containerView.bounds)
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        
-        // Setup Design Elements
-        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
-        sceneView.layer.cornerRadius = 28
-        eyePositionIndicatorCenterView.layer.cornerRadius = 4
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
+        containerView.addSubview(webView)
+
+        // Add the device button to the container view
+        containerView.addSubview(deviceButton)
+
+        // Add the content view to the container view
+        let contentView = ContentView()
+        let hostingController = UIHostingController(rootView: contentView)
+        addChild(hostingController)
+        containerView.addSubview(hostingController.view)
+
+        // Set the frame for the hosting controller's view
+        let contentHeight: CGFloat = 50 // set the height of the content view
+        hostingController.view.frame = CGRect(x: 0, y: containerView.bounds.height - contentHeight, width: containerView.bounds.width, height: contentHeight)
+
+        // Add the container view to the view hierarchy
+        view.addSubview(containerView)
+
+
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -136,23 +174,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
+        
+        // Bring the eye tracking cursor to the front
+        view.bringSubviewToFront(eyePositionIndicatorView)
+   
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
     }
     
-    @IBAction func showDeviceList() {
-            print("Button pressed!")
-           let deviceList = DeviceList()
-           deviceList.onDeviceSelected = { [weak self] device in
-               // Handle the selected device here
-               print("Selected device: \(device)")
-               self?.device = device
-               // Update your UI to reflect the selected device
-               // ...
-           }
-           present(deviceList, animated: true, completion: nil)
-       }
-    
+
     
 
     //i have a child view controller that displays a menu. i want it to tell me when a menu option has been chosen. can you write me a callback that will give me the selected item
@@ -239,15 +269,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
             
             for result in phoneScreenEyeRHitTestResults {
-                
-                eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + self.device.heightCompensation
+                eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.device.phoneScreenSize.width / 2) * self.device.phoneScreenPointSize.width
+                eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.device.phoneScreenSize.height / 2) * self.device.phoneScreenPointSize.height + self.device.heightCompensation
             }
             
             for result in phoneScreenEyeLHitTestResults {
-                
-                eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + self.device.heightCompensation
+                eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.device.phoneScreenSize.width / 2) * self.device.phoneScreenPointSize.width
+                eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.device.phoneScreenSize.height / 2) * self.device.phoneScreenPointSize.height + self.device.heightCompensation
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
@@ -263,8 +291,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
             
             // update eye look at labels values
-            self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-            self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
+            self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2)))"
+            self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2)))"
             
             // Calculate distance of the eyes to the camera
             let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero

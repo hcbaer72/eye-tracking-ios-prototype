@@ -29,12 +29,7 @@ extension View{
     //it will return the Recorded Video URL
     func stopRecording()async throws->URL{
         //file will be stored in temporary directory
-        //video name
-   //     let name = UUID().uuidString + ".mov"
-        
-      //  let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-        
-    //   let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(name)
+
        let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
         
         let recorder = RPScreenRecorder.shared()

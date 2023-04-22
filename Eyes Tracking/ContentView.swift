@@ -25,12 +25,7 @@ struct ContentView: View {
         ZStack {
             
             VStack(spacing: 0) {
-                /* Here I created a text field that takes string value and when send
-                 button is clicked 'viewModel.valuePublisher' sends that value to WebView
-                 then WebView sends that value to web app that you will load. In this
-                 project's local .html file can not receive it because it is static you should
-                 test with a web app then it will work because static website can not receive values
-                 at runtime where dynamic web app can */
+
                     //recording button
                         //MARK: Recording button
                         Button {
@@ -44,15 +39,7 @@ struct ContentView: View {
                                         //stop screen recording
                                         isRecording = false
                                         print("is recording: \(isRecording) ")
-                                        
-                                        //stop eye tracking
-                                        //      eyeTracking.endSession()
-                                        
-                                        
-                                        // Exports all `Session`s as a `String`, converting the keys to snake case
-                                        // ***let stringSessions = try? EyeTracking.exportAllString(with: .convertToSnakeCase)
-                                        
-                                        
+ 
                                     }
                                     catch{
                                         print(error.localizedDescription)
@@ -69,14 +56,7 @@ struct ContentView: View {
                                     //start screen recording
                                     isRecording = true
                                     print("is recording: \(isRecording) ")
-                                    
-                                    //                                    //start eye tracking
-                                    //                                    eyeTracking.startSession()
-                                    //
-                                    //                                    //show eye tracking pointer
-                                    //                                   eyeTracking.pointer.backgroundColor = .red
-                                    //                                    eyeTracking.showPointer()
-                                    
+
                                     
                                 }
                                 
@@ -86,17 +66,10 @@ struct ContentView: View {
                                 .font(.largeTitle)
                                 .foregroundColor(isRecording ? .red : .green)
                         }
-                        
+              
                     }
                     
-                    //}.onReceive(self.viewModel.showLoader.receive(on: //RunLoop.main)) { value in
-                    //self.showLoader = value
-                    //}
-                    
-                    // A simple loader that is shown when WebView is loading any page and hides when loading is finished.
-                    //   if showLoader {
-                    //     Loader()
-                    // }
+   
             }
         }
         
