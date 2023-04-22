@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27BE26F529F4645400A0D053 /* recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F429F4645400A0D053 /* recording.swift */; };
+		27BE26F729F465AD00A0D053 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F629F465AD00A0D053 /* ContentView.swift */; };
+		27BE26F929F465DD00A0D053 /* UIKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F829F465DD00A0D053 /* UIKitView.swift */; };
 		27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C8BF1229E0C234000E8D9E /* DeviceList.swift */; };
 		9CD4803F29B4477000D22746 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4803E29B4477000D22746 /* Device.swift */; };
 		9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD4804029B447A000D22746 /* Device+UIKit.swift */; };
@@ -19,6 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		27BE26F429F4645400A0D053 /* recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = recording.swift; sourceTree = "<group>"; };
+		27BE26F629F465AD00A0D053 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		27BE26F829F465DD00A0D053 /* UIKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitView.swift; sourceTree = "<group>"; };
 		27C8BF1229E0C234000E8D9E /* DeviceList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceList.swift; sourceTree = "<group>"; };
 		9CD4803E29B4477000D22746 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		9CD4804029B447A000D22746 /* Device+UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Device+UIKit.swift"; sourceTree = "<group>"; };
@@ -63,6 +69,9 @@
 			isa = PBXGroup;
 			children = (
 				D0E5847920C806050052967A /* AppDelegate.swift */,
+				27BE26F629F465AD00A0D053 /* ContentView.swift */,
+				27BE26F429F4645400A0D053 /* recording.swift */,
+				27BE26F829F465DD00A0D053 /* UIKitView.swift */,
 				D0E5847D20C806050052967A /* ViewController.swift */,
 				D0D25B8820C80F5500A25627 /* Extensions.swift */,
 				9CD4803E29B4477000D22746 /* Device.swift */,
@@ -149,10 +158,13 @@
 			files = (
 				D0D25B8920C80F5500A25627 /* Extensions.swift in Sources */,
 				D0E5847E20C806050052967A /* ViewController.swift in Sources */,
+				27BE26F729F465AD00A0D053 /* ContentView.swift in Sources */,
 				D0E5847A20C806050052967A /* AppDelegate.swift in Sources */,
 				27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
+				27BE26F929F465DD00A0D053 /* UIKitView.swift in Sources */,
 				9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */,
+				27BE26F529F4645400A0D053 /* recording.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
