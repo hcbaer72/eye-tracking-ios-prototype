@@ -11,6 +11,7 @@ import SceneKit
 import ARKit
 import WebKit
 import SwiftUI
+import AVFoundation
 
 //heightInPixels
 //widthInPixels
@@ -41,12 +42,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var deviceButton: UIButton!
     var webView: WKWebView!
     
-    //var device: Device?
+
     //set device measures:
     var device: Device = .iPadPro11
-
-   // var phoneScreenSize: CGSize = CGSize.zero
-    //var phoneScreenPointSize: CGSize = CGSize.zero
+    
+    //video recording:
 
     @IBAction func showDeviceList() {
             print("Button pressed!")
@@ -180,9 +180,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
    
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
+        
+        // Hide the eyePositionIndicatorView
+        //eyePositionIndicatorView.isHidden = true
     }
     
-
     
 
     //i have a child view controller that displays a menu. i want it to tell me when a menu option has been chosen. can you write me a callback that will give me the selected item
@@ -313,3 +315,4 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
 }
+
