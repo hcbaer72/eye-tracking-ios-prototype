@@ -12,6 +12,7 @@ import ReplayKit
 import AVFoundation
 
 
+
 //MARK: App recording extensions
 extension View{
     
@@ -29,12 +30,22 @@ extension View{
     //it will return the Recorded Video URL
     func stopRecording()async throws->URL{
         //file will be stored in temporary directory
-
+        //video name
+   //     let name = UUID().uuidString + ".mov"
+        
+      //  let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
+        
+    //   let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(name)
+        
        let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
-        
+        print(url.absoluteString)
+        print(NSTemporaryDirectory())
         let recorder = RPScreenRecorder.shared()
-        try await recorder.stopRecording(withOutput: url)
-        
+        do {
+            try await recorder.stopRecording(withOutput: url)
+        } catch {
+            print(error.localizedDescription)
+        }
         return url
     }
   

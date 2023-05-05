@@ -84,13 +84,11 @@ enum Device: String, CaseIterable {
     }
     
     var heightCompensation: Double {
-        if self == .iPad10_9 {
-            return widthInPoints * 0.5
-        } else {
-            return heightInPoints * 0.5
-        }
+        let screenHeight = self.phoneScreenSize.height
+        let screenPointSizeHeight = self.phoneScreenPointSize.height
+        let normalizedScreenY = 1 - Double(screenHeight) / Double(screenPointSizeHeight)
+        return normalizedScreenY * screenPointSizeHeight / 2
     }
-    
     
     var widthInPoints: Double {
         switch self {
@@ -208,11 +206,13 @@ enum Device: String, CaseIterable {
         case .iPhone13ProMax: return Double(6.7 * 25.4)
         }
     }
+    
     var pointSizeInMeters: Double {
         let diagonalSizeInMillimeters = diagonalSizeInInches * 25.4
         let diagonalSizeInPoints =  pow(widthInPoints, 2) * pow(heightInPoints, 2)
         fatalError()
     }
+    
     var phoneScreenSize: CGSize {
                 return CGSize(width: meterWidth, height: meterHeight)
             }
@@ -220,14 +220,7 @@ enum Device: String, CaseIterable {
     var phoneScreenPointSize: CGSize {
                 return CGSize(width: widthInPoints, height: heightInPoints)
             }
-//    var cDevice: HBDevice {
-//        return HBDevice(widthInPixels: Int32(widthInPoints * pixelsPerPoint),
-//                        heightInPixels: Int32(heightInPoints * pixelsPerPoint),
-//                        widthInPoints: Int32(widthInPoints),
-//                        heightInPoints: Int32(heightInPoints),
-//                        pixelsPerPoint: Int32(pixelsPerPoint)
-//        )
-//    }
+
    public var meterHeight: Double {
         switch self {
         case .iPad10_2: return 0.24

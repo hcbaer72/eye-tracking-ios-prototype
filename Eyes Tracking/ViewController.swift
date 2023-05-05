@@ -13,20 +13,9 @@ import WebKit
 import SwiftUI
 import AVFoundation
 
-//heightInPixels
-//widthInPixels
-//heightInPoints
-//widthInPoints
-//pixelsPerPoint
-//diagonalSizeInInches
-//diagonalSizeInMilliMeters
-//pointSizeInMeters
-//meterHeight
-//meterWidth
 
-//joseph:
-//how to reference device measures
-
+//Y IS smaller at top and bigger at bottom
+//X gets bigger from left to right
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
@@ -41,13 +30,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @IBOutlet weak var deviceButton: UIButton!
     var webView: WKWebView!
+   // var isRecording = false
     
+
+    
+    // initialize eye tracking data
+    var eyeTrackingData: [[CGPoint]] = []
 
     //set device measures:
     var device: Device = .iPadPro11
     
-    //video recording:
-
     @IBAction func showDeviceList() {
             print("Button pressed!")
            let deviceList = DeviceList()
@@ -154,8 +146,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
         // Add the container view to the view hierarchy
         view.addSubview(containerView)
-
-
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -185,9 +175,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         //eyePositionIndicatorView.isHidden = true
     }
     
-    
-
-    //i have a child view controller that displays a menu. i want it to tell me when a menu option has been chosen. can you write me a callback that will give me the selected item
 
     
     override func viewWillAppear(_ animated: Bool) {
@@ -259,6 +246,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
+        // Define the eye tracking data array to store the eye look at positions for the current frame
+        var currentFrameEyeTrackingData: [CGPoint] = []
         
         ///////*********
         //let heightCompensation = CGFloat(device.heightCompensation)
@@ -306,6 +295,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             // Update distance label value
             self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
             
+           // let halfWidth = self.device.phoneScreenSize.width * 0.5
+           // let halfHeight = self.device.phoneScreenSize.height * 0.5
+            
+            // Append the current eye look at position to the current frame eye tracking data array
+            currentFrameEyeTrackingData.append(CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2))
+
+            
+           
+            // Add the current frame eye tracking data to the eye tracking data array
+            self.eyeTrackingData.append(currentFrameEyeTrackingData)
+            // Save the eye tracking data for the current frame
+            self.saveEyeTrackingData()
+                
+            
         }
         
     }
@@ -314,5 +317,56 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
     }
     
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    func saveEyeTrackingData() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let filename = "EyeTrackingData-\(dateFormatter.string(from: Date())).txt"
+        let fileURL = getDocumentsDirectory().appendingPathComponent(filename)
+
+        do {
+            let data = try JSONEncoder().encode(eyeTrackingData)
+            if let fileHandle = try? FileHandle(forWritingTo: fileURL) {
+                // Append to existing file
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data)
+                fileHandle.closeFile()
+            } else {
+                // Create new file
+                try data.write(to: fileURL)
+            }
+            if let lastFrame = eyeTrackingData.last {
+                print("Last eye tracking frame x: \(lastFrame[0].x), y: \(lastFrame[0].y)")
+            }
+            print("Eye tracking data saved to file: \(filename)")
+        } catch {
+            print("Error saving eye tracking data: \(error)")
+        }
+    }
+    
+    
+    //load eye tracking data
+    func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {
+        do {
+            let data = try Data(contentsOf: fileURL)
+            let eyeTrackingData = try JSONDecoder().decode([[CGPoint]].self, from: data)
+            return eyeTrackingData
+        } catch {
+            print("Error loading eye tracking data: \(error)")
+            return nil
+        }
+    }
+    
 }
 
+//When the screen recording is finished, read the saved eye tracking data from the file.
+//Parse the eye tracking data and map it to the time codes of the screen recording frames.
+//Create a custom UIView subclass that draws the eye tracking data on top of the WKWebView. You can use Core Graphics to draw lines, circles, or any other shapes you want to show the eye movements.
+//Use AVFoundation to create a video composition that combines the screen recording with the eye tracking data overlay. You can use the AVMutableVideoComposition class to create a composition, and AVMutableVideoCompositionLayerInstruction to add the overlay on top of the screen recording.
+//Export the composition to a video file using AVAssetExportSession.
