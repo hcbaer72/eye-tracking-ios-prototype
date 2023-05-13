@@ -15,17 +15,13 @@ struct ContentView: View {
     @State private var startRecord = false
     @State private var stopRecord = false
     
-    
     // Recording status
     @State var isRecording: Bool = false
     @State var url: URL?
-    //   let eyeTracking = EyeTracking(configuration: Configuration(appID: "ios-eye-tracking-example", blendShapes: [.eyeBlinkLeft, .eyeBlinkRight]))
     
     var body: some View {
         ZStack {
-            
             VStack(spacing: 0) {
-
                     //recording button
                         //MARK: Recording button
                         Button {
@@ -56,20 +52,14 @@ struct ContentView: View {
                                     //start screen recording
                                     isRecording = true
                                     print("is recording: \(isRecording) ")
-
-                                    
                                 }
-                                
                             }
                         } label: {
                             Image(systemName: isRecording ? "record.circle.fill" : "record.circle")
                                 .font(.largeTitle)
                                 .foregroundColor(isRecording ? .red : .green)
                         }
-              
                     }
-                    
-   
             }
         }
         

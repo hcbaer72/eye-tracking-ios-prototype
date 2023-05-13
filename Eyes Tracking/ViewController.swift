@@ -32,8 +32,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var webView: WKWebView!
    // var isRecording = false
     
-
-    
     // initialize eye tracking data
     var eyeTrackingData: [[CGPoint]] = []
 
@@ -192,6 +190,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // Save the eye tracking data for the current frame
+        self.saveEyeTrackingData()
+        
         // Pause the view's session
         sceneView.session.pause()
     }
@@ -305,13 +306,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
            
             // Add the current frame eye tracking data to the eye tracking data array
             self.eyeTrackingData.append(currentFrameEyeTrackingData)
-            // Save the eye tracking data for the current frame
-            self.saveEyeTrackingData()
-                
+            
             
         }
+
         
     }
+    
+    
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
