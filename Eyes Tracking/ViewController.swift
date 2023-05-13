@@ -33,7 +33,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
    // var isRecording = false
     
     // initialize eye tracking data
-    var eyeTrackingData: [[CGPoint]] = []
+    var eyeTrackingData: [CGPoint] = []
+    
 
     //set device measures:
     var device: Device = .iPadPro11
@@ -133,7 +134,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         containerView.addSubview(deviceButton)
 
         // Add the content view to the container view
-        let contentView = ContentView()
+        var contentView = ContentView()
+        contentView.startRecordingEye = {
+            //start capturing data
+            self.eyeTrackingData = []
+        }
+        
+        contentView.stopRecordingEye = {
+            //stop capturing data
+            self.saveEyeTrackingData()
+        }
+        
         let hostingController = UIHostingController(rootView: contentView)
         addChild(hostingController)
         containerView.addSubview(hostingController.view)
@@ -189,16 +200,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        // Save the eye tracking data for the current frame
-        self.saveEyeTrackingData()
+    
         
         // Pause the view's session
         sceneView.session.pause()
     }
 
     // MARK: - ARSCNViewDelegate
-    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         
         faceNode.transform = node.transform
@@ -206,6 +214,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         update(withFaceAnchor: faceAnchor)
     }
+    
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
             guard let faceAnchor = anchor as? ARFaceAnchor, let device = renderer.device else { return nil}
             let faceGeometry = ARSCNFaceGeometry(device: device)
@@ -247,8 +256,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
         
-        // Define the eye tracking data array to store the eye look at positions for the current frame
-        var currentFrameEyeTrackingData: [CGPoint] = []
         
         ///////*********
         //let heightCompensation = CGFloat(device.heightCompensation)
@@ -298,21 +305,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
            // let halfWidth = self.device.phoneScreenSize.width * 0.5
            // let halfHeight = self.device.phoneScreenSize.height * 0.5
-            
-            // Append the current eye look at position to the current frame eye tracking data array
-            currentFrameEyeTrackingData.append(CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2))
 
-            
            
             // Add the current frame eye tracking data to the eye tracking data array
-            self.eyeTrackingData.append(currentFrameEyeTrackingData)
+            self.eyeTrackingData.append(CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2))
             
             
         }
 
         
     }
-    
     
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
@@ -328,7 +330,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     func saveEyeTrackingData() {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
         let filename = "EyeTrackingData-\(dateFormatter.string(from: Date())).txt"
         let fileURL = getDocumentsDirectory().appendingPathComponent(filename)
 
@@ -344,14 +346,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try data.write(to: fileURL)
             }
             if let lastFrame = eyeTrackingData.last {
-                print("Last eye tracking frame x: \(lastFrame[0].x), y: \(lastFrame[0].y)")
+                print("Last eye tracking frame x: \(lastFrame.x), y: \(lastFrame.y)")
             }
             print("Eye tracking data saved to file: \(filename)")
         } catch {
             print("Error saving eye tracking data: \(error)")
         }
     }
-    
+    //
     
     //load eye tracking data
     func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {

@@ -10,8 +10,14 @@ import SwiftUI
 import ReplayKit
 import Photos
 
+//add variables that allow us to accept closure
+//viewcontroller supplies code that starts and stops the saving of data to the file
+//contentview would execute code when button is pressed
 
 struct ContentView: View {
+    var startRecordingEye: (()->())? //contentview can accept optional parameter
+    var stopRecordingEye: (()->())?
+    
     @State private var startRecord = false
     @State private var stopRecord = false
     
@@ -30,6 +36,7 @@ struct ContentView: View {
                                 Task{
                                     do{
                                         self.url = try await stopRecording()
+                                        self.stopRecordingEye?()
                                         print(self.url)
                                         
                                         //stop screen recording
@@ -53,6 +60,7 @@ struct ContentView: View {
                                     isRecording = true
                                     print("is recording: \(isRecording) ")
                                 }
+                                self.startRecordingEye?()
                             }
                         } label: {
                             Image(systemName: isRecording ? "record.circle.fill" : "record.circle")
