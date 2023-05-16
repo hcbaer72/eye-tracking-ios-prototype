@@ -27,8 +27,8 @@ class EyeTrackingOverlayManager {
         let videoAsset = AVAsset(url: videoURL)
 
         // Define the video size
-        let videoSize = CGSize(width: 1920, height: 1080) // Replace with your desired size
-
+        let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
+        
         // Create a video composition
         let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
         videoComposition.renderSize = videoSize
