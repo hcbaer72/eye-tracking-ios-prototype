@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		276270972A141AB50032CD18 /* LoadVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276270962A141AB50032CD18 /* LoadVideo.swift */; };
 		27BE26F529F4645400A0D053 /* recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F429F4645400A0D053 /* recording.swift */; };
 		27BE26F729F465AD00A0D053 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F629F465AD00A0D053 /* ContentView.swift */; };
 		27BE26F929F465DD00A0D053 /* UIKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F829F465DD00A0D053 /* UIKitView.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		276270962A141AB50032CD18 /* LoadVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadVideo.swift; sourceTree = "<group>"; };
 		27BE26F429F4645400A0D053 /* recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = recording.swift; sourceTree = "<group>"; };
 		27BE26F629F465AD00A0D053 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		27BE26F829F465DD00A0D053 /* UIKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitView.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				27BE26F829F465DD00A0D053 /* UIKitView.swift */,
 				D0E5847D20C806050052967A /* ViewController.swift */,
 				D0D25B8820C80F5500A25627 /* Extensions.swift */,
+				276270962A141AB50032CD18 /* LoadVideo.swift */,
 				9CD4803E29B4477000D22746 /* Device.swift */,
 				27CCA0542A053F23003BAA9B /* EyeTrackingDataManager.swift */,
 				27C8BF1229E0C234000E8D9E /* DeviceList.swift */,
@@ -166,6 +169,7 @@
 				27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
 				27CCA0552A053F23003BAA9B /* EyeTrackingDataManager.swift in Sources */,
+				276270972A141AB50032CD18 /* LoadVideo.swift in Sources */,
 				27BE26F929F465DD00A0D053 /* UIKitView.swift in Sources */,
 				9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */,
 				27BE26F529F4645400A0D053 /* recording.swift in Sources */,

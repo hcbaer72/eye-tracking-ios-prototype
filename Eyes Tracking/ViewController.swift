@@ -33,7 +33,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
    // var isRecording = false
     
     // initialize eye tracking data
-    var eyeTrackingData: [CGPoint] = []
+    var eyeTrackingData: [EyeTrackingData] = []
+
+    
+    struct EyeTrackingData: Codable {
+        let position: CGPoint
+        let timestamp: TimeInterval
+    }
     
 
     //set device measures:
@@ -308,8 +314,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
            
             // Add the current frame eye tracking data to the eye tracking data array
-            self.eyeTrackingData.append(CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2))
-            
+            let currentTimestamp = Date().timeIntervalSince1970 // Current time in seconds
+            let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: currentTimestamp)
+            self.eyeTrackingData.append(newEntry)
             
         }
 
@@ -346,7 +353,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try data.write(to: fileURL)
             }
             if let lastFrame = eyeTrackingData.last {
-                print("Last eye tracking frame x: \(lastFrame.x), y: \(lastFrame.y)")
+                print("Last eye tracking frame x: \(lastFrame.position.x), y: \(lastFrame.position.y), timestamp: \(lastFrame.timestamp)")
             }
             print("Eye tracking data saved to file: \(filename)")
         } catch {
