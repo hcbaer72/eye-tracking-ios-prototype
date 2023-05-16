@@ -28,25 +28,21 @@ extension View{
     }
     //MARK: Stop recording
     //it will return the Recorded Video URL
-    func stopRecording()async throws->URL{
-        //file will be stored in temporary directory
-        //video name
-   //     let name = UUID().uuidString + ".mov"
-        
-      //  let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-        
-    //   let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(name)
-        
-       let url : URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().description).mov")
-        print(url.absoluteString)
-        print(NSTemporaryDirectory())
+    func stopRecording() async throws -> URL {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        let filename = "ScreenRecording-\(dateFormatter.string(from: Date())).mov"
+        let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
+
         let recorder = RPScreenRecorder.shared()
         do {
-            try await recorder.stopRecording(withOutput: url)
+            try await recorder.stopRecording(withOutput: fileURL)
         } catch {
             print(error.localizedDescription)
+            throw error
         }
-        return url
+        print("Screen recording saved to file: \(filename)")
+        return fileURL
     }
   
     

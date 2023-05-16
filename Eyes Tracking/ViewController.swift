@@ -17,6 +17,12 @@ import AVFoundation
 //Y IS smaller at top and bigger at bottom
 //X gets bigger from left to right
 
+struct EyeTrackingData: Codable {
+    let position: CGPoint
+    let timestamp: TimeInterval
+}
+
+
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     //@IBOutlet weak var webView: WKWebView!
@@ -35,12 +41,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     // initialize eye tracking data
     var eyeTrackingData: [EyeTrackingData] = []
 
-    
-    struct EyeTrackingData: Codable {
-        let position: CGPoint
-        let timestamp: TimeInterval
-    }
-    
 
     //set device measures:
     var device: Device = .iPadPro11
@@ -147,8 +147,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         contentView.stopRecordingEye = {
-            //stop capturing data
+            // Stop capturing data
             self.saveEyeTrackingData()
+            
+            // Generate the screen recording video URL
+            let videoURL = self.generateScreenRecordingURL()
+            
+            //get screen recording URL from eye tracking data URL and then overlay the eye tracking
+            let overlayManager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData)
+            overlayManager.overlayEyeTrackingDataOnVideo { result in
+                switch result {
+                case .success(let url):
+                    print("Exported video with overlay to \(url)")
+                case .failure(let error):
+                    print("Failed to export video: \(error)")
+                }
+            }
         }
         
         let hostingController = UIHostingController(rootView: contentView)
@@ -359,6 +373,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         } catch {
             print("Error saving eye tracking data: \(error)")
         }
+    }
+    
+    func generateScreenRecordingURL() -> URL {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        let filename = "ScreenRecording-\(dateFormatter.string(from: Date())).mov"
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        return fileURL
     }
     //
     
