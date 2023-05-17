@@ -12,6 +12,12 @@ import QuartzCore
 import UIKit
 
 
+// let videoSize = CGSize(width: 1300, height: 1860)
+//add heat map also?
+//add workaround for negative position values 
+
+
+
 class EyeTrackingOverlayManager {
     
     let videoURL: URL
@@ -28,7 +34,7 @@ class EyeTrackingOverlayManager {
 
         // Define the video size
         let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
-        
+
         // Create a video composition
         let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
         videoComposition.renderSize = videoSize
@@ -112,3 +118,4 @@ class EyeTrackingOverlayManager {
         }
     }
 }
+
