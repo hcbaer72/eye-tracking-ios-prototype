@@ -29,45 +29,46 @@ class EyeTrackingOverlayManager {
     }
     
     func overlayEyeTrackingDataOnVideo(completion: @escaping (Result<URL, Error>) -> Void) {
-            // Load the video
-            let videoAsset = AVAsset(url: videoURL)
-
-            // Define the video size
-            let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
-
-            // Create a video composition
-            let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
-            videoComposition.renderSize = videoSize
-            videoComposition.frameDuration = CMTime(value: 1, timescale: 30) // Adjust the timescale to match your video's frame rate
-
-            // Create an overlay layer
-            let overlayLayer = CALayer()
-            overlayLayer.frame = CGRect(x: 0, y: 0, width: videoSize.width, height: videoSize.height)
-
-            // Add the overlay to the video composition
-            videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
-
-            
+        // Load the video
+        let videoAsset = AVAsset(url: videoURL)
+        
+        // Define the video size
+        let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
+        
+        // Create a video composition
+        let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
+        videoComposition.renderSize = videoSize
+        videoComposition.frameDuration = CMTime(value: 1, timescale: 30) // Adjust the timescale to match your video's frame rate
+        
+        // Create an overlay layer
+        let overlayLayer = CALayer()
+        overlayLayer.frame = CGRect(x: 0, y: 0, width: videoSize.width, height: videoSize.height)
+        
+        // Add the overlay to the video composition
+        videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
+        
+        // Retrieve the start time from user defaults or the storage mechanism you used
+        if let startTime = UserDefaults.standard.object(forKey: "ScreenRecordingStartTime") as? Date {
             // Find the time of the first eye tracking data point
-            let firstTimestamp = self.eyeTrackingData.first?.timestamp ?? 0
-
+            let firstTimestamp = eyeTrackingData.first?.timestamp ?? 0
+            
             // Create a sublayer for each data point
-            for i in 0..<self.eyeTrackingData.count {
-                let data = self.eyeTrackingData[i]
+            for i in 0..<eyeTrackingData.count {
+                let data = eyeTrackingData[i]
                 let dotLayer = CALayer()
                 
                 // Set the initial position of the dot layer
-                dotLayer.frame = CGRect(x: data.position.x, y: data.position.y, width: 50, height: 50) // Adjust width and height as needed
-
+                dotLayer.frame = CGRect(x: data.position.x, y: data.position.y, width: 20, height: 20) // Adjust width and height as needed
+                
                 // Set other properties of the dot layer
                 dotLayer.backgroundColor = UIColor.red.cgColor // Change to the color you want for the dot
-
+                
                 // Add the dot layer to the overlay layer
                 overlayLayer.addSublayer(dotLayer)
-
+                
                 // Create an animation to move the dot to the next position
-                if i < self.eyeTrackingData.count - 1 {
-                    let nextData = self.eyeTrackingData[i + 1]
+                if i < eyeTrackingData.count - 1 {
+                    let nextData = eyeTrackingData[i + 1]
                     let animation = CABasicAnimation(keyPath: "position")
                     
                     // Convert the position to CGFloat
@@ -80,19 +81,20 @@ class EyeTrackingOverlayManager {
                     animation.fromValue = NSValue(cgPoint: CGPoint(x: floatX, y: floatY))
                     animation.toValue = NSValue(cgPoint: CGPoint(x: nextFloatX, y: nextFloatY))
                     
-                    // Make the timestamp relative to the start of the video
-                    let relativeTimestamp = CGFloat(data.timestamp - firstTimestamp)
-                    animation.beginTime = CFTimeInterval(relativeTimestamp)
+                    // Set the timestamp directly as the beginTime
+                    animation.beginTime = startTime.timeIntervalSinceReferenceDate + firstTimestamp
                     
                     // Set the duration
-                    let duration = CGFloat(nextData.timestamp - data.timestamp)
-                    animation.duration = CFTimeInterval(duration)
+                    let duration = nextData.timestamp - data.timestamp
+                    animation.duration = duration
                     
                     animation.fillMode = .forwards
-                    animation.isRemovedOnCompletion = false
+                    animation.isRemovedOnCompletion = true
                     dotLayer.add(animation, forKey: "position")
                 }
             }
+        }
+
 
         // Create a parent layer containing the video layer and the overlay layer
         let parentLayer = CALayer()
