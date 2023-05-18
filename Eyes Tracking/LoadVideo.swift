@@ -14,7 +14,7 @@ import UIKit
 
 // let videoSize = CGSize(width: 1300, height: 1860)
 //add heat map also?
-//add workaround for negative position values 
+//add workaround for negative position values
 
 
 
@@ -29,49 +29,71 @@ class EyeTrackingOverlayManager {
     }
     
     func overlayEyeTrackingDataOnVideo(completion: @escaping (Result<URL, Error>) -> Void) {
-        // Load the video
-        let videoAsset = AVAsset(url: videoURL)
+            // Load the video
+            let videoAsset = AVAsset(url: videoURL)
 
-        // Define the video size
-        let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
+            // Define the video size
+            let videoSize = CGSize(width: 1300, height: 1860) // Replace with your desired size
 
-        // Create a video composition
-        let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
-        videoComposition.renderSize = videoSize
+            // Create a video composition
+            let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
+            videoComposition.renderSize = videoSize
+            videoComposition.frameDuration = CMTime(value: 1, timescale: 30) // Adjust the timescale to match your video's frame rate
 
-        // Create an overlay layer
-        let overlayLayer = CALayer()
-        overlayLayer.frame = CGRect(x: 0, y: 0, width: videoSize.width, height: videoSize.height)
+            // Create an overlay layer
+            let overlayLayer = CALayer()
+            overlayLayer.frame = CGRect(x: 0, y: 0, width: videoSize.width, height: videoSize.height)
 
-        // Add the overlay to the video composition
-        videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
+            // Add the overlay to the video composition
+            videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
 
-        
-        // Create a sublayer for each data point
+            
+            // Find the time of the first eye tracking data point
+            let firstTimestamp = self.eyeTrackingData.first?.timestamp ?? 0
+
             // Create a sublayer for each data point
             for i in 0..<self.eyeTrackingData.count {
                 let data = self.eyeTrackingData[i]
                 let dotLayer = CALayer()
-                dotLayer.bounds = CGRect(x: 0, y: 0, width: 10, height: 10)
-                dotLayer.position = data.position
-                dotLayer.cornerRadius = dotLayer.bounds.width / 2
-                dotLayer.backgroundColor = UIColor.red.cgColor
-                overlayLayer.addSublayer(dotLayer)
                 
+                // Set the initial position of the dot layer
+                dotLayer.frame = CGRect(x: data.position.x, y: data.position.y, width: 50, height: 50) // Adjust width and height as needed
+
+                // Set other properties of the dot layer
+                dotLayer.backgroundColor = UIColor.red.cgColor // Change to the color you want for the dot
+
+                // Add the dot layer to the overlay layer
+                overlayLayer.addSublayer(dotLayer)
+
                 // Create an animation to move the dot to the next position
                 if i < self.eyeTrackingData.count - 1 {
                     let nextData = self.eyeTrackingData[i + 1]
                     let animation = CABasicAnimation(keyPath: "position")
-                    animation.fromValue = NSValue(cgPoint: data.position)
-                    animation.toValue = NSValue(cgPoint: nextData.position)
-                    animation.beginTime = data.timestamp
-                    animation.duration = nextData.timestamp - data.timestamp
+                    
+                    // Convert the position to CGFloat
+                    let floatX = CGFloat(data.position.x)
+                    let floatY = CGFloat(data.position.y)
+                    let nextFloatX = CGFloat(nextData.position.x)
+                    let nextFloatY = CGFloat(nextData.position.y)
+                    
+                    // Set the animation properties
+                    animation.fromValue = NSValue(cgPoint: CGPoint(x: floatX, y: floatY))
+                    animation.toValue = NSValue(cgPoint: CGPoint(x: nextFloatX, y: nextFloatY))
+                    
+                    // Make the timestamp relative to the start of the video
+                    let relativeTimestamp = CGFloat(data.timestamp - firstTimestamp)
+                    animation.beginTime = CFTimeInterval(relativeTimestamp)
+                    
+                    // Set the duration
+                    let duration = CGFloat(nextData.timestamp - data.timestamp)
+                    animation.duration = CFTimeInterval(duration)
+                    
                     animation.fillMode = .forwards
                     animation.isRemovedOnCompletion = false
                     dotLayer.add(animation, forKey: "position")
                 }
             }
-        
+
         // Create a parent layer containing the video layer and the overlay layer
         let parentLayer = CALayer()
         let videoLayer = CALayer()
@@ -79,19 +101,17 @@ class EyeTrackingOverlayManager {
         videoLayer.frame = parentLayer.frame
         parentLayer.addSublayer(videoLayer)
         parentLayer.addSublayer(overlayLayer)
-        
+
         // Add the overlay to the video composition
         videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayers: [videoLayer], in: parentLayer)
-        
-        
+
         // Create an export session
         guard let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else {
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not create AVAssetExportSession"])))
             return
         }
-        
+
         exportSession.videoComposition = videoComposition
-        
 
         // Generate a unique filename with date and time prefix
         let dateFormatter = DateFormatter()
