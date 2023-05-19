@@ -53,6 +53,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
            present(deviceList, animated: true, completion: nil)
        }
     
+    @IBOutlet var upperLeftCorner: UIView!
+    @IBOutlet var upperRightCorner: UIView!
+    @IBOutlet var lowerLeftCorner: UIView!
+    @IBOutlet var lowerRightCorner: UIView!
+    
+    @IBAction func buttonPressed(_ sender: UIButton) {
+        let dotViews = [upperLeftCorner, upperRightCorner, lowerRightCorner, lowerLeftCorner]
+        for dotView in dotViews {
+            dotView?.isHidden = false
+        }
+    }
+    
     
     var faceNode: SCNNode = SCNNode()
     
