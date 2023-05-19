@@ -165,14 +165,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.eyeTrackingData[i].timestamp += self.delay
             }
             
-            //get screen recording URL from eye tracking data URL and then overlay the eye tracking
-            let overlayManager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData)
-            overlayManager.overlayEyeTrackingDataOnVideo { result in
-                switch result {
-                case .success(let url):
-                    print("Exported video with overlay to \(url)")
-                case .failure(let error):
-                    print("Failed to export video: \(error)")
+            let manager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData, device: self.device)
+            Task {
+                await manager.overlayEyeTrackingDataOnVideo { result in
+                    switch result {
+                    case .success(let outputURL):
+                        // Handle the successful export
+                        print("Video overlay completed. Output URL: \(outputURL)")
+                    case .failure(let error):
+                        // Handle the failure
+                        print("Video overlay failed with error: \(error)")
+                    }
                 }
             }
         }
@@ -355,6 +358,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+        
     }
     
     
