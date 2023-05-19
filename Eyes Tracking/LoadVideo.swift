@@ -61,7 +61,7 @@ class EyeTrackingOverlayManager {
             
             
             overlayLayer.frame = CGRect(x: 0, y: 0, width: videoComposition.renderSize.width, height: videoComposition.renderSize.height)
-
+            print(overlayLayer.frame)
             
             // Add the overlay to the video composition
             videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
@@ -70,21 +70,29 @@ class EyeTrackingOverlayManager {
             // Find the time of the first eye tracking data point
             let firstTimestamp = self.eyeTrackingData.first?.timestamp ?? 0
             
+            
+            
             // Create a sublayer for each data point
             for i in 0..<self.eyeTrackingData.count {
                 let data = self.eyeTrackingData[i]
                 let dotLayer = CALayer()
                 
-                let dotSize: CGFloat = 20.0 // Adjust the dot size as needed
-                let scaledX = videoSize.width * CGFloat(data.position.x) / self.device.phoneScreenPointSize.width
-                let scaledY = videoSize.height * (1 - CGFloat(data.position.y)) / self.device.phoneScreenPointSize.height // Invert the Y-axis
-                let dotFrame = CGRect(x: scaledX - dotSize/2, y: scaledY - dotSize/2, width: dotSize, height: dotSize)
+                let dotSize = CGSize(width: 20, height: 20) // Adjust the dot size as needed
+                //let scaledX = device.phoneScreenSize.width * CGFloat(data.position.x) / device.phoneScreenPointSize.width
+                //let scaledY = device.phoneScreenSize.height * (1-CGFloat(data.position.y)) / device.phoneScreenPointSize.height
+                //let dotFrame = CGRect(x: scaledX - dotSize/2, y: scaledY - dotSize/2, width: dotSize, height: dotSize)
+                // Convert the position to CGFloat
+                
+                let position = CGPoint(x: data.position.y, y: data.position.y)
+                let dotOrigin = CGPoint(x: data.position.x, y: videoSize.height - data.position.y)
+                let dotFrame = CGRect(origin: dotOrigin, size: dotSize)
                 dotLayer.frame = dotFrame
-                dotLayer.cornerRadius = dotSize / 2
+                
+                dotLayer.cornerRadius = dotSize.width / 2
                 dotLayer.masksToBounds = true // Clip to bounds
                 
                 // Set other properties of the dot layer
-                dotLayer.backgroundColor = UIColor.red.cgColor // Change to the color you want for the dot
+                dotLayer.backgroundColor = UIColor.blue.cgColor // Change to the color you want for the dot
                 
                 // Add the dot layer to the overlay layer
                 overlayLayer.addSublayer(dotLayer)
@@ -96,9 +104,9 @@ class EyeTrackingOverlayManager {
                     
                     // Convert the position to CGFloat
                     let floatX = CGFloat(data.position.x)
-                    let floatY = CGFloat(data.position.y)
+                    let floatY = CGFloat(videoSize.height - data.position.y)
                     let nextFloatX = CGFloat(nextData.position.x)
-                    let nextFloatY = CGFloat(nextData.position.y)
+                    let nextFloatY = CGFloat(videoSize.height - nextData.position.y)
                     
                     // Set the animation properties
                     animation.fromValue = NSValue(cgPoint: CGPoint(x: floatX, y: floatY))
@@ -128,6 +136,7 @@ class EyeTrackingOverlayManager {
             
             // Add the overlay to the video composition
             videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayers: [videoLayer], in: parentLayer)
+            
             
             // Create an export session
             guard let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else {

@@ -50,6 +50,7 @@ struct ContentView: View {
                                 }
                             }
                             else{
+                                
                                 startRecording { error in
                                     if let error = error{
                                         print(error.localizedDescription)

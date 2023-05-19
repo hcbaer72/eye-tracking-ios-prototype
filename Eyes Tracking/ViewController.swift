@@ -328,6 +328,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             // update eye look at labels values
             self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2)))"
             self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2)))"
+            //print(CGPoint(x: (smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2), y: (smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2)))
+            
             
             // Calculate distance of the eyes to the camera
             let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
