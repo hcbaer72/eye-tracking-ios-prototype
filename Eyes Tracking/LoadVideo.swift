@@ -83,16 +83,23 @@ class EyeTrackingOverlayManager {
                 //let dotFrame = CGRect(x: scaledX - dotSize/2, y: scaledY - dotSize/2, width: dotSize, height: dotSize)
                 // Convert the position to CGFloat
                 
-                let position = CGPoint(x: data.position.y, y: data.position.y)
-                let dotOrigin = CGPoint(x: data.position.x, y: videoSize.height - data.position.y)
+                let dotOrigin = CGPoint(x: (data.position.x / device.phoneScreenPointSize.width) * videoSize.width, y: videoSize.height - (data.position.y / device.phoneScreenPointSize.height) * (videoSize.height))
+                
                 let dotFrame = CGRect(origin: dotOrigin, size: dotSize)
                 dotLayer.frame = dotFrame
+                
+                //pass function cgpoint to translate x and y
                 
                 dotLayer.cornerRadius = dotSize.width / 2
                 dotLayer.masksToBounds = true // Clip to bounds
                 
                 // Set other properties of the dot layer
                 dotLayer.backgroundColor = UIColor.blue.cgColor // Change to the color you want for the dot
+                
+                // Check if dotLayer is within the overlayLayer
+                if !overlayLayer.bounds.intersects(dotLayer.frame) {
+                    print("Warning: dotLayer frame is outside of overlayLayer bounds")
+                            }
                 
                 // Add the dot layer to the overlay layer
                 overlayLayer.addSublayer(dotLayer)
@@ -101,12 +108,12 @@ class EyeTrackingOverlayManager {
                 if i < self.eyeTrackingData.count - 1 {
                     let nextData = self.eyeTrackingData[i + 1]
                     let animation = CABasicAnimation(keyPath: "position")
-                    
-                    // Convert the position to CGFloat
-                    let floatX = CGFloat(data.position.x)
-                    let floatY = CGFloat(videoSize.height - data.position.y)
-                    let nextFloatX = CGFloat(nextData.position.x)
-                    let nextFloatY = CGFloat(videoSize.height - nextData.position.y)
+
+                    // Convert to video size
+                    let floatX = (data.position.x / device.phoneScreenPointSize.width) * (videoSize.width)
+                    let floatY = (videoSize.height) - (data.position.y / device.phoneScreenPointSize.height) * (videoSize.height)
+                    let nextFloatX = (nextData.position.x / device.phoneScreenPointSize.width) * (videoSize.width)
+                    let nextFloatY = (videoSize.height) - (nextData.position.y / device.phoneScreenPointSize.height) * (videoSize.height)
                     
                     // Set the animation properties
                     animation.fromValue = NSValue(cgPoint: CGPoint(x: floatX, y: floatY))
