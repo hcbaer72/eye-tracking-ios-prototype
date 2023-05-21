@@ -48,9 +48,6 @@ class EyeTrackingOverlayManager {
             // Get the frame rate of the video
             let frameRate = try await videoTrack.load(.nominalFrameRate)
             
-            print("Frame rate: \(frameRate)")
-            print("Natural size: \(videoSize)")
-            
             // Create a video composition
             let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
             videoComposition.renderSize = videoSize
@@ -58,19 +55,16 @@ class EyeTrackingOverlayManager {
             
             // Create an overlay layer
             let overlayLayer = CALayer()
-            
-            
             overlayLayer.frame = CGRect(x: 0, y: 0, width: videoComposition.renderSize.width, height: videoComposition.renderSize.height)
-            print(overlayLayer.frame)
             
             // Add the overlay to the video composition
             videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: overlayLayer, in: overlayLayer)
             
-            
             // Find the time of the first eye tracking data point
-            let firstTimestamp = self.eyeTrackingData.first?.timestamp ?? 0
-            
-            
+            guard let firstTimestamp = self.eyeTrackingData.first?.timestamp else {
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No eye tracking data available"])))
+                return
+            }
             
             // Create a sublayer for each data point
             for i in 0..<self.eyeTrackingData.count {
@@ -78,28 +72,22 @@ class EyeTrackingOverlayManager {
                 let dotLayer = CALayer()
                 
                 let dotSize = CGSize(width: 20, height: 20) // Adjust the dot size as needed
-                //let scaledX = device.phoneScreenSize.width * CGFloat(data.position.x) / device.phoneScreenPointSize.width
-                //let scaledY = device.phoneScreenSize.height * (1-CGFloat(data.position.y)) / device.phoneScreenPointSize.height
-                //let dotFrame = CGRect(x: scaledX - dotSize/2, y: scaledY - dotSize/2, width: dotSize, height: dotSize)
-                // Convert the position to CGFloat
                 
-                let dotOrigin = CGPoint(x: (data.position.x / device.phoneScreenPointSize.width) * videoSize.width, y: videoSize.height - (data.position.y / device.phoneScreenPointSize.height) * (videoSize.height))
+                // Calculate the dot position based on the eye tracking data
+                let dotOrigin = CGPoint(x: data.position.x * videoSize.width, y: (1 - data.position.y) * videoSize.height)
                 
                 let dotFrame = CGRect(origin: dotOrigin, size: dotSize)
                 dotLayer.frame = dotFrame
                 
-                //pass function cgpoint to translate x and y
-                
                 dotLayer.cornerRadius = dotSize.width / 2
                 dotLayer.masksToBounds = true // Clip to bounds
                 
-                // Set other properties of the dot layer
                 dotLayer.backgroundColor = UIColor.blue.cgColor // Change to the color you want for the dot
                 
                 // Check if dotLayer is within the overlayLayer
                 if !overlayLayer.bounds.intersects(dotLayer.frame) {
                     print("Warning: dotLayer frame is outside of overlayLayer bounds")
-                            }
+                }
                 
                 // Add the dot layer to the overlay layer
                 overlayLayer.addSublayer(dotLayer)
@@ -108,7 +96,7 @@ class EyeTrackingOverlayManager {
                 if i < self.eyeTrackingData.count - 1 {
                     let nextData = self.eyeTrackingData[i + 1]
                     let animation = CABasicAnimation(keyPath: "position")
-
+                    
                     // Convert to video size
                     let floatX = (data.position.x / device.phoneScreenPointSize.width) * (videoSize.width)
                     let floatY = (videoSize.height) - (data.position.y / device.phoneScreenPointSize.height) * (videoSize.height)
@@ -119,16 +107,23 @@ class EyeTrackingOverlayManager {
                     animation.fromValue = NSValue(cgPoint: CGPoint(x: floatX, y: floatY))
                     animation.toValue = NSValue(cgPoint: CGPoint(x: nextFloatX, y: nextFloatY))
                     
-                    // Make the timestamp relative to the start of the video
-                    let relativeTimestamp = CGFloat(data.timestamp - firstTimestamp)
-                    animation.beginTime = CFTimeInterval(relativeTimestamp)
+                    // Calculate the frame numbers
+                    let currentFrameNumber = Int(round((data.timestamp - firstTimestamp) * Double(frameRate)))
+                    let nextFrameNumber = Int(round((nextData.timestamp - firstTimestamp) * Double(frameRate)))
                     
+                    // Calculate the begin time using the presentation time stamp
+                    let beginTime = CMTime(value: Int64(currentFrameNumber), timescale: Int32(frameRate)).seconds
+
+                    // Set the animation begin time
+                    animation.beginTime = beginTime
+
                     // Set the duration
                     let duration = CGFloat(nextData.timestamp - data.timestamp)
-                    animation.duration = CFTimeInterval(duration)
+                    animation.duration = CMTime(value: Int64(duration * Double(frameRate)), timescale: Int32(frameRate)).seconds
                     
                     animation.fillMode = .forwards
                     animation.isRemovedOnCompletion = false
+                    
                     dotLayer.add(animation, forKey: "position")
                 }
             }
@@ -143,7 +138,6 @@ class EyeTrackingOverlayManager {
             
             // Add the overlay to the video composition
             videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayers: [videoLayer], in: parentLayer)
-            
             
             // Create an export session
             guard let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else {

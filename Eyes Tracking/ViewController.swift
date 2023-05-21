@@ -14,8 +14,19 @@ import SwiftUI
 import AVFoundation
 
 
+
 //Y IS smaller at top and bigger at bottom
 //X gets bigger from left to right
+//
+//can add pupil size tracker
+//can add frames per second for eye tracking
+//add AVCaptureDevice.Position?
+//captureDeviceType
+//var providesAudioData: Bool { get set }
+//ARConfiguration.SceneReconstruction
+//add relocalization?
+//add heat map?
+//capturedDepthDataTimestamp
 
 struct EyeTrackingData: Codable {
     let position: CGPoint
@@ -43,6 +54,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var firstTimestamp: TimeInterval?
     var delay: TimeInterval = 0
     var eyeTrackingStartTimestamp: TimeInterval = 0
+
 
     //set device measures:
     var device: Device = .iPadPro11
@@ -196,6 +208,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.session.delegate = self
         sceneView.automaticallyUpdatesLighting = true
         
+        sceneView.rendersContinuously = true //added
+        
+        
         // Setup Scenegraph
         sceneView.scene.rootNode.addChildNode(faceNode)
         sceneView.scene.rootNode.addChildNode(virtualPhoneNode)
@@ -287,6 +302,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         eyeRNode.simdTransform = anchor.rightEyeTransform
         eyeLNode.simdTransform = anchor.leftEyeTransform
+        
+        // Inside the update method
+        let leftPupilSize = anchor.blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
+        let rightPupilSize = anchor.blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
         
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
