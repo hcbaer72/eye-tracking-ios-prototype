@@ -158,7 +158,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         contentView.startRecordingEye = {
             //start capturing data
             self.eyeTrackingData = []
-            self.eyeTrackingStartTimestamp = Date().timeIntervalSince1970
+            self.eyeTrackingStartTimestamp = CMTimeGetSeconds(CMTimeMakeWithSeconds(Date().timeIntervalSince1970, preferredTimescale: 600))
             print("startRecordingEye at \(self.eyeTrackingStartTimestamp)")
         }
         
@@ -356,16 +356,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
            // let halfHeight = self.device.phoneScreenSize.height * 0.5
 
            
-            // Calculate the relative timestamp from the start of eye tracking
             let relativeTimestamp = currentTimestamp - self.eyeTrackingStartTimestamp
-            
-            // Add the current frame eye tracking data to the eye tracking data array
-            let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: relativeTimestamp)
+            let relativeTimestampCMTime = CMTimeMakeWithSeconds(relativeTimestamp, preferredTimescale: 600)
+            let relativeTimestampSeconds = CMTimeGetSeconds(relativeTimestampCMTime)
+            let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: relativeTimestampSeconds)
             self.eyeTrackingData.append(newEntry)
-            
         }
-
-        
     }
     
     

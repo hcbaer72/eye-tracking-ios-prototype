@@ -46,6 +46,7 @@ class EyeTrackingOverlayManager {
                 return
             }
             
+            
             // Get the video size from the track's naturalSize
             let videoSize = try await getVideoSize(from: videoTrack)
             
@@ -75,6 +76,7 @@ class EyeTrackingOverlayManager {
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not create AVAssetExportSession"])))
                 return
             }
+            
             
             // Export the video
             exportSession.exportAsynchronously {
@@ -109,20 +111,33 @@ class EyeTrackingOverlayManager {
         // Iterate through the eye tracking data and scale the timestamps
         var syncedEyeTrackingData: [EyeTrackingData] = []
         for data in eyeTrackingData {
-            let scaledTimestamp = (data.timestamp - eyeTrackingData.first!.timestamp) * timestampScaleFactor - 0.8
+            let scaledTimestamp = (data.timestamp - eyeTrackingData.first!.timestamp) * timestampScaleFactor
             let syncedData = EyeTrackingData(position: data.position, timestamp: scaledTimestamp)
             syncedEyeTrackingData.append(syncedData)
         }
         
-        // Calculate the interpolation step size based on the video frame rate
-        let frameRate = Double(try await videoAsset.loadTracks(withMediaType: .video).first!.load(.nominalFrameRate))
-        let interpolationStepSize = 1.0 / frameRate
+        // Get the frame rates of the video
+        let videoTrack = try await videoAsset.loadTracks(withMediaType: .video).first!
+        let frameRates = try await videoTrack.load(.nominalFrameRate, .timeRange)
         
         // Interpolate the eye tracking data to match the video frame rate
         var interpolatedEyeTrackingData: [EyeTrackingData] = []
         var nextDataIndex = 1
-        for timestamp in stride(from: 0.0, to: videoDuration, by: interpolationStepSize) {
-            while nextDataIndex < syncedEyeTrackingData.count && syncedEyeTrackingData[nextDataIndex].timestamp < timestamp {
+        var currentTime: Double = 0.0
+        
+        // Print the video duration and eye tracking data duration
+        print("Screen Recording duration: \(videoDuration)")
+        print("Eye Tracking Data Duration: \(eyeTrackingDataDuration)")
+        
+        // Print the frame rate
+        print("Video Frame Rate: \(frameRates)")
+        
+        // Print the scaled timestamps and interpolated eye tracking data
+        //print("Scaled Timestamps: \(syncedEyeTrackingData.map { $0.timestamp })")
+        //print("Interpolated Eye Tracking Data: \(interpolatedEyeTrackingData)")
+        
+        while currentTime <= videoDuration {
+            while nextDataIndex < syncedEyeTrackingData.count && syncedEyeTrackingData[nextDataIndex].timestamp < currentTime {
                 nextDataIndex += 1
             }
             
@@ -134,11 +149,18 @@ class EyeTrackingOverlayManager {
             let previousData = syncedEyeTrackingData[nextDataIndex - 1]
             let nextData = syncedEyeTrackingData[nextDataIndex]
             
-            let t = (timestamp - previousData.timestamp) / (nextData.timestamp - previousData.timestamp)
+            // Calculate the timestamp adjustment based on the frame's timestamp
+            let timeRange = try await videoTrack.load(.timeRange)
+            let frameTimestamp = currentTime + CMTimeGetSeconds(timeRange.start)
+            let timestampAdjustment = frameTimestamp - previousData.timestamp
+            
+            let t = (currentTime - previousData.timestamp) / (nextData.timestamp - previousData.timestamp)
             let interpolatedPosition = CGPoint(x: previousData.position.x + (nextData.position.x - previousData.position.x) * CGFloat(t), y: previousData.position.y + (nextData.position.y - previousData.position.y) * CGFloat(t))
             
-            let interpolatedData = EyeTrackingData(position: interpolatedPosition, timestamp: timestamp)
+            let interpolatedData = EyeTrackingData(position: interpolatedPosition, timestamp: currentTime + timestampAdjustment)
             interpolatedEyeTrackingData.append(interpolatedData)
+            
+            currentTime += 1.0 / Double(frameRates.0 ) // Use default frame rate if not available
         }
         
         return interpolatedEyeTrackingData
@@ -177,7 +199,7 @@ extension EyeTrackingOverlayManager {
         }
 
         // Create only one dot layer
-        let dotLayer = createDotLayer(with: syncedEyeTrackingData.first!.position, videoSize: videoSize)
+        let dotLayer = createDotLayer(with: syncedEyeTrackingData[0].position, videoSize: videoSize)
 
         // Add the dot layer to the overlay layer
         overlayLayer.addSublayer(dotLayer)
