@@ -51,8 +51,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     // initialize eye tracking data
     var eyeTrackingData: [EyeTrackingData] = []
-    var firstTimestamp: TimeInterval?
-    var delay: TimeInterval = 0
+   // var firstTimestamp: TimeInterval?
+    //var delay: TimeInterval = 0
     var eyeTrackingStartTimestamp: TimeInterval = 0
 
 
@@ -159,6 +159,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             //start capturing data
             self.eyeTrackingData = []
             self.eyeTrackingStartTimestamp = Date().timeIntervalSince1970
+            print("startRecordingEye at \(self.eyeTrackingStartTimestamp)")
         }
         
         contentView.stopRecordingEye = {
@@ -167,15 +168,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             // Generate the screen recording video URL
             let videoURL = self.generateScreenRecordingURL()
-            
-            // Calculate the delay
-            let screenRecordingStartTimestamp = Date().timeIntervalSince1970
-            self.delay = screenRecordingStartTimestamp - self.eyeTrackingStartTimestamp
-            
-            // Adjust the timestamps in the eye tracking data
-            for i in 0..<self.eyeTrackingData.count {
-                self.eyeTrackingData[i].timestamp += self.delay
-            }
             
             let manager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData, device: self.device)
             Task {
@@ -315,7 +307,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         //let heightCompensation = CGFloat(device.heightCompensation)
         
         DispatchQueue.main.async {
-            let currentTimestamp = Date().timeIntervalSince1970
+            let currentTimestamp = CACurrentMediaTime()
 
             // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
             
@@ -364,9 +356,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
            // let halfHeight = self.device.phoneScreenSize.height * 0.5
 
            
-            // Adjust the timestamp with the delay
-            let relativeTimestamp = currentTimestamp - self.eyeTrackingStartTimestamp + self.delay
-                    
+            // Calculate the relative timestamp from the start of eye tracking
+            let relativeTimestamp = currentTimestamp - self.eyeTrackingStartTimestamp
+            
             // Add the current frame eye tracking data to the eye tracking data array
             let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: relativeTimestamp)
             self.eyeTrackingData.append(newEntry)

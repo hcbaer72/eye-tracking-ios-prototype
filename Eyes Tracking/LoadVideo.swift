@@ -57,7 +57,7 @@ class EyeTrackingOverlayManager {
             
             let syncedEyeTrackingData = try await syncEyeTrackingDataWithVideo(videoURL: videoURL, eyeTrackingData: eyeTrackingData)
             
-            let overlayLayer = createOverlayLayer2(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: syncedEyeTrackingData[0].timestamp)
+            let overlayLayer = createOverlayLayer(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: syncedEyeTrackingData[0].timestamp)
             
             let parentLayer = createParentLayer(videoSize: videoSize)
             // Create a parent layer containing the video layer and the overlay layer
@@ -66,7 +66,7 @@ class EyeTrackingOverlayManager {
             
             parentLayer.addSublayer(videoLayer)
             parentLayer.addSublayer(overlayLayer)
-        
+            
             // Add the overlay to the video composition
             videoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayers: [videoLayer], in: parentLayer)
             
@@ -99,71 +99,49 @@ class EyeTrackingOverlayManager {
         // Load the video
         let videoAsset = AVAsset(url: videoURL)
         
-        do {
-            // Get the video track
-            guard let videoTrack = try await videoAsset.loadTracks(withMediaType: .video).first else {
-                throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Video track not found"])
-            }
-            
-            // Get the video duration
-            let videoDuration = try await CMTimeGetSeconds(videoAsset.load(.duration))
-            
-            // Check if the eye tracking data covers the entire duration of the video
-            let eyeTrackingDataDuration = eyeTrackingData.last!.timestamp - eyeTrackingData.first!.timestamp
-            if eyeTrackingDataDuration < videoDuration {
-                throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Eye tracking data does not cover the entire duration of the video"])
-            }
-            
-            // Calculate the time scale for frame synchronization
-            let timeScale = try await videoTrack.load(.nominalFrameRate).rounded()
-            
-            // Iterate through the eye tracking data and synchronize with video frames
-            var syncedEyeTrackingData: [EyeTrackingData] = []
-            
-            for i in 0..<eyeTrackingData.count {
-                let currentData = eyeTrackingData[i]
-                let currentTime = currentData.timestamp - eyeTrackingData.first!.timestamp
-                
-                // Find the closest video frame timestamp based on time scale
-                let closestVideoFrameTimestamp = round(currentTime * Double(timeScale)) / Double(timeScale)
-                
-                // Check if there's a next data point
-                if i < eyeTrackingData.count - 1 {
-                    let nextData = eyeTrackingData[i + 1]
-                    let nextTime = nextData.timestamp - eyeTrackingData.first!.timestamp
-                    
-                    // Interpolate positions between current and next data points
-                    let positionDiff = CGPoint(x: nextData.position.x - currentData.position.x, y: nextData.position.y - currentData.position.y)
-                    let timeDiff = nextTime - currentTime
-                    
-                    // Calculate interpolation steps based on the time scale
-                    let interpolationSteps = Int(round(timeDiff * Double(timeScale)))
-                    
-                    for step in 0..<interpolationSteps {
-                        let interpolationTime = currentTime + (Double(step) / Double(timeScale))
-                        
-                        // Calculate interpolated position
-                        let t = (interpolationTime - currentTime) / timeDiff
-                        let interpolatedPosition = CGPoint(x: currentData.position.x + (positionDiff.x * CGFloat(t)), y: currentData.position.y + (positionDiff.y * CGFloat(t)))
-                        
-                        // Add the interpolated eye tracking data
-                        let interpolatedData = EyeTrackingData(position: interpolatedPosition, timestamp: interpolationTime)
-                        syncedEyeTrackingData.append(interpolatedData)
-                    }
-                }
-                
-                // Add the current eye tracking data
-                let syncedEyeTracking = EyeTrackingData(position: currentData.position, timestamp: closestVideoFrameTimestamp)
-                syncedEyeTrackingData.append(syncedEyeTracking)
-            }
-            
-            // Sort the synchronized eye tracking data by timestamp
-            syncedEyeTrackingData.sort(by: { $0.timestamp < $1.timestamp })
-            
-            return syncedEyeTrackingData
-        } catch {
-            throw error
+        // Get the video duration
+        let videoDuration = try await CMTimeGetSeconds(videoAsset.load(.duration))
+        
+        // Calculate the scale factor for the timestamps
+        let eyeTrackingDataDuration = eyeTrackingData.last!.timestamp - eyeTrackingData.first!.timestamp
+        let timestampScaleFactor = videoDuration / eyeTrackingDataDuration
+        
+        // Iterate through the eye tracking data and scale the timestamps
+        var syncedEyeTrackingData: [EyeTrackingData] = []
+        for data in eyeTrackingData {
+            let scaledTimestamp = (data.timestamp - eyeTrackingData.first!.timestamp) * timestampScaleFactor - 0.8
+            let syncedData = EyeTrackingData(position: data.position, timestamp: scaledTimestamp)
+            syncedEyeTrackingData.append(syncedData)
         }
+        
+        // Calculate the interpolation step size based on the video frame rate
+        let frameRate = Double(try await videoAsset.loadTracks(withMediaType: .video).first!.load(.nominalFrameRate))
+        let interpolationStepSize = 1.0 / frameRate
+        
+        // Interpolate the eye tracking data to match the video frame rate
+        var interpolatedEyeTrackingData: [EyeTrackingData] = []
+        var nextDataIndex = 1
+        for timestamp in stride(from: 0.0, to: videoDuration, by: interpolationStepSize) {
+            while nextDataIndex < syncedEyeTrackingData.count && syncedEyeTrackingData[nextDataIndex].timestamp < timestamp {
+                nextDataIndex += 1
+            }
+            
+            if nextDataIndex >= syncedEyeTrackingData.count {
+                // Reached the end of the data, break the loop
+                break
+            }
+            
+            let previousData = syncedEyeTrackingData[nextDataIndex - 1]
+            let nextData = syncedEyeTrackingData[nextDataIndex]
+            
+            let t = (timestamp - previousData.timestamp) / (nextData.timestamp - previousData.timestamp)
+            let interpolatedPosition = CGPoint(x: previousData.position.x + (nextData.position.x - previousData.position.x) * CGFloat(t), y: previousData.position.y + (nextData.position.y - previousData.position.y) * CGFloat(t))
+            
+            let interpolatedData = EyeTrackingData(position: interpolatedPosition, timestamp: timestamp)
+            interpolatedEyeTrackingData.append(interpolatedData)
+        }
+        
+        return interpolatedEyeTrackingData
     }
 }
 
@@ -189,62 +167,8 @@ extension EyeTrackingOverlayManager {
         videoComposition.frameDuration = CMTime(value: 1, timescale: Int32(frameRate))
         return videoComposition
     }
-    func createOverlayLayer(with size: CGSize, syncedEyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CALayer {
-        let overlayLayer = CALayer()
-        overlayLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        
-        guard !syncedEyeTrackingData.isEmpty else {
-            return overlayLayer
-        }
-        
-        let dotSize = CGSize(width: 20, height: 20) // Adjust the dot size as needed
-        
-        for i in 0..<syncedEyeTrackingData.count - 1 {
-            let data = syncedEyeTrackingData[i]
-            let nextData = syncedEyeTrackingData[i + 1]
-            
-            // Calculate the dot position based on the eye tracking data
-            let floatX = (nextData.position.x / device.phoneScreenPointSize.width) * videoSize.width
-            let floatY = videoSize.height - (nextData.position.y / device.phoneScreenPointSize.height) * videoSize.height
-            let dotOrigin = CGPoint(x: floatX, y: floatY)
-            
-            let dotLayer = CALayer()
-            dotLayer.frame = CGRect(origin: dotOrigin, size: dotSize)
-            dotLayer.cornerRadius = dotSize.width / 2
-            dotLayer.masksToBounds = true // Clip to bounds
-            dotLayer.backgroundColor = UIColor.blue.cgColor // Change to the color you want for the dot
-            
-            overlayLayer.addSublayer(dotLayer)
-            
-            let dotLayerAnimation = CABasicAnimation(keyPath: "position")
-            
-            let currentDotPosition = CGPoint(x: data.position.x / device.phoneScreenPointSize.width * videoSize.width,
-                                             y: videoSize.height - data.position.y / device.phoneScreenPointSize.height * videoSize.height)
-            let nextDotPosition = CGPoint(x: nextData.position.x / device.phoneScreenPointSize.width * videoSize.width,
-                                          y: videoSize.height - nextData.position.y / device.phoneScreenPointSize.height * videoSize.height)
-            
-            dotLayerAnimation.fromValue = NSValue(cgPoint: currentDotPosition)
-            dotLayerAnimation.toValue = NSValue(cgPoint: nextDotPosition)
-            
-            let currentFrameNumber = Int(round((data.timestamp - firstTimestamp) * Double(frameRate)))
-            let nextFrameNumber = Int(round((nextData.timestamp - firstTimestamp) * Double(frameRate)))
-            
-            let beginTime = CMTime(value: Int64(currentFrameNumber), timescale: Int32(frameRate)).seconds
-            dotLayerAnimation.beginTime = beginTime
-            
-            let duration = CGFloat(nextData.timestamp - data.timestamp)
-            dotLayerAnimation.duration = CMTime(value: Int64(duration * Double(frameRate)), timescale: Int32(frameRate)).seconds
-            
-            dotLayerAnimation.fillMode = .forwards
-            dotLayerAnimation.isRemovedOnCompletion = false
-            
-            dotLayer.add(dotLayerAnimation, forKey: "position")
-        }
-        
-        return overlayLayer
-    }
     
-    func createOverlayLayer2(with size: CGSize, syncedEyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CALayer {
+    func createOverlayLayer(with size: CGSize, syncedEyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CALayer {
         let overlayLayer = CALayer()
         overlayLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
 
@@ -309,19 +233,19 @@ extension EyeTrackingOverlayManager {
             dotLayer.add(animation, forKey: "position")
         }
     }
-        
+    
     func createDotAnimation(from currentData: EyeTrackingData, to nextData: EyeTrackingData, videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CABasicAnimation {
         let dotLayerAnimation = CABasicAnimation(keyPath: "position")
-        
+
         let currentDotPosition = calculateDotPosition(for: currentData.position, videoSize: videoSize)
         let nextDotPosition = calculateDotPosition(for: nextData.position, videoSize: videoSize)
-        
+
         dotLayerAnimation.fromValue = NSValue(cgPoint: currentDotPosition)
         dotLayerAnimation.toValue = NSValue(cgPoint: nextDotPosition)
-        
+
         let currentFrameNumber = Int(round((currentData.timestamp - firstTimestamp) * Double(frameRate)))
         let nextFrameNumber = Int(round((nextData.timestamp - firstTimestamp) * Double(frameRate)))
-        
+
         let beginTime = CMTime(value: Int64(currentFrameNumber), timescale: Int32(frameRate)).seconds
         dotLayerAnimation.beginTime = beginTime
         
@@ -367,6 +291,7 @@ extension EyeTrackingOverlayManager {
             exportSession.outputFileType = .mov
             return exportSession
         }
+    
         
     }
 
