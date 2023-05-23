@@ -47,31 +47,32 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @IBOutlet weak var deviceButton: UIButton!
     var webView: WKWebView!
-   // var isRecording = false
+    // var isRecording = false
     
     // initialize eye tracking data
     var eyeTrackingData: [EyeTrackingData] = []
-   // var firstTimestamp: TimeInterval?
+    // var firstTimestamp: TimeInterval?
     //var delay: TimeInterval = 0
     var eyeTrackingStartTimestamp: TimeInterval = 0
-
-
+    var screenRecordingStartTime: Date?
+    var eyeTrackingStartTime: Date?
+    
     //set device measures:
     var device: Device = .iPadPro11
     
     @IBAction func showDeviceList() {
-            print("Button pressed!")
-           let deviceList = DeviceList()
-           deviceList.onDeviceSelected = { [weak self] device in
-               // Handle the selected device here
-               print("Selected device: \(device)")
-               self?.device = device
-                   // Update your UI to reflect the selected device
-                   self?.sceneView.scene.rootNode.addChildNode(self?.virtualPhoneNode ?? SCNNode())
-               
-           }
-           present(deviceList, animated: true, completion: nil)
-       }
+        print("Button pressed!")
+        let deviceList = DeviceList()
+        deviceList.onDeviceSelected = { [weak self] device in
+            // Handle the selected device here
+            print("Selected device: \(device)")
+            self?.device = device
+            // Update your UI to reflect the selected device
+            self?.sceneView.scene.rootNode.addChildNode(self?.virtualPhoneNode ?? SCNNode())
+            
+        }
+        present(deviceList, animated: true, completion: nil)
+    }
     
     
     var faceNode: SCNNode = SCNNode()
@@ -106,7 +107,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
     ////****
-   // var phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
+    // var phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
     //var phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
     //phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
     //phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
@@ -134,64 +135,49 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         return UIStatusBarStyle.lightContent
     }
     
-   // let contentView = UIHostingController(rootView: ContentView())
-
+    // let contentView = UIHostingController(rootView: ContentView())
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Create a parent container view
         let containerView = UIView(frame: view.bounds)
-
+        
         // Load the web view
         webView = WKWebView(frame: containerView.bounds)
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         containerView.addSubview(webView)
-
+        
         // Add the device button to the container view
         containerView.addSubview(deviceButton)
-
+        
         // Add the content view to the container view
         var contentView = ContentView()
         contentView.startRecordingEye = {
             //start capturing data
             self.eyeTrackingData = []
-            self.eyeTrackingStartTimestamp = CMTimeGetSeconds(CMTimeMakeWithSeconds(Date().timeIntervalSince1970, preferredTimescale: 600))
-            print("startRecordingEye at \(self.eyeTrackingStartTimestamp)")
+            self.eyeTrackingStartTimestamp = CACurrentMediaTime()
+            self.eyeTrackingStartTime = Date()  // Save the start time
+            print("startRecordingEye at timestamp \(self.eyeTrackingStartTimestamp)")
+            print("startRecordingEye at time", self.eyeTrackingStartTime!)
         }
         
         contentView.stopRecordingEye = {
-            // Stop capturing data
             self.saveEyeTrackingData()
-            
-            // Generate the screen recording video URL
-            let videoURL = self.generateScreenRecordingURL()
-            
-            let manager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData, device: self.device)
-            Task {
-                await manager.overlayEyeTrackingDataOnVideo { result in
-                    switch result {
-                    case .success(let outputURL):
-                        // Handle the successful export
-                        print("Video overlay completed. Output URL: \(outputURL)")
-                    case .failure(let error):
-                        // Handle the failure
-                        print("Video overlay failed with error: \(error)")
-                    }
-                }
-            }
+            self.performEyeTrackingOverlay()
         }
         
         let hostingController = UIHostingController(rootView: contentView)
         addChild(hostingController)
         containerView.addSubview(hostingController.view)
-
+        
         // Set the frame for the hosting controller's view
         let contentHeight: CGFloat = 50 // set the height of the content view
         hostingController.view.frame = CGRect(x: 0, y: containerView.bounds.height - contentHeight, width: containerView.bounds.width, height: contentHeight)
-
+        
         // Add the container view to the view hierarchy
         view.addSubview(containerView)
         
@@ -218,7 +204,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         // Bring the eye tracking cursor to the front
         view.bringSubviewToFront(eyePositionIndicatorView)
-   
+        
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
         
@@ -226,7 +212,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         //eyePositionIndicatorView.isHidden = true
     }
     
-
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -242,12 +228,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    
+        
         
         // Pause the view's session
         sceneView.session.pause()
     }
-
+    
     // MARK: - ARSCNViewDelegate
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         
@@ -258,35 +244,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-            guard let faceAnchor = anchor as? ARFaceAnchor, let device = renderer.device else { return nil}
-            let faceGeometry = ARSCNFaceGeometry(device: device)
-            let node = SCNNode(geometry: faceGeometry)
-            node.geometry?.firstMaterial?.fillMode = .lines
-            return node
-            
-        }
+        guard let faceAnchor = anchor as? ARFaceAnchor, let device = renderer.device else { return nil}
+        let faceGeometry = ARSCNFaceGeometry(device: device)
+        let node = SCNNode(geometry: faceGeometry)
+        node.geometry?.firstMaterial?.fillMode = .lines
+        return node
+        
+    }
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard let faceAnchor = anchor as? ARFaceAnchor, let faceGeometry = node.geometry as? ARSCNFaceGeometry else {
             return }
-                faceNode.transform = node.transform
-               
-                update(withFaceAnchor: faceAnchor)
-            
-            
-            var leftEyeTransform: simd_float4x4 { get {
-                return faceAnchor.leftEyeTransform }
+        faceNode.transform = node.transform
         
-                
-            }
-            //print("Left Eye: \(faceAnchor.leftEyeTransform)")
+        update(withFaceAnchor: faceAnchor)
+        
+        
+        var leftEyeTransform: simd_float4x4 { get {
+            return faceAnchor.leftEyeTransform }
             
-            for x in 0..<1220 {
-                let child = node.childNode(withName: "\(x)", recursively: false)
-                child?.position = SCNVector3(faceAnchor.geometry.vertices[x])
-            }
             
-            faceGeometry.update(from: faceAnchor.geometry)
         }
+        //print("Left Eye: \(faceAnchor.leftEyeTransform)")
+        
+        for x in 0..<1220 {
+            let child = node.childNode(withName: "\(x)", recursively: false)
+            child?.position = SCNVector3(faceAnchor.geometry.vertices[x])
+        }
+        
+        faceGeometry.update(from: faceAnchor.geometry)
+    }
     
     // MARK: - update(ARFaceAnchor)
     
@@ -351,80 +337,99 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             // Update distance label value
             self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
+                
+                let absoluteTimestamp = CACurrentMediaTime() - self.eyeTrackingStartTimestamp
+                let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: absoluteTimestamp)
+                self.eyeTrackingData.append(newEntry)
+            }
             
-           // let halfWidth = self.device.phoneScreenSize.width * 0.5
-           // let halfHeight = self.device.phoneScreenSize.height * 0.5
-
-           
-            let relativeTimestamp = currentTimestamp - self.eyeTrackingStartTimestamp
-            let relativeTimestampCMTime = CMTimeMakeWithSeconds(relativeTimestamp, preferredTimescale: 600)
-            let relativeTimestampSeconds = CMTimeGetSeconds(relativeTimestampCMTime)
-            let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: relativeTimestampSeconds)
-            self.eyeTrackingData.append(newEntry)
         }
-    }
+
     
-    
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+        
+        
+        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+            
+        }
+        
+        
+        func getDocumentsDirectory() -> URL {
+            let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+            let documentsDirectory = paths[0]
+            return documentsDirectory
+        }
+        
+        func saveEyeTrackingData() {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+            let filename = "EyeTrackingData-\(dateFormatter.string(from: Date())).txt"
+            let fileURL = getDocumentsDirectory().appendingPathComponent(filename)
+            
+            do {
+                let data = try JSONEncoder().encode(eyeTrackingData)
+                if let fileHandle = try? FileHandle(forWritingTo: fileURL) {
+                    // Append to existing file
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                } else {
+                    // Create new file
+                    try data.write(to: fileURL)
+                }
+                if let lastFrame = eyeTrackingData.last {
+                    print("Last eye tracking frame x: \(lastFrame.position.x), y: \(lastFrame.position.y), timestamp: \(lastFrame.timestamp)")
+                }
+                print("Eye tracking data saved to file: \(filename)")
+            } catch {
+                print("Error saving eye tracking data: \(error)")
+            }
+        }
+        func generateScreenRecordingURL() -> URL {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+            let filename = "ScreenRecording-\(dateFormatter.string(from: Date())).mov"
+            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+            return fileURL
+        }
+        
+        //
+        func performEyeTrackingOverlay() {
+            // Stop capturing data
+            //self.saveEyeTrackingData()
+            
+            // Generate the screen recording video URL
+            let videoURL = self.generateScreenRecordingURL()
+            
+            let manager = EyeTrackingOverlayManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData, device: self.device)
+            Task {
+                await manager.overlayEyeTrackingDataOnVideo { result in
+                    switch result {
+                    case .success(let outputURL):
+                        // Handle the successful export
+                        print("Video overlay completed. Output URL: \(outputURL)")
+                    case .failure(let error):
+                        // Handle the failure
+                        print("Video overlay failed with error: \(error)")
+                    }
+                }
+            }
+        }
+        
+        
+        //load eye tracking data
+        func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {
+            do {
+                let data = try Data(contentsOf: fileURL)
+                let eyeTrackingData = try JSONDecoder().decode([[CGPoint]].self, from: data)
+                return eyeTrackingData
+            } catch {
+                print("Error loading eye tracking data: \(error)")
+                return nil
+            }
+        }
         
     }
-    
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
-    }
-    
-    func saveEyeTrackingData() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
-        let filename = "EyeTrackingData-\(dateFormatter.string(from: Date())).txt"
-        let fileURL = getDocumentsDirectory().appendingPathComponent(filename)
-
-        do {
-            let data = try JSONEncoder().encode(eyeTrackingData)
-            if let fileHandle = try? FileHandle(forWritingTo: fileURL) {
-                // Append to existing file
-                fileHandle.seekToEndOfFile()
-                fileHandle.write(data)
-                fileHandle.closeFile()
-            } else {
-                // Create new file
-                try data.write(to: fileURL)
-            }
-            if let lastFrame = eyeTrackingData.last {
-                print("Last eye tracking frame x: \(lastFrame.position.x), y: \(lastFrame.position.y), timestamp: \(lastFrame.timestamp)")
-            }
-            print("Eye tracking data saved to file: \(filename)")
-        } catch {
-            print("Error saving eye tracking data: \(error)")
-        }
-    }
-    
-    func generateScreenRecordingURL() -> URL {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
-        let filename = "ScreenRecording-\(dateFormatter.string(from: Date())).mov"
-        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-        return fileURL
-    }
-    //
-    
-    //load eye tracking data
-    func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {
-        do {
-            let data = try Data(contentsOf: fileURL)
-            let eyeTrackingData = try JSONDecoder().decode([[CGPoint]].self, from: data)
-            return eyeTrackingData
-        } catch {
-            print("Error loading eye tracking data: \(error)")
-            return nil
-        }
-    }
-    
-}
 
 //When the screen recording is finished, read the saved eye tracking data from the file.
 //Parse the eye tracking data and map it to the time codes of the screen recording frames.

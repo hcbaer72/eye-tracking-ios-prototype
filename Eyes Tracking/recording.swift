@@ -25,7 +25,9 @@ extension View{
         
         //Starting Recording
         recorder.startRecording(handler: completion)
+        
     }
+    
     //MARK: Stop recording
     //it will return the Recorded Video URL
     func stopRecording() async throws -> URL {
@@ -44,9 +46,6 @@ extension View{
         print("Screen recording saved to file: \(filename)")
         return fileURL
     }
-  
-    
-
     
     
     //MARK: cancel recording

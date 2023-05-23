@@ -96,78 +96,20 @@ class EyeTrackingOverlayManager {
         }
     }
     
-    
-    func syncEyeTrackingDataWithVideo(videoURL: URL, eyeTrackingData: [EyeTrackingData]) async throws -> [EyeTrackingData] {
-        // Load the video
-        let videoAsset = AVAsset(url: videoURL)
-        
-        // Get the video duration
-        let videoDuration = try await CMTimeGetSeconds(videoAsset.load(.duration))
-        
-        // Calculate the scale factor for the timestamps
-        let eyeTrackingDataDuration = eyeTrackingData.last!.timestamp - eyeTrackingData.first!.timestamp
-        let timestampScaleFactor = videoDuration / eyeTrackingDataDuration
-        
-        // Iterate through the eye tracking data and scale the timestamps
-        var syncedEyeTrackingData: [EyeTrackingData] = []
-        for data in eyeTrackingData {
-            let scaledTimestamp = (data.timestamp - eyeTrackingData.first!.timestamp) * timestampScaleFactor
-            let syncedData = EyeTrackingData(position: data.position, timestamp: scaledTimestamp)
-            syncedEyeTrackingData.append(syncedData)
+    func syncEyeTrackingDataWithVideo(videoURL: URL, eyeTrackingData: [EyeTrackingData]) -> [EyeTrackingData] {
+        guard let eyeTrackingDataStartTimestamp = eyeTrackingData.first?.timestamp else {
+            print("Eye tracking data is empty")
+            return []
         }
-        
-        // Get the frame rates of the video
-        let videoTrack = try await videoAsset.loadTracks(withMediaType: .video).first!
-        let frameRates = try await videoTrack.load(.nominalFrameRate, .timeRange)
-        
-        // Interpolate the eye tracking data to match the video frame rate
-        var interpolatedEyeTrackingData: [EyeTrackingData] = []
-        var nextDataIndex = 1
-        var currentTime: Double = 0.0
-        
-        // Print the video duration and eye tracking data duration
-        print("Screen Recording duration: \(videoDuration)")
-        print("Eye Tracking Data Duration: \(eyeTrackingDataDuration)")
-        
-        // Print the frame rate
-        print("Video Frame Rate: \(frameRates)")
-        
-        // Print the scaled timestamps and interpolated eye tracking data
-        //print("Scaled Timestamps: \(syncedEyeTrackingData.map { $0.timestamp })")
-        //print("Interpolated Eye Tracking Data: \(interpolatedEyeTrackingData)")
-        
-        while currentTime <= videoDuration {
-            while nextDataIndex < syncedEyeTrackingData.count && syncedEyeTrackingData[nextDataIndex].timestamp < currentTime {
-                nextDataIndex += 1
-            }
-            
-            if nextDataIndex >= syncedEyeTrackingData.count {
-                // Reached the end of the data, break the loop
-                break
-            }
-            
-            let previousData = syncedEyeTrackingData[nextDataIndex - 1]
-            let nextData = syncedEyeTrackingData[nextDataIndex]
-            
-            // Calculate the timestamp adjustment based on the frame's timestamp
-            let timeRange = try await videoTrack.load(.timeRange)
-            let frameTimestamp = currentTime + CMTimeGetSeconds(timeRange.start)
-            let timestampAdjustment = frameTimestamp - previousData.timestamp
-            
-            let t = (currentTime - previousData.timestamp) / (nextData.timestamp - previousData.timestamp)
-            let interpolatedPosition = CGPoint(x: previousData.position.x + (nextData.position.x - previousData.position.x) * CGFloat(t), y: previousData.position.y + (nextData.position.y - previousData.position.y) * CGFloat(t))
-            
-            let interpolatedData = EyeTrackingData(position: interpolatedPosition, timestamp: currentTime + timestampAdjustment)
-            interpolatedEyeTrackingData.append(interpolatedData)
-            
-            currentTime += 1.0 / Double(frameRates.0 ) // Use default frame rate if not available
+        print("Eye tracking data start timestamp: \(eyeTrackingDataStartTimestamp)")
+
+        let syncedEyeTrackingData = eyeTrackingData.map { data in
+            let adjustedTimestamp = data.timestamp - eyeTrackingDataStartTimestamp
+            return EyeTrackingData(position: data.position, timestamp: adjustedTimestamp)
         }
-        
-        return interpolatedEyeTrackingData
+        return syncedEyeTrackingData
     }
 }
-
-
     
 extension EyeTrackingOverlayManager {
     func getVideoTrack(from asset: AVAsset) async throws -> AVAssetTrack? {

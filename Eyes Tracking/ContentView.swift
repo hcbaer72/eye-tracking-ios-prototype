@@ -14,6 +14,8 @@ import Photos
 //viewcontroller supplies code that starts and stops the saving of data to the file
 //contentview would execute code when button is pressed
 
+//var screenRecordingStartTime: Date?
+
 struct ContentView: View {
     var startRecordingEye: (()->())? //contentview can accept optional parameter
     var stopRecordingEye: (()->())?
@@ -24,6 +26,7 @@ struct ContentView: View {
     // Recording status
     @State var isRecording: Bool = false
     @State var url: URL?
+    @State var screenRecordingStartTime: Date? = nil
     
     var body: some View {
         ZStack {
@@ -50,18 +53,8 @@ struct ContentView: View {
                                 }
                             }
                             else{
+                                startAllRecordings()
                                 
-                                startRecording { error in
-                                    if let error = error{
-                                        print(error.localizedDescription)
-                                        return
-                                    }
-                                    //success
-                                    //start screen recording
-                                    isRecording = true
-                                    print("is recording: \(isRecording) ")
-                                }
-                                self.startRecordingEye?()
                             }
                         } label: {
                             Image(systemName: isRecording ? "record.circle.fill" : "record.circle")
@@ -70,7 +63,28 @@ struct ContentView: View {
                         }
                     }
             }
+        
         }
+    func startAllRecordings() {
+        // First ensure that both recordings are not currently active
+        guard !isRecording else { return }
+
+        // Then start both recordings
+        startRecording { error in
+            if let error = error {
+                print("Error starting screen recording: \(error.localizedDescription)")
+                return
+            }
+            self.screenRecordingStartTime = Date()
+
+            // Start eye tracking only if screen recording was successful
+            startRecordingEye?() // Assuming this has a similar error handling mechanism
+
+            // If both recordings are successful, update the state
+            isRecording = true
+            print("is recording: \(isRecording) ")
+        }
+    }
         
         struct ContentView_Previews: PreviewProvider {
             static var previews: some View {
