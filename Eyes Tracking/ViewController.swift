@@ -28,6 +28,11 @@ import AVFoundation
 //add heat map?
 //capturedDepthDataTimestamp
 
+//TIMESTAMPS:
+//CACurrentMedia = CFTimeInterval derived by calling mach_absolute_time() and converting the result to seconds.
+
+
+
 struct EyeTrackingData: Codable {
     let position: CGPoint
     var timestamp: TimeInterval

@@ -56,9 +56,15 @@ class EyeTrackingOverlayManager {
             // Create a video composition
             let videoComposition = createVideoComposition(videoAsset: videoAsset, videoSize: videoSize, frameRate: frameRate)
             
-            let syncedEyeTrackingData = try await syncEyeTrackingDataWithVideo(videoURL: videoURL, eyeTrackingData: eyeTrackingData)
+            let syncedEyeTrackingData = await syncEyeTrackingDataWithVideo(videoURL: videoURL, eyeTrackingData: eyeTrackingData)
             
-            let overlayLayer = createOverlayLayer(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: syncedEyeTrackingData[0].timestamp)
+           // let overlayLayer = createOverlayLayer(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: syncedEyeTrackingData[0].timestamp)
+            let firstTimestamp = syncedEyeTrackingData.first?.timestamp ?? 0.0
+            let delay = firstTimestamp > 0.0 ? firstTimestamp : 0.0
+            
+            let overlayLayer = createOverlayLayer(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: firstTimestamp)
+            overlayLayer.beginTime = CFTimeInterval(delay)
+            
             
             let parentLayer = createParentLayer(videoSize: videoSize)
             // Create a parent layer containing the video layer and the overlay layer
@@ -96,19 +102,6 @@ class EyeTrackingOverlayManager {
         }
     }
     
-    func syncEyeTrackingDataWithVideo(videoURL: URL, eyeTrackingData: [EyeTrackingData]) -> [EyeTrackingData] {
-        guard let eyeTrackingDataStartTimestamp = eyeTrackingData.first?.timestamp else {
-            print("Eye tracking data is empty")
-            return []
-        }
-        print("Eye tracking data start timestamp: \(eyeTrackingDataStartTimestamp)")
-
-        let syncedEyeTrackingData = eyeTrackingData.map { data in
-            let adjustedTimestamp = data.timestamp - eyeTrackingDataStartTimestamp
-            return EyeTrackingData(position: data.position, timestamp: adjustedTimestamp)
-        }
-        return syncedEyeTrackingData
-    }
 }
     
 extension EyeTrackingOverlayManager {
@@ -177,26 +170,6 @@ extension EyeTrackingOverlayManager {
         return dotLayer
     }
     
-    func addDotLayers(to overlayLayer: CALayer, syncedEyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float) {
-        guard !syncedEyeTrackingData.isEmpty else {
-            return
-        }
-        
-        let firstTimestamp = syncedEyeTrackingData[0].timestamp
-        
-        for i in 0..<syncedEyeTrackingData.count - 1 {
-            let data = syncedEyeTrackingData[i]
-            let nextData = syncedEyeTrackingData[i + 1]
-            
-            // Create dot layers only for the next positions
-            let dotLayer = createDotLayer(with: nextData.position, videoSize: videoSize)
-            // Add the dot layer to the overlay layer
-            overlayLayer.addSublayer(dotLayer)
-            
-            let animation = createDotAnimation(from: data, to: nextData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: firstTimestamp)
-            dotLayer.add(animation, forKey: "position")
-        }
-    }
     
     func createDotAnimation(from currentData: EyeTrackingData, to nextData: EyeTrackingData, videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CABasicAnimation {
         let dotLayerAnimation = CABasicAnimation(keyPath: "position")
@@ -222,12 +195,104 @@ extension EyeTrackingOverlayManager {
         return dotLayerAnimation
     }
         
-        func calculateDotPosition(for position: CGPoint, videoSize: CGSize) -> CGPoint {
+    func calculateDotPosition(for position: CGPoint, videoSize: CGSize) -> CGPoint {
             let floatX = (position.x / device.phoneScreenPointSize.width) * videoSize.width
             let floatY = videoSize.height - (position.y / device.phoneScreenPointSize.height) * videoSize.height
             return CGPoint(x: floatX, y: floatY)
         }
+    
+    func syncEyeTrackingDataWithVideo(videoURL: URL, eyeTrackingData: [EyeTrackingData]) async -> [EyeTrackingData] {
+        do {
+            let videoFrameTimestamps = await getVideoFrameTimestamps(videoURL: videoURL)
+            
+            guard !videoFrameTimestamps.isEmpty else {
+                print("Video frame timestamps are empty")
+                return []
+            }
+            
+            guard let eyeTrackingDataStartTimestamp = eyeTrackingData.first?.timestamp else {
+                print("Eye tracking data is empty")
+                return []
+            }
+            print("Eye tracking first timestamp: \(eyeTrackingData.first?.timestamp ?? 0)")
+
+            
+            let syncedEyeTrackingData = eyeTrackingData.map { data in
+                let adjustedTimestamp = data.timestamp
+                return EyeTrackingData(position: data.position, timestamp: adjustedTimestamp)
+            }
+            
+            return syncedEyeTrackingData
+        }
+    }
+    
+    func syncTimestampToVideoFrames(timestamp: TimeInterval, videoFrameTimestamps: [CMTime]) -> TimeInterval {
+        guard !videoFrameTimestamps.isEmpty else {
+            return timestamp
+        }
         
+        let videoFrameDurations = videoFrameTimestamps.map { $0.seconds }
+        
+        // Find the two closest video frame timestamps surrounding the eye tracking timestamp
+        guard let lowerIndex = videoFrameDurations.enumerated().first(where: { $0.1 > timestamp })?.offset else {
+            // If no frame timestamp is greater than the given timestamp,
+            // return the last frame timestamp as the closest timestamp
+            let lastTimestamp = videoFrameTimestamps.last?.seconds ?? timestamp
+            return lastTimestamp
+        }
+        
+        let upperIndex = lowerIndex - 1
+        let lowerTimestamp = videoFrameTimestamps[lowerIndex].seconds
+        let upperTimestamp = videoFrameTimestamps[upperIndex].seconds
+        
+        // Calculate the interpolation factor based on the relative position between the two frames
+        let interpolationFactor = (timestamp - upperTimestamp) / (lowerTimestamp - upperTimestamp)
+        
+        // Perform linear interpolation to get the adjusted timestamp
+        let adjustedTimestamp = upperTimestamp + interpolationFactor * (lowerTimestamp - upperTimestamp)
+        
+        return adjustedTimestamp
+    }
+        
+
+    func getVideoFrameTimestamps(videoURL: URL) async -> [CMTime] {
+        do {
+            let asset = AVAsset(url: videoURL)
+            let videoTrack = try await asset.loadTracks(withMediaType: .video).first
+            
+            var timestamps: [CMTime] = []
+            
+            if let videoTrack = videoTrack {
+                let reader = try? AVAssetReader(asset: asset)
+                
+                let outputSettings: [String: Any] = [
+                    kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+                ]
+                let videoOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: outputSettings)
+                reader?.add(videoOutput)
+                reader?.startReading()
+                
+                while let sampleBuffer = videoOutput.copyNextSampleBuffer() {
+                    let presentationTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                    timestamps.append(presentationTimestamp)
+                    
+                    CMSampleBufferInvalidate(sampleBuffer)
+                }
+            }
+            
+            // Print the timestamp of the first frame for verification
+            if let firstFrameTimestamp = timestamps.first {
+                print("First Frame Timestamp: \(firstFrameTimestamp.seconds)")
+            }
+            
+            return timestamps
+        } catch {
+            // Handle the error here, such as logging or displaying an error message
+            print("Error: \(error)")
+            return []
+        }
+    }
+    
     func createParentLayer(videoSize: CGSize) -> CALayer {
         let parentLayer = CALayer()
         let videoLayer = CALayer()
@@ -237,7 +302,7 @@ extension EyeTrackingOverlayManager {
         return parentLayer
     }
         
-        func generateOutputURL() -> URL {
+    func generateOutputURL() -> URL {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
             let filename = "OverlayVideo-\(dateFormatter.string(from: Date())).mov"
@@ -245,7 +310,7 @@ extension EyeTrackingOverlayManager {
             return outputURL
         }
         
-        func createExportSessionWithOutputURL(videoAsset: AVAsset, videoComposition: AVMutableVideoComposition) -> AVAssetExportSession? {
+    func createExportSessionWithOutputURL(videoAsset: AVAsset, videoComposition: AVMutableVideoComposition) -> AVAssetExportSession? {
             let outputURL = generateOutputURL()
             guard let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else {
                 return nil
@@ -255,8 +320,28 @@ extension EyeTrackingOverlayManager {
             exportSession.outputFileType = .mov
             return exportSession
         }
-    
+    func addDotLayers(to overlayLayer: CALayer, syncedEyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float) {
+        guard !syncedEyeTrackingData.isEmpty else {
+            return
+        }
         
+        let firstTimestamp = syncedEyeTrackingData[0].timestamp
+        print("Synced eye tracking first timestamp: \(firstTimestamp)")
+        
+        for i in 0..<syncedEyeTrackingData.count - 1 {
+            let data = syncedEyeTrackingData[i]
+            let nextData = syncedEyeTrackingData[i + 1]
+            
+            // Create dot layers only for the next positions
+            let dotLayer = createDotLayer(with: nextData.position, videoSize: videoSize)
+            // Add the dot layer to the overlay layer
+            overlayLayer.addSublayer(dotLayer)
+            
+            let animation = createDotAnimation(from: data, to: nextData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: firstTimestamp)
+            dotLayer.add(animation, forKey: "position")
+        }
+    }
+   
     }
 
 
