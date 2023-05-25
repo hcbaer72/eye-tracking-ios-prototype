@@ -27,6 +27,8 @@ import AVFoundation
 //add relocalization?
 //add heat map?
 //capturedDepthDataTimestamp
+//increase brightness automatically
+//not proportional to my phone size when i run it. cant even hit the device button to change
 
 //TIMESTAMPS:
 //CACurrentMedia = CFTimeInterval derived by calling mach_absolute_time() and converting the result to seconds.
@@ -146,11 +148,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let screenSize = calculatePhoneScreenSize()
+
         // Create a parent container view
-        let containerView = UIView(frame: view.bounds)
-        
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height))
+        containerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
         // Load the web view
-        webView = WKWebView(frame: containerView.bounds)
+        webView = WKWebView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height))
+        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         webView.scrollView.contentInsetAdjustmentBehavior = .never
@@ -162,7 +168,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Add the content view to the container view
         var contentView = ContentView()
         contentView.startRecordingEye = {
-            //start capturing data
+            // Start capturing data
             self.eyeTrackingData = []
             self.eyeTrackingStartTimestamp = CACurrentMediaTime()
             self.eyeTrackingStartTime = Date()  // Save the start time
@@ -177,11 +183,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         let hostingController = UIHostingController(rootView: contentView)
         addChild(hostingController)
-        containerView.addSubview(hostingController.view)
         
         // Set the frame for the hosting controller's view
-        let contentHeight: CGFloat = 50 // set the height of the content view
-        hostingController.view.frame = CGRect(x: 0, y: containerView.bounds.height - contentHeight, width: containerView.bounds.width, height: contentHeight)
+        let contentHeight: CGFloat = 50 // Set the height of the content view
+        
+        hostingController.view.frame = CGRect(x: 0, y: screenSize.height - contentHeight, width: screenSize.width, height: contentHeight)
+        containerView.addSubview(hostingController.view)
         
         // Add the container view to the view hierarchy
         view.addSubview(containerView)
@@ -190,9 +197,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.delegate = self
         sceneView.session.delegate = self
         sceneView.automaticallyUpdatesLighting = true
-        
-        sceneView.rendersContinuously = true //added
-        
+        sceneView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         // Setup Scenegraph
         sceneView.scene.rootNode.addChildNode(faceNode)
@@ -212,11 +217,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
-        
-        // Hide the eyePositionIndicatorView
-        //eyePositionIndicatorView.isHidden = true
     }
-    
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -420,7 +421,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             }
         }
-        
+    
+    func calculatePhoneScreenSize() -> CGSize {
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        let screenRatio = screenWidth / screenHeight
+
+        return CGSize(width: screenWidth, height: screenHeight)
+    }
         
         //load eye tracking data
         func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {
