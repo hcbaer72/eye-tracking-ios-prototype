@@ -11,11 +11,9 @@ import AVFoundation
 import QuartzCore
 import UIKit
 
-
 // let videoSize = CGSize(width: 1300, height: 1860)
 //add heat map also?
 //add workaround for negative position values
-
 
 
 class EyeTrackingOverlayManager {
@@ -46,7 +44,6 @@ class EyeTrackingOverlayManager {
                 return
             }
             
-            
             // Get the video size from the track's naturalSize
             let videoSize = try await getVideoSize(from: videoTrack)
             
@@ -55,19 +52,21 @@ class EyeTrackingOverlayManager {
             
             // Create a video composition
             let videoComposition = createVideoComposition(videoAsset: videoAsset, videoSize: videoSize, frameRate: frameRate)
-            
-           // let syncedEyeTrackingData = await syncEyeTrackingDataWithVideo(videoURL: videoURL, eyeTrackingData: eyeTrackingData)
-            
-           // let overlayLayer = createOverlayLayer(with: videoSize, syncedEyeTrackingData: syncedEyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: syncedEyeTrackingData[0].timestamp)
+
+            // Get the timestamp of the first eye tracking data, or use 0.0 as default if there is no data
             let firstTimestamp = eyeTrackingData.first?.timestamp ?? 0.0
+
+            // Calculate the delay based on the first timestamp. If the first timestamp is greater than 0.0, use it as the delay; otherwise, set the delay to 0.0
             let delay = firstTimestamp > 0.0 ? firstTimestamp : 0.0
-            
+
+            // Create the overlay layer with the specified video size, eye tracking data, video size, frame rate, and first timestamp
             let overlayLayer = createOverlayLayer(with: videoSize, eyeTrackingData: eyeTrackingData, videoSize: videoSize, frameRate: frameRate, firstTimestamp: firstTimestamp)
+
+            // Set the begin time of the overlay layer to incorporate the delay before the animation starts
             overlayLayer.beginTime = CFTimeInterval(delay)
             
-            
-            let parentLayer = createParentLayer(videoSize: videoSize)
             // Create a parent layer containing the video layer and the overlay layer
+            let parentLayer = createParentLayer(videoSize: videoSize)
             let videoLayer = CALayer()
             videoLayer.frame = parentLayer.frame
             
@@ -82,7 +81,6 @@ class EyeTrackingOverlayManager {
                 completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not create AVAssetExportSession"])))
                 return
             }
-            
             
             // Export the video
             exportSession.exportAsynchronously {
@@ -101,23 +99,26 @@ class EyeTrackingOverlayManager {
             completion(.failure(error))
         }
     }
-    
 }
     
 extension EyeTrackingOverlayManager {
+    // Retrieve the video track from the given AVAsset asynchronously
     func getVideoTrack(from asset: AVAsset) async throws -> AVAssetTrack? {
         let videoTracks = try await asset.loadTracks(withMediaType: .video)
         return videoTracks.first
     }
     
+    // Retrieve the video size from the given AVAssetTrack asynchronously
     func getVideoSize(from videoTrack: AVAssetTrack) async throws -> CGSize {
         return try await videoTrack.load(.naturalSize)
     }
     
+    // Retrieve the frame rate from the given AVAssetTrack asynchronously
     func getFrameRate(from videoTrack: AVAssetTrack) async throws -> Float {
         return try await videoTrack.load(.nominalFrameRate)
     }
     
+    // Create and configure an AVMutableVideoComposition based on the video asset, size, and frame rate
     func createVideoComposition(videoAsset: AVAsset, videoSize: CGSize, frameRate: Float) -> AVMutableVideoComposition {
         let videoComposition = AVMutableVideoComposition(propertiesOf: videoAsset)
         videoComposition.renderSize = videoSize
@@ -125,13 +126,10 @@ extension EyeTrackingOverlayManager {
         return videoComposition
     }
     
+    // Create the overlay layer with a given size, eye tracking data, video size, frame rate, and first timestamp
     func createOverlayLayer(with size: CGSize, eyeTrackingData: [EyeTrackingData], videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CALayer {
         let overlayLayer = CALayer()
         overlayLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        
-        // guard eyeTrackingData.isEmpty else {
-        //   return overlayLayer
-        //}
         
         // Create only one dot layer
         let dotLayer = createDotLayer(with: eyeTrackingData[0].position, videoSize: videoSize)
@@ -139,6 +137,7 @@ extension EyeTrackingOverlayManager {
         // Add the dot layer to the overlay layer
         overlayLayer.addSublayer(dotLayer)
         
+        // Create dot animations for each pair of eye tracking data
         for i in 0..<eyeTrackingData.count - 1 {
             let data = eyeTrackingData[i]
             let nextData = eyeTrackingData[i + 1]
@@ -152,7 +151,7 @@ extension EyeTrackingOverlayManager {
         return overlayLayer
     }
     
-    
+    // Create a dot layer with a given position and video size
     func createDotLayer(with position: CGPoint, videoSize: CGSize) -> CALayer {
         let dotSize = CGSize(width: 20, height: 20) // Adjust the dot size as needed
         
@@ -170,66 +169,69 @@ extension EyeTrackingOverlayManager {
         return dotLayer
     }
     
-    /*
+    // Create a dot animation from current eye tracking data to next eye tracking data
     func createDotAnimation(from currentData: EyeTrackingData, to nextData: EyeTrackingData, videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CABasicAnimation {
         let dotLayerAnimation = CABasicAnimation(keyPath: "position")
         
+        // Calculate the current and next dot positions based on eye tracking data and video size
         let currentDotPosition = calculateDotPosition(for: currentData.position, videoSize: videoSize)
         let nextDotPosition = calculateDotPosition(for: nextData.position, videoSize: videoSize)
         
+        // Set the initial and final values for the dot position animation
         dotLayerAnimation.fromValue = NSValue(cgPoint: currentDotPosition)
         dotLayerAnimation.toValue = NSValue(cgPoint: nextDotPosition)
         
-        let currentFrameNumber = Int(round((currentData.timestamp - firstTimestamp) * Double(frameRate)))
-        let nextFrameNumber = Int(round((nextData.timestamp - firstTimestamp) * Double(frameRate)))
-        
-        let beginTime = CMTime(value: Int64(currentFrameNumber), timescale: Int32(frameRate)).seconds
-        dotLayerAnimation.beginTime = beginTime
-        
-        let duration = CGFloat(nextData.timestamp - currentData.timestamp)
-        dotLayerAnimation.duration = CMTime(value: Int64(duration * Double(frameRate)), timescale: Int32(frameRate)).seconds
-        
-        dotLayerAnimation.fillMode = .forwards
-        dotLayerAnimation.isRemovedOnCompletion = false
-        
-        return dotLayerAnimation
-    }
-    */
-    func createDotAnimation(from currentData: EyeTrackingData, to nextData: EyeTrackingData, videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CABasicAnimation {
-        let dotLayerAnimation = CABasicAnimation(keyPath: "position")
-        
-        let currentDotPosition = calculateDotPosition(for: currentData.position, videoSize: videoSize)
-        let nextDotPosition = calculateDotPosition(for: nextData.position, videoSize: videoSize)
-        
-        dotLayerAnimation.fromValue = NSValue(cgPoint: currentDotPosition)
-        dotLayerAnimation.toValue = NSValue(cgPoint: nextDotPosition)
-        
+        // Set the begin time of the animation relative to the first timestamp
         let beginTime = currentData.timestamp - firstTimestamp
         dotLayerAnimation.beginTime = beginTime
         
+        // Set the duration of the animation based on the time difference between eye tracking data points
         let duration = nextData.timestamp - currentData.timestamp
         dotLayerAnimation.duration = duration
         
+        // Set the fill mode to maintain the final animation state and prevent removal on completion
         dotLayerAnimation.fillMode = .forwards
         dotLayerAnimation.isRemovedOnCompletion = false
         
         return dotLayerAnimation
     }
     
+    // Calculate the dot position based on the eye tracking data and video size
     func calculateDotPosition(for position: CGPoint, videoSize: CGSize) -> CGPoint {
+        // Calculate the dot position within the video frame based on eye tracking data and video size
+        
+        // Calculate the X-coordinate of the dot position by scaling the eye tracking data X-coordinate
+        // to fit within the width of the video frame
         let floatX = (position.x / device.phoneScreenPointSize.width) * videoSize.width
+        
+        // Calculate the Y-coordinate of the dot position by scaling the eye tracking data Y-coordinate
+        // to fit within the height of the video frame, while accounting for the inverted Y-axis
         let floatY = videoSize.height - (position.y / device.phoneScreenPointSize.height) * videoSize.height
+        
+        // Return the calculated dot position as a CGPoint
         return CGPoint(x: floatX, y: floatY)
     }
+    
+    // Create a parent layer with the given video size
     func createParentLayer(videoSize: CGSize) -> CALayer {
-        let parentLayer = CALayer()
-        let videoLayer = CALayer()
+        // Create a parent layer to contain the video layer
+        let parentLayer = CALayer() // Create a new CALayer instance for the parent layer
+        let videoLayer = CALayer() // Create a new CALayer instance for the video layer
+        
+        // Set the frame of the parent layer to match the video size
         parentLayer.frame = CGRect(x: 0, y: 0, width: videoSize.width, height: videoSize.height)
+        
+        // Set the frame of the video layer to match the parent layer's frame
         videoLayer.frame = parentLayer.frame
+        
+        // Add the video layer as a sublayer to the parent layer
         parentLayer.addSublayer(videoLayer)
+        
+        // Return the parent layer
         return parentLayer
     }
     
+    // Generate a unique output URL for the overlay video
     func generateOutputURL() -> URL {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
@@ -238,6 +240,7 @@ extension EyeTrackingOverlayManager {
         return outputURL
     }
     
+    // Create an AVAssetExportSession with the given video asset and video composition
     func createExportSessionWithOutputURL(videoAsset: AVAsset, videoComposition: AVMutableVideoComposition) -> AVAssetExportSession? {
         let outputURL = generateOutputURL()
         guard let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else {
@@ -248,8 +251,11 @@ extension EyeTrackingOverlayManager {
         exportSession.outputFileType = .mov
         return exportSession
     }
-    
 }
+
+
+
+
 
   /*  func syncTimestampToVideoFrames(timestamp: TimeInterval, videoFrameTimestamps: [CMTime]) -> TimeInterval {
         guard !videoFrameTimestamps.isEmpty else {
@@ -367,6 +373,31 @@ func syncEyeTrackingDataWithVideo(videoURL: URL, eyeTrackingData: [EyeTrackingDa
         
         return syncedEyeTrackingData
     }
-}*/
+}
+   
+func createDotAnimation(from currentData: EyeTrackingData, to nextData: EyeTrackingData, videoSize: CGSize, frameRate: Float, firstTimestamp: TimeInterval) -> CABasicAnimation {
+    let dotLayerAnimation = CABasicAnimation(keyPath: "position")
+    
+    let currentDotPosition = calculateDotPosition(for: currentData.position, videoSize: videoSize)
+    let nextDotPosition = calculateDotPosition(for: nextData.position, videoSize: videoSize)
+    
+    dotLayerAnimation.fromValue = NSValue(cgPoint: currentDotPosition)
+    dotLayerAnimation.toValue = NSValue(cgPoint: nextDotPosition)
+    
+    let currentFrameNumber = Int(round((currentData.timestamp - firstTimestamp) * Double(frameRate)))
+    let nextFrameNumber = Int(round((nextData.timestamp - firstTimestamp) * Double(frameRate)))
+    
+    let beginTime = CMTime(value: Int64(currentFrameNumber), timescale: Int32(frameRate)).seconds
+    dotLayerAnimation.beginTime = beginTime
+    
+    let duration = CGFloat(nextData.timestamp - currentData.timestamp)
+    dotLayerAnimation.duration = CMTime(value: Int64(duration * Double(frameRate)), timescale: Int32(frameRate)).seconds
+    
+    dotLayerAnimation.fillMode = .forwards
+    dotLayerAnimation.isRemovedOnCompletion = false
+    
+    return dotLayerAnimation
+}
+*/
     
 
