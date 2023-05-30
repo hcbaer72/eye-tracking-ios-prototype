@@ -73,12 +73,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet var lowerLeftCorner: UIView!
     @IBOutlet var lowerRightCorner: UIView!
     
+    @IBOutlet weak var stackView: UIStackView!
+    
     @IBAction func buttonPressed(_ sender: UIButton) {
         let dotViews = [upperLeftCorner, upperRightCorner, lowerRightCorner, lowerLeftCorner]
-        for dotView in dotViews {
-            dotView?.isHidden = false
+            
+            // Toggle visibility of dotViews
+        let isHidden = !dotViews[0]!.isHidden
+            for dotView in dotViews {
+                dotView?.isHidden = isHidden
+                if !isHidden {
+                    view.bringSubviewToFront(dotView!)
+                } else {
+                    view.sendSubviewToBack(dotView!)
+                }
+            }
         }
-    }
     
     @IBAction func showDeviceList() {
         print("Button pressed!")
@@ -231,6 +241,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         view.bringSubviewToFront(eyePositionIndicatorView)
         // Bring the device button to the front
         view.bringSubviewToFront(deviceButton)
+        
+        view.bringSubviewToFront(stackView)
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)

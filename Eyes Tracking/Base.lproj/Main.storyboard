@@ -389,14 +389,11 @@ Position Estimation</string>
                                 </constraints>
                             </view>
                             <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="record.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="gv8-FZ-Pfp">
-                                <rect key="frame" x="205" y="100" width="20.333333333333343" height="19"/>
+                                <rect key="frame" x="195" y="100" width="40" height="40"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" button="YES" image="YES"/>
                                 </accessibility>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="gv8-FZ-Pfp" secondAttribute="height" id="txQ-lp-DqD"/>
-                                </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xVo-BW-bCQ"/>
@@ -404,6 +401,7 @@ Position Estimation</string>
                         <constraints>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" id="0r7-Xq-koP"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" constant="40" id="1me-Ik-wRM"/>
+                            <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="xVo-BW-bCQ" secondAttribute="centerX" id="2hX-ns-9IL"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="4VC-J5-Os5"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="CsP-0N-8ID"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="JPh-g3-I0P"/>
@@ -414,19 +412,20 @@ Position Estimation</string>
                             <constraint firstItem="Xqf-kQ-3Kr" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="LVz-Mw-soY"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="hwd-Yi-01f" secondAttribute="trailing" constant="40" id="Ofl-Pc-H2n"/>
                             <constraint firstItem="mk8-Sa-145" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="T7C-yN-JYN"/>
+                            <constraint firstItem="gv8-FZ-Pfp" firstAttribute="height" secondItem="9bF-ps-mOb" secondAttribute="height" multiplier="0.96124" id="TEk-fH-Xbg"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="Xqf-kQ-3Kr" secondAttribute="trailing" constant="40" id="Yze-9n-aAH"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="mk8-Sa-145" secondAttribute="bottom" constant="20" id="a8R-UX-SM1"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="TCC-mo-wG1" secondAttribute="trailing" constant="20" id="fgY-pd-cZI"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="7gw-KV-U42" secondAttribute="trailing" id="gdY-VG-3cL"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="width" secondItem="NeR-3c-RI2" secondAttribute="height" id="h0u-4i-DAp"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="bottom" secondItem="xVo-BW-bCQ" secondAttribute="bottom" id="h1H-sC-E4V"/>
-                            <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="xVo-BW-bCQ" secondAttribute="centerX" id="hcC-8N-htp"/>
                             <constraint firstItem="mk8-Sa-145" firstAttribute="leading" secondItem="7gw-KV-U42" secondAttribute="leading" constant="40" id="jYB-5l-eVN"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="centerX" secondItem="xVo-BW-bCQ" secondAttribute="centerX" id="lfE-Ym-PKI"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="9bF-ps-mOb" secondAttribute="height" multiplier="1:1" id="mbg-6K-Nwe"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="bottom" secondItem="7gw-KV-U42" secondAttribute="bottom" id="n6m-bf-1g0"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="top" secondItem="7gw-KV-U42" secondAttribute="top" constant="40" id="p4x-eE-ZUp"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" constant="20" id="qQ5-jg-WHu"/>
+                            <constraint firstItem="gv8-FZ-Pfp" firstAttribute="width" secondItem="9bF-ps-mOb" secondAttribute="width" multiplier="0.930233" id="rmv-QL-thN"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="centerY" secondItem="xVo-BW-bCQ" secondAttribute="centerY" id="vNj-m7-laT"/>
                         </constraints>
                     </view>
@@ -441,6 +440,7 @@ Position Estimation</string>
                         <outlet property="lowerRightCorner" destination="Xqf-kQ-3Kr" id="Gvr-Ut-3n0"/>
                         <outlet property="recordButton" destination="gv8-FZ-Pfp" id="flZ-QG-nBl"/>
                         <outlet property="sceneView" destination="7gw-KV-U42" id="MbV-O3-y44"/>
+                        <outlet property="stackView" destination="TCC-mo-wG1" id="ns8-AM-qSC"/>
                         <outlet property="upperLeftCorner" destination="9bF-ps-mOb" id="PA2-KY-Lqs"/>
                         <outlet property="upperRightCorner" destination="hwd-Yi-01f" id="6jR-T4-NFX"/>
                         <outlet property="webView" destination="vCP-gz-2FE" id="Mgw-iE-lpc"/>
