@@ -51,19 +51,34 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var distanceLabel: UILabel!
     
     @IBOutlet weak var deviceButton: UIButton!
-    var webView: WKWebView!
-    // var isRecording = false
+    @IBOutlet var webView: WKWebView!
+    var isRecording: Bool = false
+    @IBOutlet weak var recordButton: UIImageView!
+    @State var url: URL?
+    
+    var startRecordingEye: (()->())? //contentview can accept optional parameter
+    var stopRecordingEye: (()->())?
     
     // initialize eye tracking data
     var eyeTrackingData: [EyeTrackingData] = []
-    // var firstTimestamp: TimeInterval?
-    //var delay: TimeInterval = 0
     var eyeTrackingStartTimestamp: TimeInterval = 0
     var screenRecordingStartTime: Date?
     var eyeTrackingStartTime: Date?
     
     //set device measures:
     var device: Device = .iPadPro11
+    
+    @IBOutlet var upperLeftCorner: UIView!
+    @IBOutlet var upperRightCorner: UIView!
+    @IBOutlet var lowerLeftCorner: UIView!
+    @IBOutlet var lowerRightCorner: UIView!
+    
+    @IBAction func buttonPressed(_ sender: UIButton) {
+        let dotViews = [upperLeftCorner, upperRightCorner, lowerRightCorner, lowerLeftCorner]
+        for dotView in dotViews {
+            dotView?.isHidden = false
+        }
+    }
     
     @IBAction func showDeviceList() {
         print("Button pressed!")
@@ -146,6 +161,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        /*
         // Create a parent container view
         let containerView = UIView(frame: view.bounds)
         
@@ -158,33 +174,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         // Add the device button to the container view
         containerView.addSubview(deviceButton)
+         */
+        startRecordingEye = {
+                    //start capturing data
+                    self.eyeTrackingData = []
+                    self.eyeTrackingStartTimestamp = CACurrentMediaTime()
+                    self.eyeTrackingStartTime = Date()  // Save the start time
+                    print("startRecordingEye at timestamp \(self.eyeTrackingStartTimestamp)")
+                    print("startRecordingEye at time", self.eyeTrackingStartTime!)
+                }
         
-        // Add the content view to the container view
-        var contentView = ContentView()
-        contentView.startRecordingEye = {
-            //start capturing data
-            self.eyeTrackingData = []
-            self.eyeTrackingStartTimestamp = CACurrentMediaTime()
-            self.eyeTrackingStartTime = Date()  // Save the start time
-            print("startRecordingEye at timestamp \(self.eyeTrackingStartTimestamp)")
-            print("startRecordingEye at time", self.eyeTrackingStartTime!)
-        }
+        stopRecordingEye = {
+                    self.saveEyeTrackingData()
+                    self.performEyeTrackingOverlay()
+                }
         
-        contentView.stopRecordingEye = {
-            self.saveEyeTrackingData()
-            self.performEyeTrackingOverlay()
-        }
+        //webview
+        webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         
-        let hostingController = UIHostingController(rootView: contentView)
-        addChild(hostingController)
-        containerView.addSubview(hostingController.view)
-        
-        // Set the frame for the hosting controller's view
-        let contentHeight: CGFloat = 50 // set the height of the content view
-        hostingController.view.frame = CGRect(x: 0, y: containerView.bounds.height - contentHeight, width: containerView.bounds.width, height: contentHeight)
+        // Add the recording button to the container view
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(startStopRecordButtonTapped(_:)))
+        recordButton.addGestureRecognizer(tapGesture)
+        recordButton.isUserInteractionEnabled = true
+        // containerView.addSubview(recordButton)
         
         // Add the container view to the view hierarchy
-        view.addSubview(containerView)
+        //view.addSubview(containerView)
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -192,7 +208,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.automaticallyUpdatesLighting = true
         
         sceneView.rendersContinuously = true //added
-        
         
         // Setup Scenegraph
         sceneView.scene.rootNode.addChildNode(faceNode)
@@ -207,8 +222,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
         
+        // Bring the web view to the front
+        view.bringSubviewToFront(webView)
+        // Bring the recording button to the front
+        view.bringSubviewToFront(recordButton)
+        
         // Bring the eye tracking cursor to the front
         view.bringSubviewToFront(eyePositionIndicatorView)
+        // Bring the device button to the front
+        view.bringSubviewToFront(deviceButton)
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
@@ -216,7 +238,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
     }
-    
     
     
     override func viewWillAppear(_ animated: Bool) {
