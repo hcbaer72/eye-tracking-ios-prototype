@@ -91,16 +91,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     
     @IBAction func showDeviceList() {
-        print("Button pressed!")
         let deviceList = DeviceList()
         deviceList.onDeviceSelected = { [weak self] device in
-            // Handle the selected device here
             print("Selected device: \(device)")
             self?.device = device
-            // Update your UI to reflect the selected device
             self?.sceneView.scene.rootNode.addChildNode(self?.virtualPhoneNode ?? SCNNode())
-            
         }
+
+        // Set presentation style to popover
+        deviceList.modalPresentationStyle = .popover
+
+        // Set popover properties
+        if let popoverPresentationController = deviceList.popoverPresentationController {
+            popoverPresentationController.sourceView = deviceButton // Set the source view for the popover
+            popoverPresentationController.sourceRect = deviceButton.bounds // Set the source rect for the popover
+            popoverPresentationController.permittedArrowDirections = .any // Set the arrow directions for the popover
+        }
+
         present(deviceList, animated: true, completion: nil)
     }
     
