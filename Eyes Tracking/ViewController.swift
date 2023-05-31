@@ -27,6 +27,7 @@ import AVFoundation
 //add relocalization?
 //add heat map?
 //capturedDepthDataTimestamp
+//add other post-processing
 
 //TIMESTAMPS:
 //CACurrentMedia = CFTimeInterval derived by calling mach_absolute_time() and converting the result to seconds.
@@ -90,6 +91,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         }
     
+
     @IBAction func showDeviceList() {
         let deviceList = DeviceList()
         deviceList.onDeviceSelected = { [weak self] device in
@@ -98,19 +100,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self?.sceneView.scene.rootNode.addChildNode(self?.virtualPhoneNode ?? SCNNode())
         }
 
-        // Set presentation style to popover
-        deviceList.modalPresentationStyle = .popover
+        let navigationController = UINavigationController(rootViewController: deviceList)
+        navigationController.modalPresentationStyle = .popover
 
-        // Set popover properties
-        if let popoverPresentationController = deviceList.popoverPresentationController {
-            popoverPresentationController.sourceView = deviceButton // Set the source view for the popover
-            popoverPresentationController.sourceRect = deviceButton.bounds // Set the source rect for the popover
-            popoverPresentationController.permittedArrowDirections = .any // Set the arrow directions for the popover
+        if let popoverPresentationController = navigationController.popoverPresentationController {
+            popoverPresentationController.sourceView = deviceButton
+            popoverPresentationController.sourceRect = deviceButton.bounds
+            popoverPresentationController.permittedArrowDirections = .any
+
+            // Set the popover size based on content size
+            deviceList.preferredContentSize = CGSize(width: 150, height: 200)
         }
 
-        present(deviceList, animated: true, completion: nil)
+        present(navigationController, animated: true, completion: nil)
     }
-    
     
     var faceNode: SCNNode = SCNNode()
     
@@ -204,6 +207,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         stopRecordingEye = {
                     self.saveEyeTrackingData()
                     self.performEyeTrackingOverlay()
+                    self.saveEyeTrackingFixations()
                 }
         
         //webview
@@ -254,6 +258,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
         
+        // Set the scalesPageToFit property of the web view's configuration
+        let script = """
+            var meta = document.createElement('meta');
+            meta.setAttribute('name', 'viewport');
+            meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            document.getElementsByTagName('head')[0].appendChild(meta);
+        """
+        webView.evaluateJavaScript(script, completionHandler: nil)
+        
+        // Set the content mode of the web view
+        webView.contentMode = .scaleAspectFit
+        
+        // Adjust the content insets to align the web content
+        webView.scrollView.contentInset = UIEdgeInsets(top: -8, left: -8, bottom: -8, right: -8)
+
+        // Inject custom CSS to align the web content
+        let css = """
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        """
+        let styleScript = "var style = document.createElement('style'); style.innerHTML = '\(css)'; document.head.appendChild(style);"
+        webView.evaluateJavaScript(styleScript, completionHandler: nil)
+        
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
     }
@@ -266,6 +295,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         guard ARFaceTrackingConfiguration.isSupported else { return }
         let configuration = ARFaceTrackingConfiguration()
         configuration.isLightEstimationEnabled = true
+        
         
         // Run the view's session
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
