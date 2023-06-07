@@ -57,6 +57,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var recordButton: UIImageView!
     @State var url: URL?
     
+    var fixations: [FixationData] = [] // Define the fixations property
+    
+    var videoURL: URL? // Define the videoURL property
+    
     var startRecordingEye: (()->())? //contentview can accept optional parameter
     var stopRecordingEye: (()->())?
     
@@ -205,10 +209,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
         
         stopRecordingEye = {
-                    self.saveEyeTrackingData()
-                    self.performEyeTrackingOverlay()
-                    self.saveEyeTrackingFixations()
-                }
+            self.saveEyeTrackingData()
+            self.performEyeTrackingOverlay()
+            self.saveEyeTrackingFixations()
+            // Call processFixationsWithImageAnalysis without explicitly passing fixations
+             self.processFixationsWithImageAnalysis()
+        }
         
         //webview
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"

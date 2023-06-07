@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2756968E2A228D0B00BA4270 /* ScreenRecording.swift */; };
 		276270972A141AB50032CD18 /* LoadVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276270962A141AB50032CD18 /* LoadVideo.swift */; };
+		276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */; };
 		27BE26F529F4645400A0D053 /* recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F429F4645400A0D053 /* recording.swift */; };
 		27BE26F729F465AD00A0D053 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BE26F629F465AD00A0D053 /* ContentView.swift */; };
 		27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C8BF1229E0C234000E8D9E /* DeviceList.swift */; };
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		2756968E2A228D0B00BA4270 /* ScreenRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecording.swift; sourceTree = "<group>"; };
 		276270962A141AB50032CD18 /* LoadVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadVideo.swift; sourceTree = "<group>"; };
+		276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingAnalysis.swift; sourceTree = "<group>"; };
 		27BE26F429F4645400A0D053 /* recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = recording.swift; sourceTree = "<group>"; };
 		27BE26F629F465AD00A0D053 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		27C8BF1229E0C234000E8D9E /* DeviceList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceList.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				D0D25B8820C80F5500A25627 /* Extensions.swift */,
 				27D24A1A2A27936800FEA637 /* EyeTrackingDataAnalysis.swift */,
 				276270962A141AB50032CD18 /* LoadVideo.swift */,
+				276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */,
 				9CD4803E29B4477000D22746 /* Device.swift */,
 				27CCA0542A053F23003BAA9B /* EyeTrackingDataManager.swift */,
 				27C8BF1229E0C234000E8D9E /* DeviceList.swift */,
@@ -173,6 +176,7 @@
 				27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
 				27CCA0552A053F23003BAA9B /* EyeTrackingDataManager.swift in Sources */,
+				276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */,
 				276270972A141AB50032CD18 /* LoadVideo.swift in Sources */,
 				2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */,
 				9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */,
