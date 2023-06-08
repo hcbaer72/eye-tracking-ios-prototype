@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 import Vision
 
-
+/*
 extension ViewController {
     
   //  convenience init(videoURL: URL, eyeTrackingData: [EyeTrackingData], device: Device, assetReaderOutputs: [AVAssetReaderOutput]) {
@@ -441,3 +441,4 @@ extension ViewController {
     }
     
 }
+*/

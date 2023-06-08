@@ -228,7 +228,7 @@ Position Estimation</string>
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <wkWebView clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vCP-gz-2FE">
+                            <wkWebView contentMode="scaleAspectFit" layoutMarginsFollowReadableWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vCP-gz-2FE">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <wkWebViewConfiguration key="configuration">
@@ -236,7 +236,7 @@ Position Estimation</string>
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-KV-U42">
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-KV-U42">
                                 <rect key="frame" x="0.0" y="24" width="1024" height="1322"/>
                                 <gestureRecognizers/>
                             </arscnView>
@@ -408,6 +408,7 @@ Position Estimation</string>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" constant="40" id="1me-Ik-wRM"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="trailing" secondItem="xVo-BW-bCQ" secondAttribute="trailing" id="3qr-cs-R1m"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="4VC-J5-Os5"/>
+                            <constraint firstItem="vCP-gz-2FE" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="8l8-61-cTu"/>
                             <constraint firstAttribute="bottom" secondItem="vCP-gz-2FE" secondAttribute="bottom" id="BlL-PN-PEi"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="CsP-0N-8ID"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="top" secondItem="upD-46-TsP" secondAttribute="top" id="Ek8-Hy-4n2"/>
@@ -418,6 +419,7 @@ Position Estimation</string>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="leading" secondItem="7gw-KV-U42" secondAttribute="leading" constant="40" id="KU2-Uj-RTb"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="upD-46-TsP" secondAttribute="centerX" id="Kch-4b-Mbj"/>
                             <constraint firstItem="Xqf-kQ-3Kr" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="LVz-Mw-soY"/>
+                            <constraint firstItem="7gw-KV-U42" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="NLd-1I-yRm"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="hwd-Yi-01f" secondAttribute="trailing" constant="40" id="Ofl-Pc-H2n"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="upD-46-TsP" secondAttribute="centerX" id="PoH-w2-cDO"/>
                             <constraint firstItem="mk8-Sa-145" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="T7C-yN-JYN"/>

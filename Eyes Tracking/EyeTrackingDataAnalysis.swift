@@ -7,21 +7,25 @@
 //
 
 import Foundation
+import QuartzCore
 
 struct FixationData {
     let center: CGPoint
     let duration: TimeInterval
     let startTime: TimeInterval // Timestamp when the fixation starts
-    var recognizedObjects: [RecognizedObject] = [] // Array to store the recognized objects associated with the fixation
+   // var recognizedObjects: [RecognizedObject] = [] // Array to store the recognized objects associated with the fixation
 }
 
+/*
 struct RecognizedObject {
     let label: String
     let confidence: VNConfidence
     var boundingBox: CGRect // Added property for the bounding box
 }
 
-typealias VNConfidence = Float
+//typealias VNConfidence = Float
+
+*/
 
 
 extension ViewController {
@@ -36,7 +40,7 @@ extension ViewController {
         let sortedData = eyeTrackingData.sorted { $0.timestamp < $1.timestamp }
         
         // Define fixation analysis parameters
-        let fixationDurationThreshold: TimeInterval = 0.5 // Minimum duration for a fixation (in seconds)
+        let fixationDurationThreshold: TimeInterval = 2 // Minimum duration for a fixation (in seconds)
         let maxFixationDistance: CGFloat = 50.0 // Maximum distance between consecutive eye positions for a fixation (in points)
         
         // Perform fixation analysis
@@ -64,21 +68,36 @@ extension ViewController {
             previousPosition = currentPosition
         }
         
+        // Perform revisits analysis
+        let revisits = calculateRevisits(fixations: fixations)
+        
         // Write fixation analysis to a new file
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
         let filename = "FixationAnalysis-\(dateFormatter.string(from: Date())).txt"
         let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
         
-        var analysisString = "Fixation Duration Analysis:\n\n"
-
+        var analysisString = "Fixation Duration and Revisit Analysis:\n\n"
+        
         for (index, fixation) in fixations.enumerated() {
             analysisString += "Fixation \(index + 1):\n"
-            analysisString += "Start Time: \(fixation.startTime)\n" // Include start time
+            analysisString += "Start Time: \(fixation.startTime)\n"
             analysisString += "Duration: \(fixation.duration) seconds\n"
-            analysisString += "Center: (\(fixation.center.x), \(fixation.center.y))\n\n"
+            analysisString += "Center: (\(fixation.center.x), \(fixation.center.y))\n"
+            
+            if let revisitCount = revisits[fixation.center] {
+                analysisString += "Revisits: \(revisitCount)\n"
+            }
+            
+            analysisString += "\n"
         }
-
+        
+        // Calculate average fixation duration
+        let totalFixationDuration = fixations.reduce(0.0) { $0 + $1.duration }
+        let averageFixationDuration = totalFixationDuration / Double(fixations.count)
+        
+        analysisString += "\nAverage Fixation Duration: \(averageFixationDuration) seconds\n"
+        
         do {
             try analysisString.write(to: fileURL, atomically: true, encoding: .utf8)
             print("Fixation analysis saved to file: \(filename)")
@@ -98,6 +117,31 @@ extension ViewController {
         
         let count = CGFloat(endIndex - startIndex + 1)
         return CGPoint(x: totalX / count, y: totalY / count)
+    }
+    
+    private func calculateRevisits(fixations: [FixationData]) -> [CGPoint: Int] {
+        var revisits: [CGPoint: Int] = [:]
+        
+        for fixation in fixations {
+            if let revisitCount = revisits[fixation.center] {
+                revisits[fixation.center] = revisitCount + 1
+            } else {
+                revisits[fixation.center] = 1
+            }
+        }
+        
+        return revisits
+    }
+}
+
+extension CGPoint: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(x)
+        hasher.combine(y)
+    }
+    
+    public static func == (lhs: CGPoint, rhs: CGPoint) -> Bool {
+        return lhs.x == rhs.x && lhs.y == rhs.y
     }
 }
 

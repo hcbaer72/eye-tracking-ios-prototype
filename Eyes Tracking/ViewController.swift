@@ -185,20 +185,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        /*
-        // Create a parent container view
-        let containerView = UIView(frame: view.bounds)
-        
-        // Load the web view
-        webView = WKWebView(frame: containerView.bounds)
-        webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        containerView.addSubview(webView)
-        
-        // Add the device button to the container view
-        containerView.addSubview(deviceButton)
-         */
         startRecordingEye = {
                     //start capturing data
                     self.eyeTrackingData = []
@@ -213,12 +199,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.performEyeTrackingOverlay()
             self.saveEyeTrackingFixations()
             // Call processFixationsWithImageAnalysis without explicitly passing fixations
-             self.processFixationsWithImageAnalysis()
+           //  self.processFixationsWithImageAnalysis()
         }
+        
+        //webview
+        
+     //   webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+       // webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         
         //webview
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+        
+        // Set the scalesPageToFit property of the web view
+        webView.contentMode = .scaleAspectFit
+        webView.scrollView.bounces = false
         
         // Add the recording button to the container view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(startStopRecordButtonTapped(_:)))
@@ -264,30 +259,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
         
-        // Set the scalesPageToFit property of the web view's configuration
-        let script = """
-            var meta = document.createElement('meta');
-            meta.setAttribute('name', 'viewport');
-            meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-            document.getElementsByTagName('head')[0].appendChild(meta);
-        """
-        webView.evaluateJavaScript(script, completionHandler: nil)
         
-        // Set the content mode of the web view
-        webView.contentMode = .scaleAspectFit
-        
-        // Adjust the content insets to align the web content
-        webView.scrollView.contentInset = UIEdgeInsets(top: -8, left: -8, bottom: -8, right: -8)
+        let cssCode = """
+            // CSS code to adjust the YouTube Kids container
+            // ...
 
-        // Inject custom CSS to align the web content
-        let css = """
-            body {
-                margin: 0;
-                padding: 0;
-            }
+            // Example: Adjusting width of .youtube-kids-container
+            var css = '.youtube-kids-container { width: 100%; }';
+            var style = document.createElement('style');
+            style.appendChild(document.createTextNode(css));
+            document.head.appendChild(style);
         """
-        let styleScript = "var style = document.createElement('style'); style.innerHTML = '\(css)'; document.head.appendChild(style);"
-        webView.evaluateJavaScript(styleScript, completionHandler: nil)
+
+        webView.evaluateJavaScript(cssCode, completionHandler: nil)
+
+         
         
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
