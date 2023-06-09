@@ -27,6 +27,7 @@ struct RecognizedObject {
 
 */
 
+private let maxRevisitDistance: CGFloat = 50.0 // Maximum distance for revisits (adjust as needed)
 
 extension ViewController {
     func saveEyeTrackingFixations() {
@@ -42,6 +43,7 @@ extension ViewController {
         // Define fixation analysis parameters
         let fixationDurationThreshold: TimeInterval = 2 // Minimum duration for a fixation (in seconds)
         let maxFixationDistance: CGFloat = 50.0 // Maximum distance between consecutive eye positions for a fixation (in points)
+        let maxRevisitDistance: CGFloat = 100.0 // Maximum distance for revisits (in points)
         
         // Perform fixation analysis
         var fixations: [FixationData] = []
@@ -69,7 +71,7 @@ extension ViewController {
         }
         
         // Perform revisits analysis
-        let revisits = calculateRevisits(fixations: fixations)
+        let revisits = calculateRevisits(fixations: fixations, maxRevisitDistance: maxRevisitDistance)
         
         // Write fixation analysis to a new file
         let dateFormatter = DateFormatter()
@@ -119,15 +121,22 @@ extension ViewController {
         return CGPoint(x: totalX / count, y: totalY / count)
     }
     
-    private func calculateRevisits(fixations: [FixationData]) -> [CGPoint: Int] {
+    private func calculateRevisits(fixations: [FixationData], maxRevisitDistance: CGFloat) -> [CGPoint: Int] {
         var revisits: [CGPoint: Int] = [:]
         
-        for fixation in fixations {
-            if let revisitCount = revisits[fixation.center] {
-                revisits[fixation.center] = revisitCount + 1
-            } else {
-                revisits[fixation.center] = 1
+        for (index, fixation) in fixations.enumerated() {
+            var revisitCount = 0
+            
+            for i in 0..<index {
+                let otherFixation = fixations[i]
+                let distance = CGPoint.distance(from: fixation.center, to: otherFixation.center)
+                
+                if distance <= maxRevisitDistance {
+                    revisitCount += 1
+                }
             }
+            
+            revisits[fixation.center] = revisitCount
         }
         
         return revisits

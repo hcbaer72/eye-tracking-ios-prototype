@@ -28,19 +28,26 @@ import AVFoundation
 //add heat map?
 //capturedDepthDataTimestamp
 //add other post-processing
+//add device to data text file?
+//add low pass filter?
+//add session ID? (put all saved files from a session into one folder)
+//add orientation to the ET data
 
 //TIMESTAMPS:
 //CACurrentMedia = CFTimeInterval derived by calling mach_absolute_time() and converting the result to seconds.
 
+//add eyelid detection and pupil image detection for calibration w bears?
+//add orientation to eye track data?
 
 
 struct EyeTrackingData: Codable {
     let position: CGPoint
     var timestamp: TimeInterval
+    var eyelidValue: Float
 }
 
 
-class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WKNavigationDelegate {
     
     //@IBOutlet weak var webView: WKWebView!
     @IBOutlet var sceneView: ARSCNView!
@@ -53,6 +60,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @IBOutlet weak var deviceButton: UIButton!
     @IBOutlet var webView: WKWebView!
+    
     var isRecording: Bool = false
     @IBOutlet weak var recordButton: UIImageView!
     @State var url: URL?
@@ -178,12 +186,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }
-    
-    // let contentView = UIHostingController(rootView: ContentView())
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Set the navigation delegate
+        webView.navigationDelegate = self
         
         startRecordingEye = {
                     //start capturing data
@@ -259,22 +267,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
         
-        
-        let cssCode = """
-            // CSS code to adjust the YouTube Kids container
-            // ...
+       
 
-            // Example: Adjusting width of .youtube-kids-container
-            var css = '.youtube-kids-container { width: 100%; }';
-            var style = document.createElement('style');
-            style.appendChild(document.createTextNode(css));
-            document.head.appendChild(style);
-        """
-
-        webView.evaluateJavaScript(cssCode, completionHandler: nil)
-
-         
-        
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
     }
@@ -288,6 +282,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARFaceTrackingConfiguration()
         configuration.isLightEstimationEnabled = true
         
+        webView.scrollView.contentSize = view.frame.size
+
         
         // Run the view's session
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
@@ -351,6 +347,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Inside the update method
         let leftPupilSize = anchor.blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
         let rightPupilSize = anchor.blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
+        let averageEyelidValue = (leftPupilSize + rightPupilSize) / 2.0
+        
+        //print(leftPupilSize)
         
         var eyeLLookAt = CGPoint()
         var eyeRLookAt = CGPoint()
@@ -406,20 +405,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
                 
                 let absoluteTimestamp = CACurrentMediaTime() - self.eyeTrackingStartTimestamp
-                let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: absoluteTimestamp)
+                let newEntry = EyeTrackingData(position: CGPoint(x: smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2, y: smoothEyeLookAtPositionY + self.device.phoneScreenPointSize.height / 2), timestamp: absoluteTimestamp, eyelidValue: averageEyelidValue)
                 self.eyeTrackingData.append(newEntry)
             }
             
         }
 
-    
-        
-        
         func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
             virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
             
         }
-        
         
         func getDocumentsDirectory() -> URL {
             let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -503,3 +498,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //Create a custom UIView subclass that draws the eye tracking data on top of the WKWebView. You can use Core Graphics to draw lines, circles, or any other shapes you want to show the eye movements.
 //Use AVFoundation to create a video composition that combines the screen recording with the eye tracking data overlay. You can use the AVMutableVideoComposition class to create a composition, and AVMutableVideoCompositionLayerInstruction to add the overlay on top of the screen recording.
 //Export the composition to a video file using AVAssetExportSession.
+
+
+extension ViewController{
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        let cssCode = """
+            var targetElement = document.querySelector('body');
+            if (targetElement) {
+                targetElement.style.width = '600px';
+                targetElement.style.backgroundColor = '#00ffff';
+                targetElement.style.overflow = 'hidden';
+                
+                true;
+            } else {
+                false;
+            }
+        """
+
+        webView.evaluateJavaScript(cssCode) { value, error in
+            if let error{
+                print(error.localizedDescription)
+            }
+            if let value{
+                print(value)
+            }
+        }
+    }
+
+}
