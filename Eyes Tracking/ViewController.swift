@@ -46,6 +46,21 @@ struct EyeTrackingData: Codable {
     var eyelidValue: Float
 }
 
+public struct FixationData {
+    let center: CGPoint
+    let duration: TimeInterval
+    let startTime: TimeInterval // Timestamp when the fixation starts
+    var recognizedObjects: [RecognizedObject] = [] // Array to store the recognized objects associated with the fixation
+}
+
+struct RecognizedObject {
+    let label: String
+    let confidence: VNConfidence
+    var boundingBox: CGRect // Added property for the bounding box
+}
+
+//typealias VNConfidence = Float
+
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WKNavigationDelegate {
     
@@ -192,10 +207,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         super.viewDidLoad()
         
         // Set the navigation delegate
-        webView.navigationDelegate = self
+        //webView.navigationDelegate = self
 
-        //webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+       // webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+       // webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+       // loadYouTubeKids()
        // webView.scrollView.zoomScale = 0.5 // Zoom out by 50%
         webView.scrollView.bounces = false
         
@@ -218,9 +234,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
         //webview
         
-        webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Mobile/15E148 Safari/604.1"
-
-
+        webView.customUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
         /*
         //webview
@@ -237,9 +251,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         recordButton.addGestureRecognizer(tapGesture)
         recordButton.isUserInteractionEnabled = true
         // containerView.addSubview(recordButton)
-        
-        // Add the container view to the view hierarchy
-        //view.addSubview(containerView)
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -288,8 +299,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         guard ARFaceTrackingConfiguration.isSupported else { return }
         let configuration = ARFaceTrackingConfiguration()
         configuration.isLightEstimationEnabled = true
-        
-
         
         // Run the view's session
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
@@ -509,11 +518,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
 extension ViewController {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let webViewContentWidth: CGFloat = webView.scrollView.contentSize.width
-        let viewWidth: CGFloat = view.bounds.width
+        let viewWidth: CGFloat = view.frame.width
+        var scale: CGFloat = 0.8
+        print(webViewContentWidth)
+        print(viewWidth)
                
-        let scale: CGFloat = 0.8
-               
-       // scale = viewWidth / webViewContentWidth
+        scale = viewWidth / webViewContentWidth
         
         let script = """
         var style = document.createElement('style');

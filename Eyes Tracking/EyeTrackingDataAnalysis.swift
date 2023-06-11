@@ -9,23 +9,7 @@
 import Foundation
 import QuartzCore
 
-struct FixationData {
-    let center: CGPoint
-    let duration: TimeInterval
-    let startTime: TimeInterval // Timestamp when the fixation starts
-   // var recognizedObjects: [RecognizedObject] = [] // Array to store the recognized objects associated with the fixation
-}
 
-/*
-struct RecognizedObject {
-    let label: String
-    let confidence: VNConfidence
-    var boundingBox: CGRect // Added property for the bounding box
-}
-
-//typealias VNConfidence = Float
-
-*/
 
 private let maxRevisitDistance: CGFloat = 50.0 // Maximum distance for revisits (adjust as needed)
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #youtube-kids-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        #youtube-kids-iframe {
+            transform-origin: top left;
+            transform: scale(%f);
+        }
+    </style>
+</head>
+<body>
+    <div id="youtube-kids-container">
+        <iframe id="youtube-kids-iframe" src="https://www.youtubekids.com"></iframe>
+    </div>
+    <script>
+        function adjustScale() {
+            var iframe = document.getElementById('youtube-kids-iframe');
+            var container = document.getElementById('youtube-kids-container');
+            var containerWidth = container.offsetWidth;
+            var desiredScale = containerWidth / iframe.offsetWidth;
+            
+            if (desiredScale > 1) {
+                // Limit the scale to 1 to prevent the iframe from exceeding the container width
+                desiredScale = 1;
+            }
+            
+            iframe.style.transform = 'scale(' + desiredScale + ')';
+        }
+        
+        adjustScale();
+        window.addEventListener('resize', adjustScale);
+    </script>
+</body>
+</html>
+
+
+
+
