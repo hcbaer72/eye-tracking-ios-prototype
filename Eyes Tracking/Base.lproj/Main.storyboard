@@ -233,7 +233,7 @@ Position Estimation</string>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
-                                    <wkPreferences key="preferences"/>
+                                    <wkPreferences key="preferences" javaScriptCanOpenWindowsAutomatically="YES"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="7gw-KV-U42">
@@ -453,7 +453,7 @@ Position Estimation</string>
                         <outlet property="stackView" destination="TCC-mo-wG1" id="ns8-AM-qSC"/>
                         <outlet property="upperLeftCorner" destination="9bF-ps-mOb" id="PA2-KY-Lqs"/>
                         <outlet property="upperRightCorner" destination="hwd-Yi-01f" id="6jR-T4-NFX"/>
-                        <outlet property="webView" destination="vCP-gz-2FE" id="Mgw-iE-lpc"/>
+                        <outlet property="webView" destination="vCP-gz-2FE" id="blW-FK-Al8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hg5-eT-zdo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

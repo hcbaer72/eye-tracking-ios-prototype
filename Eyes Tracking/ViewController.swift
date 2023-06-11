@@ -60,6 +60,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     
     @IBOutlet weak var deviceButton: UIButton!
     @IBOutlet var webView: WKWebView!
+    //var webView: WKWebView!
     
     var isRecording: Bool = false
     @IBOutlet weak var recordButton: UIImageView!
@@ -192,6 +193,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
         // Set the navigation delegate
         webView.navigationDelegate = self
+
+        //webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+       // webView.scrollView.zoomScale = 0.5 // Zoom out by 50%
+        webView.scrollView.bounces = false
         
         startRecordingEye = {
                     //start capturing data
@@ -212,9 +218,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
         //webview
         
-     //   webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-       // webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        
+        webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Mobile/15E148 Safari/604.1"
+
+
+        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
+        /*
         //webview
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
@@ -222,6 +230,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         // Set the scalesPageToFit property of the web view
         webView.contentMode = .scaleAspectFit
         webView.scrollView.bounces = false
+        */
         
         // Add the recording button to the container view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(startStopRecordButtonTapped(_:)))
@@ -266,8 +275,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
-        
-       
 
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
@@ -282,7 +289,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         let configuration = ARFaceTrackingConfiguration()
         configuration.isLightEstimationEnabled = true
         
-        webView.scrollView.contentSize = view.frame.size
 
         
         // Run the view's session
@@ -499,30 +505,70 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
 //Use AVFoundation to create a video composition that combines the screen recording with the eye tracking data overlay. You can use the AVMutableVideoComposition class to create a composition, and AVMutableVideoCompositionLayerInstruction to add the overlay on top of the screen recording.
 //Export the composition to a video file using AVAssetExportSession.
 
-
-extension ViewController{
+/*
+extension ViewController {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let cssCode = """
-            var targetElement = document.querySelector('body');
-            if (targetElement) {
-                targetElement.style.width = '600px';
-                targetElement.style.backgroundColor = '#00ffff';
-                targetElement.style.overflow = 'hidden';
-                
-                true;
-            } else {
-                false;
-            }
+        let webViewContentWidth: CGFloat = webView.scrollView.contentSize.width
+        let viewWidth: CGFloat = view.bounds.width
+               
+        let scale: CGFloat = 0.8
+               
+       // scale = viewWidth / webViewContentWidth
+        
+        let script = """
+        var style = document.createElement('style');
+        style.innerHTML = 'body { min-width: 0px; max-width: 100%; transform: scale(\(scale)); transform-origin: 0 0; position: absolute; left: 0; }';
+        document.head.appendChild(style);
         """
-
-        webView.evaluateJavaScript(cssCode) { value, error in
-            if let error{
-                print(error.localizedDescription)
-            }
-            if let value{
-                print(value)
+        
+        webView.evaluateJavaScript(script) { result, error in
+            if let error = error {
+                print("JavaScript execution error:", error.localizedDescription)
+            } else {
+                print("JavaScript execution successful")
             }
         }
     }
-
 }
+ */
+/*
+extension ViewController {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        let script = """
+            function getMinWidth() {
+                var bodyStyle = window.getComputedStyle(document.body);
+                var bodyMinWidth = bodyStyle.getPropertyValue('min-width');
+                
+                // Try getting the scrollWidth of the document
+                var documentScrollWidth = document.documentElement.scrollWidth;
+                
+                return {bodyMinWidth: bodyMinWidth, documentScrollWidth: documentScrollWidth};
+            }
+        
+            getMinWidth();
+        """
+        
+        webView.evaluateJavaScript(script) { result, error in
+            if let error = error {
+                print("JavaScript execution error:", error.localizedDescription)
+            } else if let dictionary = result as? [String: Any] {
+                print("Body min-width:", dictionary["bodyMinWidth"] ?? "unknown")
+                print("Document scrollWidth:", dictionary["documentScrollWidth"] ?? "unknown")
+            }
+        }
+    }
+}
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
