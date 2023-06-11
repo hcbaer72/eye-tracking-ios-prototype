@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		273215A42A36439A00971669 /* YOLOv3Tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */; };
+		273215A62A36693500971669 /* PupilDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273215A52A36693500971669 /* PupilDetection.swift */; };
 		2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2756968E2A228D0B00BA4270 /* ScreenRecording.swift */; };
 		276270972A141AB50032CD18 /* LoadVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276270962A141AB50032CD18 /* LoadVideo.swift */; };
 		276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */; };
@@ -26,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3Tiny.mlmodel; path = ../../../Downloads/YOLOv3Tiny.mlmodel; sourceTree = "<group>"; };
+		273215A52A36693500971669 /* PupilDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PupilDetection.swift; sourceTree = "<group>"; };
 		2756968E2A228D0B00BA4270 /* ScreenRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecording.swift; sourceTree = "<group>"; };
 		276270962A141AB50032CD18 /* LoadVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadVideo.swift; sourceTree = "<group>"; };
 		276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingAnalysis.swift; sourceTree = "<group>"; };
@@ -76,9 +80,11 @@
 		D0E5847820C806050052967A /* Eyes Tracking */ = {
 			isa = PBXGroup;
 			children = (
+				273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */,
 				D0E5847920C806050052967A /* AppDelegate.swift */,
 				27BE26F629F465AD00A0D053 /* ContentView.swift */,
 				2756968E2A228D0B00BA4270 /* ScreenRecording.swift */,
+				273215A52A36693500971669 /* PupilDetection.swift */,
 				27BE26F429F4645400A0D053 /* recording.swift */,
 				D0E5847D20C806050052967A /* ViewController.swift */,
 				D0D25B8820C80F5500A25627 /* Extensions.swift */,
@@ -178,6 +184,8 @@
 				27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
 				27CCA0552A053F23003BAA9B /* EyeTrackingDataManager.swift in Sources */,
+				273215A62A36693500971669 /* PupilDetection.swift in Sources */,
+				273215A42A36439A00971669 /* YOLOv3Tiny.mlmodel in Sources */,
 				276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */,
 				276270972A141AB50032CD18 /* LoadVideo.swift in Sources */,
 				2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */,

@@ -50,13 +50,6 @@ public struct FixationData {
     let center: CGPoint
     let duration: TimeInterval
     let startTime: TimeInterval // Timestamp when the fixation starts
-    var recognizedObjects: [RecognizedObject] = [] // Array to store the recognized objects associated with the fixation
-}
-
-struct RecognizedObject {
-    let label: String
-    let confidence: VNConfidence
-    var boundingBox: CGRect // Added property for the bounding box
 }
 
 //typealias VNConfidence = Float
@@ -228,8 +221,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             self.saveEyeTrackingData()
             self.performEyeTrackingOverlay()
             self.saveEyeTrackingFixations()
-            // Call processFixationsWithImageAnalysis without explicitly passing fixations
-           //  self.processFixationsWithImageAnalysis()
+            self.performEyeTrackingDataAnalysis()
+                // Perform additional actions after processing is complete
+            
         }
         
         //webview
@@ -492,8 +486,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                 }
             }
         }
+    func performEyeTrackingDataAnalysis() {
+        // Generate the screen recording video URL
+        let videoURL = self.generateScreenRecordingURL()
         
-        
+        let objectManager = ObjectManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData)
+        Task{
+            await objectManager.processEyeTrackingDataWithImageAnalysis { result in
+                switch result {
+                case .success(let outputURL):
+                    // Handle the successful completion
+                    print("Video analysis completed. Output URL: \(outputURL)")
+                case .failure(let error):
+                    // Handle the failure
+                    print("Video analysis failed with error: \(error)")
+                }
+            }
+        }
+    }
+   
+      
         //load eye tracking data
         func loadEyeTrackingData(from fileURL: URL) -> [[CGPoint]]? {
             do {

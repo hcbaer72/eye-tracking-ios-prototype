@@ -12,298 +12,206 @@ import Vision
 import CoreML
 import UIKit
 
-
-
-
-extension ViewController {
+public struct RecognizedObject {
+    let label: String
+    let confidence: VNConfidence
+    let boundingBox: CGRect
     
-    //  convenience init(videoURL: URL, eyeTrackingData: [EyeTrackingData], device: Device, assetReaderOutputs: [AVAssetReaderOutput]) {
-    //      self.init(videoURL: videoURL, eyeTrackingData: eyeTrackingData, device: device, assetReaderOutputs: assetReaderOutputs)
-    // Other initialization code
-    //  }
+    init(label: String, confidence: VNConfidence, boundingBox: CGRect) {
+        self.label = label
+        self.confidence = confidence
+        self.boundingBox = boundingBox
+    }
+}
+
+class ObjectManager {
+    let videoURL: URL
+    let eyeTrackingData: [EyeTrackingData]
     
+    init(videoURL: URL, eyeTrackingData: [EyeTrackingData]) {
+        self.videoURL = videoURL
+        self.eyeTrackingData = eyeTrackingData
+    }
     
-    func processEyeTrackingDataWithImageAnalysis(completion: @escaping () -> Void) async {
-        // Ensure that the eye tracking data is available
-        guard !eyeTrackingData.isEmpty else {
-            print("Eye tracking data is empty.")
-            completion()
-            return
-        }
-        
-        // Load the screen recording video
-        guard let videoURL = self.videoURL else {
-            print("VideoURL is nil. Make sure it is set before calling processEyeTrackingDataWithImageAnalysis.")
-            completion()
-            return
-        }
-        
-        let asset = AVAsset(url: videoURL)
-        
+    func processEyeTrackingDataWithImageAnalysis(completion: @escaping (Result<URL, Error>) -> Void) async {
         do {
-            // Get the video track from the asset
-            guard let videoTrack = try await getVideoTrack(from: asset) else {
-                print("Failed to retrieve the video track from the asset.")
-                completion()
+            // Check if eye tracking data is available
+            guard !eyeTrackingData.isEmpty else {
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No eye tracking data available"])))
                 return
             }
             
-            do {
-                let assetReader = try AVAssetReader(asset: asset)
-                
-                // Add video output to the asset reader
-                let videoOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: nil)
-                assetReader.add(videoOutput)
-                
-                // Start the asset reader
-                assetReader.startReading()
-                
-                // Process each eye tracking data point
-                for eyeTrackingPoint in eyeTrackingData {
-                    do {
-                        let videoFrameIndex = try await mapEyeTrackingPointToVideoFrame(eyeTrackingPoint: eyeTrackingPoint, videoTrack: videoTrack)
-                        
-                        // Load the frame from the video
-                        guard let frame = loadFrame(at: videoFrameIndex, using: assetReader.outputs, assetReader: assetReader) else {
-                            continue
-                        }
-                        
-                        // Perform image analysis using Vision
-                        do {
-                            let recognizedObjects = try await performImageAnalysis(on: frame, eyeTrackingPoint: eyeTrackingPoint)
-                            
-                            // Perform further analysis or associate the recognized objects with the eye tracking data
-                            // ...
-                            
-                            // Example: Print the recognized objects
-                            for object in recognizedObjects {
-                                print("Recognized Object Label: \(object.label)")
-                                print("Confidence: \(object.confidence)")
-                                print("Bounding Box: \(object.boundingBox)")
-                                print("---")
-                            }
-                            
-                        } catch {
-                            print("Error performing image analysis for eye tracking data point: \(error)")
-                        }
-                    } catch {
-                        print("Error mapping eye tracking point to video frame: \(error)")
-                    }
-                }
-                
-                // Finish reading the asset
-                assetReader.cancelReading()
-                
-                completion()
-            } catch {
-                print("Error creating or reading the asset: \(error)")
-                completion()
+            // Load the video
+            let videoAsset = AVAsset(url: videoURL)
+            
+            // Get the video track
+            guard let videoTrack = try await getVideoTrack(from: videoAsset) else {
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Video track not found"])))
+                return
             }
             
-            func performImageAnalysis(on frame: CVPixelBuffer, eyeTrackingPoint: EyeTrackingData) async throws -> [RecognizedObject] {
-                var recognizedObjects: [RecognizedObject] = []
-                
-                // Perform feature extraction using Vision
-                let saliencyImage = await performFeatureExtraction(on: frame)
-                
-                // Perform object recognition using Vision
-                recognizedObjects = try await performObjectRecognition(on: frame)
-                
-                // Perform further analysis or associate the recognized objects with the eye tracking data
-                // ...
-                
-                return recognizedObjects
-            }
-            func performFeatureExtraction(on frame: CVPixelBuffer) async -> CGImage? {
-                  let request = VNGenerateAttentionBasedSaliencyImageRequest { request, error in
-                      guard error == nil else {
-                          print("Error performing feature extraction request: \(error!)")
-                          return
-                      }
-                      
-                      guard let result = request.results?.first as? VNPixelBufferObservation else {
-                          return
-                      }
-                      
-                      let saliencyImage = result.pixelBuffer.toImage()
-                      
-                      // Process the feature extraction results
-                      // ...
-                  }
-                  
-                  let requestHandler = VNImageRequestHandler(cvPixelBuffer: frame, options: [:])
-                  
-                  do {
-                      try await requestHandler.perform([request])
-                      return saliencyImage
-                  } catch {
-                      print("Error performing feature extraction request: \(error)")
-                      return nil
-                  }
-              }
-              
+            // Generate output URL for the recognized objects file
+            let outputURL = generateOutputURL()
             
-            func mapEyeTrackingPointToVideoFrame(eyeTrackingPoint: EyeTrackingData, videoTrack: AVAssetTrack) async throws -> Int {
-                let eyeTrackingTimestamp = eyeTrackingPoint.timestamp
-                let frameRate = try await getFrameRate(from: videoTrack)
+            // Processed objects will be stored in this array
+            var processedObjects: [RecognizedObject] = []
+            
+            for eyeTrackingPoint in eyeTrackingData {
+                let videoFrameIndex = try await mapEyeTrackingPointToVideoFrame(eyeTrackingPoint: eyeTrackingPoint, videoTrack: videoTrack)
                 
-                let frameRateInSeconds = TimeInterval(frameRate)
-                let videoFrameIndex = Int(eyeTrackingTimestamp * frameRateInSeconds)
-                return videoFrameIndex
+                guard let frame = try await loadFrame(at: videoFrameIndex, using: videoAsset) else {
+                    continue
+                }
+                
+                let recognizedObjects = await performObjectDetectionSync(on: frame, eyeTrackingData: eyeTrackingPoint, fileURL: outputURL)
+                processedObjects.append(contentsOf: recognizedObjects)
             }
             
-            
-            // Function to write the identified objects and features along with fixation analysis to a text file
-            func writeIdentifiedObjectsWithFixationAnalysis(objects: [RecognizedObject], fixations: [FixationData]) {
-                // Generate the fixation analysis string
-                var analysisString = "Fixation Duration Analysis:\n\n"
-                
-                for (index, fixation) in fixations.enumerated() {
-                    analysisString += "Fixation \(index + 1):\n"
-                    analysisString += "Start Time: \(fixation.startTime)\n"
-                    analysisString += "Duration: \(fixation.duration) seconds\n"
-                    analysisString += "Center: (\(fixation.center.x), \(fixation.center.y))\n\n"
-                }
-                
-                // Convert the fixations and recognized objects data to string format
-                var fileContent = ""
-                
-                for (index, fixation) in fixations.enumerated() {
-                    fileContent += "Fixation \(index + 1):\n"
-                    fileContent += "Timestamp: \(fixation.startTime)\n"
-                    fileContent += "Duration: \(fixation.duration)\n"
-                    fileContent += "Center: (\(fixation.center.x), \(fixation.center.y))\n"
-                    
-                    let recognizedObjects = fixation.recognizedObjects
-                    
-                    if !recognizedObjects.isEmpty {
-                        fileContent += "Recognized Objects:\n"
-                        
-                        for object in recognizedObjects {
-                            fileContent += "Label: \(object.label)\n"
-                            fileContent += "Confidence: \(object.confidence)\n"
-                            fileContent += "Bounding Box: \(object.boundingBox)\n"
-                            fileContent += "\n"
-                        }
-                    }
-                    
-                    fileContent += "\n"
-                }
-                
-                // Combine the fixation analysis and recognized objects data
-                let finalContent = analysisString + "\n\n" + fileContent
-                
-                // Write the combined content to the text file
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
-                let filename = "FixationAnalysis-\(dateFormatter.string(from: Date())).txt"
-                let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
-                
-                do {
-                    try finalContent.write(to: fileURL, atomically: true, encoding: .utf8)
-                    print("Fixation analysis and identified objects saved to file: \(filename)")
-                } catch {
-                    print("Error writing to file: \(error)")
-                }
-            }
-            func performObjectRecognition(on frame: CVPixelBuffer, modelURL: URL) async throws -> [RecognizedObject] {
-                let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
-                
-                let objectRecognitionRequest = VNCoreMLRequest(model: visionModel) { request, error in
-                    guard error == nil else {
-                        print("Error performing object recognition request: \(error!)")
-                        return
-                    }
-                    
-                    guard let results = request.results as? [VNRecognizedObjectObservation] else {
-                        return
-                    }
-                    
-                    // Process the object recognition results
-                    var recognizedObjects: [RecognizedObject] = []
-                    
-                    for result in results {
-                        // Extract label, confidence, and bounding box information from the result
-                        
-                        // Example: Get the label of the recognized object
-                        let label = result.labels.first?.identifier
-                        
-                        // Example: Get the confidence of the recognized object
-                        let confidence = result.confidence
-                        
-                        // Example: Get the bounding box of the recognized object
-                        let boundingBox = result.boundingBox
-                        
-                        // Create a RecognizedObject instance with label, confidence, and bounding box
-                        let recognizedObject = RecognizedObject(label: label ?? "", confidence: confidence, boundingBox: boundingBox)
-                        
-                        recognizedObjects.append(recognizedObject)
-                    }
-                    
-                    // Perform further analysis or filtering of recognized objects
-                    // ...
-                    
-                    // Return the recognized objects
-                    return recognizedObjects
-                }
-                
-                // Create a Vision request handler for the current frame
-                let requestHandler = VNImageRequestHandler(cvPixelBuffer: frame, options: [:])
-                
-                // Perform the object recognition request
-                do {
-                    try await requestHandler.perform([objectRecognitionRequest])
-                    return objectRecognitionRequest.results as? [RecognizedObject] ?? []
-                } catch {
-                    print("Error performing object recognition request: \(error)")
-                    throw error
-                }
-            }
-
-            // Load a specific frame from the screen recording video
-            func loadFrame(at index: Int, using assetReaderOutputs: [AVAssetReaderOutput], assetReader: AVAssetReader) -> CVPixelBuffer? {
-                // Get the video output from the asset reader's outputs
-                guard let videoOutput = assetReaderOutputs.first as? AVAssetReaderVideoCompositionOutput else {
-                    return nil
-                }
-                
-                // Ensure the output has been initialized
-                guard assetReader.status == .reading else {
-                    return nil
-                }
-                
-                // Get the frame at the specified index
-                guard let sampleBuffer = videoOutput.copyNextSampleBuffer() else {
-                    return nil
-                }
-                
-                let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-                return pixelBuffer
+            // Processed objects are available in the `processedObjects` array
+            for object in processedObjects {
+                print("Recognized Object Label: \(object.label)")
+                print("Confidence: \(object.confidence)")
+                print("Bounding Box: \(object.boundingBox)")
+                print("---")
             }
             
-            // Retrieve the frame rate from the given AVAssetTrack asynchronously
-            func getFrameRate(from videoTrack: AVAssetTrack) async throws -> Float {
-                return try await videoTrack.load(.nominalFrameRate)
-            }
-            // Retrieve the video track from the given AVAsset asynchronously
-            func getVideoTrack(from asset: AVAsset) async throws -> AVAssetTrack? {
-                let videoTracks = try await asset.loadTracks(withMediaType: .video)
-                return videoTracks.first
-            }
-            func convertPixelBufferToUIImage(pixelBuffer: CVPixelBuffer) -> UIImage? {
-                let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-                let context = CIContext()
-                
-                guard let cgImage = context.createCGImage(ciImage, from: CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))) else {
-                    return nil
-                }
-                
-                return UIImage(cgImage: cgImage)
-            }
-
-            }
-            
+            completion(.success(outputURL))
+        } catch {
+            completion(.failure(error))
+        }
+    }
+    
+    func mapEyeTrackingPointToVideoFrame(eyeTrackingPoint: EyeTrackingData, videoTrack: AVAssetTrack) async throws -> Int {
+        let eyeTrackingTimestamp = eyeTrackingPoint.timestamp
+        guard let asset = videoTrack.asset else {
+            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid asset"])
+        }
+        let duration = try await asset.load(.duration)
+        let timeScale = duration.timescale
+        let time = CMTime(seconds: eyeTrackingTimestamp, preferredTimescale: timeScale)
+        let videoFrameIndex = Int(time.value) / Int(time.timescale)
+        return videoFrameIndex
+    }
+    
+    func performObjectDetectionSync(on frame: CVPixelBuffer, eyeTrackingData: EyeTrackingData, fileURL: URL) async -> [RecognizedObject] {
+        guard let modelURL = Bundle.main.url(forResource: "yolov3-tiny", withExtension: "mlmodelc") else {
+            fatalError("Failed to locate the YOLOv3-Tiny model file.")
         }
         
+        do {
+            let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
+            let objectDetectionRequest = VNCoreMLRequest(model: visionModel) { request, error in
+                guard error == nil else {
+                    print("Error performing object detection request: \(error!)")
+                    return
+                }
+                
+                guard let results = request.results as? [VNRecognizedObjectObservation] else {
+                    return
+                }
+                
+                var recognizedObjects: [RecognizedObject] = []
+                
+                for result in results {
+                    let label = result.labels.first?.identifier
+                    let confidence = result.confidence
+                    let boundingBox = result.boundingBox
+                    
+                    let recognizedObject = RecognizedObject(label: label ?? "", confidence: confidence, boundingBox: boundingBox)
+                    recognizedObjects.append(recognizedObject)
+                }
+                
+                self.addRecognizedObjectsToFile(recognizedObjects, eyeTrackingData: eyeTrackingData, fileURL: fileURL)
+            }
+            
+            let recognizedObjects: [RecognizedObject] = []
+            
+            try VNImageRequestHandler(cvPixelBuffer: frame, options: [:]).perform([objectDetectionRequest])
+            
+            // Return the recognized objects
+            return recognizedObjects
+        } catch {
+            print("Error loading YOLOv3-Tiny model: \(error)")
+            return []
+        }
+    }
+
+
+    
+    func loadFrame(at index: Int, using asset: AVAsset) async throws -> CVPixelBuffer? {
+        guard let videoTrack = try await asset.loadTracks(withMediaType: .video).first else {
+            return nil
+        }
+        
+        let composition = AVMutableComposition()
+        let videoCompositionTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
+        
+        do {
+            try await videoCompositionTrack?.insertTimeRange(CMTimeRange(start: CMTime.zero, duration: asset.load(.duration)), of: videoTrack, at: CMTime.zero)
+            
+            let assetReader = try AVAssetReader(asset: composition)
+            let videoOutput = AVAssetReaderTrackOutput(track: videoCompositionTrack!, outputSettings: nil)
+            
+            assetReader.add(videoOutput)
+            assetReader.startReading()
+            
+            guard let sampleBuffer = videoOutput.copyNextSampleBuffer() else {
+                return nil
+            }
+            
+            let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+            return pixelBuffer
+        } catch {
+            throw error
+        }
+    }
+
+
+    
+    func generateOutputURL() -> URL {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        let filename = "ObjectData-\(dateFormatter.string(from: Date())).mov"
+        let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        return outputURL
+    }
+    
+    func addRecognizedObjectsToFile(_ objects: [RecognizedObject], eyeTrackingData: EyeTrackingData, fileURL: URL) {
+        let timestamp = eyeTrackingData.timestamp
+        let position = eyeTrackingData.position
+        
+        let text = objects.map { object in
+            return """
+            Timestamp: \(timestamp)
+            Position: \(position)
+            Label: \(object.label)
+            Confidence: \(object.confidence)
+            Bounding Box: \(object.boundingBox)
+            ---
+            """
+        }.joined()
+        
+        if let data = text.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: fileURL) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                } else {
+                    print("Failed to open file handle for writing")
+                }
+            } else {
+                FileManager.default.createFile(atPath: fileURL.path, contents: data, attributes: nil)
+            }
+        } else {
+            print("Failed to convert text to data")
+        }
+    }
+    // Retrieve the video track from the given AVAsset asynchronously
+    func getVideoTrack(from asset: AVAsset) async throws -> AVAssetTrack? {
+        let videoTracks = try await asset.loadTracks(withMediaType: .video)
+        return videoTracks.first
     }
 }
+
+
