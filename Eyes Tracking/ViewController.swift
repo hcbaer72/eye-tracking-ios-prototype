@@ -221,7 +221,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             self.saveEyeTrackingData()
             self.performEyeTrackingOverlay()
             self.saveEyeTrackingFixations()
-            self.performEyeTrackingDataAnalysis()
+           // self.performEyeTrackingDataAnalysis()
                 // Perform additional actions after processing is complete
             
         }
@@ -486,7 +486,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                 }
             }
         }
-    func performEyeTrackingDataAnalysis() {
+   /* func performEyeTrackingDataAnalysis() {
         // Generate the screen recording video URL
         let videoURL = self.generateScreenRecordingURL()
         
@@ -503,7 +503,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                 }
             }
         }
-    }
+    }*/
    
       
         //load eye tracking data

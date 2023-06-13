@@ -12,6 +12,7 @@ import Vision
 import CoreML
 import UIKit
 
+/*
 public struct RecognizedObject {
     let label: String
     let confidence: VNConfidence
@@ -214,4 +215,4 @@ class ObjectManager {
     }
 }
 
-
+*/

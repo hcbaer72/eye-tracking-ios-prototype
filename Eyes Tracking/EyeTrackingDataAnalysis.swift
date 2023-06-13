@@ -9,7 +9,7 @@
 import Foundation
 import QuartzCore
 
-
+//have it print average after each fixation
 
 private let maxRevisitDistance: CGFloat = 50.0 // Maximum distance for revisits (adjust as needed)
 
