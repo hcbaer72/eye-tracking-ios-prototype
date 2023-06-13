@@ -285,7 +285,7 @@ Position Estimation</string>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="x8Q-Vn-AQt">
-                                <rect key="frame" x="391" y="1119.5" width="242" height="151.5"/>
+                                <rect key="frame" x="391" y="1069" width="242" height="202"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="L eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2C-u9-RfT">
                                         <rect key="frame" x="0.0" y="0.0" width="242" height="20.5"/>
@@ -313,6 +313,18 @@ Position Estimation</string>
                                     </label>
                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="6lx-3G-xsc">
                                         <rect key="frame" x="-2" y="121.5" width="246" height="31"/>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brightness of eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5g2-GN-24w">
+                                        <rect key="frame" x="0.0" y="151.5" width="242" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="HTS-kw-M3a">
+                                        <rect key="frame" x="-2" y="172" width="246" height="31"/>
+                                        <connections>
+                                            <action selector="brightnessSliderValueChanged:" destination="TGs-iS-D8Y" eventType="valueChanged" id="w1s-mh-h4I"/>
+                                        </connections>
                                     </slider>
                                 </subviews>
                                 <constraints>
@@ -505,6 +517,7 @@ Position Estimation</string>
                         <outlet property="lookAtPositionYLabel" destination="LW8-Fb-0lN" id="CoS-Cg-66Z"/>
                         <outlet property="lowerLeftCorner" destination="mk8-Sa-145" id="YBa-z5-d6q"/>
                         <outlet property="lowerRightCorner" destination="Xqf-kQ-3Kr" id="Gvr-Ut-3n0"/>
+                        <outlet property="mySliderBrightness" destination="HTS-kw-M3a" id="gVy-kE-HVp"/>
                         <outlet property="mySliderDistance" destination="6lx-3G-xsc" id="59n-b8-UV2"/>
                         <outlet property="mySliderLeye" destination="i36-HY-Cc6" id="sFj-S5-B1d"/>
                         <outlet property="mySliderReye" destination="GH4-Le-Wbi" id="cG9-7b-x4S"/>
