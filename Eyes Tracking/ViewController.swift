@@ -40,6 +40,8 @@ import AVFoundation
 //add orientation to eye track data?
 
 
+//add stack view
+
 struct EyeTrackingData: Codable {
     let position: CGPoint
     var timestamp: TimeInterval
@@ -90,11 +92,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     //set device measures:
     var device: Device = .iPadPro11
     
+    //sliders
+    @IBOutlet weak var mySliderLeye: UISlider!
+    @IBOutlet weak var mySliderReye: UISlider!
+    @IBOutlet weak var mySliderDistance: UISlider!
+    @IBOutlet weak var sliderView: UIStackView!
+    
+    let minZ: Float = 0.1
+    let maxZ: Float = 3.0
+    let defaultZ: Float = 2.0
+    
+    
+    //bears
     @IBOutlet var upperLeftCorner: UIView!
     @IBOutlet var upperRightCorner: UIView!
     @IBOutlet var lowerLeftCorner: UIView!
     @IBOutlet var lowerRightCorner: UIView!
     
+    //button horizontal stack view
     @IBOutlet weak var stackView: UIStackView!
     
     @IBAction func buttonPressed(_ sender: UIButton) {
@@ -167,11 +182,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     var lookAtTargetEyeLNode: SCNNode = SCNNode()
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
-    ////****
-    // var phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
-    //var phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
-    //phoneScreenSize: CGSize {CGSize(width: device.meterWidth, height: device.meterHeight)}
-    //phoneScreenPointSize: CGSize {CGSize(width: device.widthInPoints, height: device.heightInPoints)}
     
     var virtualPhoneNode: SCNNode = SCNNode()
     var virtualScreenNode: SCNNode = {
@@ -199,15 +209,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set the navigation delegate
-        //webView.navigationDelegate = self
-
-       // webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-       // webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-       // loadYouTubeKids()
-       // webView.scrollView.zoomScale = 0.5 // Zoom out by 50%
-        webView.scrollView.bounces = false
-        
         startRecordingEye = {
                     //start capturing data
                     self.eyeTrackingData = []
@@ -227,19 +228,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         }
         
         //webview
-        
         webView.customUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0"
         webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        /*
-        //webview
-        webView.customUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-        webView.load(URLRequest(url: URL(string: "https://www.youtubekids.com")!))
-        
-        // Set the scalesPageToFit property of the web view
-        webView.contentMode = .scaleAspectFit
         webView.scrollView.bounces = false
-        */
-        
+
         // Add the recording button to the container view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(startStopRecordButtonTapped(_:)))
         recordButton.addGestureRecognizer(tapGesture)
@@ -266,6 +258,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
         
+        mySliderLeye.value = normalZ(defaultZ)
+        mySliderReye.value = normalZ(defaultZ)
+
+        mySliderLeye.addTarget(self, action: #selector(mySliderLeyeValueChanged(_:)), for: .valueChanged)
+        mySliderReye.addTarget(self, action: #selector(mySliderReyeValueChanged(_:)), for: .valueChanged)
+        
+        
         // Bring the web view to the front
         view.bringSubviewToFront(webView)
         // Bring the recording button to the front
@@ -276,7 +275,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         // Bring the device button to the front
         view.bringSubviewToFront(deviceButton)
         
-        view.bringSubviewToFront(stackView)
+        view.bringSubviewToFront(stackView) //horizontal buttons
+        view.bringSubviewToFront(sliderView) //sliders
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
@@ -285,6 +285,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         //eyePositionIndicatorView.isHidden = true
     }
     
+    @objc func mySliderLeyeValueChanged(_ sender: UISlider) {
+    lookAtTargetEyeLNode.position.z = zFromNormal(sender.value)
+    print("Slider value changed to \(sender.value)")
+}
+    @objc func mySliderReyeValueChanged(_ sender: UISlider) {
+    lookAtTargetEyeRNode.position.z = zFromNormal(sender.value)
+}
+    func normalZ(_ value: Float) -> Float {
+    let offset = minZ
+    let adjustedValue = value - offset
+    let domainWidth = maxZ - minZ
+    return adjustedValue / domainWidth
+}
+    func zFromNormal(_ value: Float) -> Float {
+    let domainWidth = maxZ - minZ
+    let adjustedValue = value * domainWidth
+    return adjustedValue + minZ
+}
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

@@ -284,6 +284,42 @@ Position Estimation</string>
                                 </constraints>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="x8Q-Vn-AQt">
+                                <rect key="frame" x="391" y="1119.5" width="242" height="151.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="L eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2C-u9-RfT">
+                                        <rect key="frame" x="0.0" y="0.0" width="242" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="i36-HY-Cc6" userLabel="My Slider Leye">
+                                        <rect key="frame" x="-2" y="20.5" width="246" height="31"/>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="R eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bdv-oH-pCP">
+                                        <rect key="frame" x="0.0" y="50.5" width="242" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="GH4-Le-Wbi" userLabel="My Slider Reye">
+                                        <rect key="frame" x="-2" y="71" width="246" height="31"/>
+                                    </slider>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lLw-uE-Fjz">
+                                        <rect key="frame" x="0.0" y="101" width="242" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="6lx-3G-xsc">
+                                        <rect key="frame" x="-2" y="121.5" width="246" height="31"/>
+                                    </slider>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="242" id="GZD-Jq-bmc"/>
+                                    <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="lLw-uE-Fjz" secondAttribute="centerX" id="sFp-1G-y6j"/>
+                                </constraints>
+                            </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="TCC-mo-wG1">
                                 <rect key="frame" x="20" y="1311.5" width="984" height="34.5"/>
                                 <subviews>
@@ -419,52 +455,19 @@ Position Estimation</string>
                                     <constraint firstAttribute="width" secondItem="gv8-FZ-Pfp" secondAttribute="height" multiplier="1:1" id="iuk-UQ-2ZR"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="L eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2C-u9-RfT">
-                                <rect key="frame" x="491" y="1090" width="42" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="R eye" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bdv-oH-pCP">
-                                <rect key="frame" x="491" y="1170.5" width="42" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lLw-uE-Fjz">
-                                <rect key="frame" x="478" y="1241" width="67" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="6lx-3G-xsc">
-                                <rect key="frame" x="410" y="1269.5" width="204" height="31"/>
-                            </slider>
-                            <slider opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="GH4-Le-Wbi" userLabel="My Slider Reye">
-                                <rect key="frame" x="410" y="1183" width="204" height="31"/>
-                            </slider>
-                            <slider opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="i36-HY-Cc6" userLabel="My Slider Leye">
-                                <rect key="frame" x="410" y="1118.5" width="204" height="31"/>
-                            </slider>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="xVo-BW-bCQ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" id="0r7-Xq-koP"/>
-                            <constraint firstItem="lLw-uE-Fjz" firstAttribute="top" secondItem="Bdv-oH-pCP" secondAttribute="bottom" constant="50" id="1JI-57-19g"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" constant="40" id="1me-Ik-wRM"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="trailing" secondItem="upD-46-TsP" secondAttribute="trailing" id="3qr-cs-R1m"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="4VC-J5-Os5"/>
-                            <constraint firstItem="Bdv-oH-pCP" firstAttribute="top" secondItem="i36-HY-Cc6" secondAttribute="bottom" constant="22" id="8BU-QA-ENJ"/>
+                            <constraint firstItem="x8Q-Vn-AQt" firstAttribute="centerX" secondItem="7gw-KV-U42" secondAttribute="centerX" id="7UU-5g-qVr"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="8l8-61-cTu"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="6lx-3G-xsc" secondAttribute="centerX" id="9V8-f5-UbK"/>
-                            <constraint firstItem="6lx-3G-xsc" firstAttribute="leading" secondItem="i36-HY-Cc6" secondAttribute="leading" id="9jR-7c-u69"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Bdv-oH-pCP" secondAttribute="trailing" id="9qb-is-cPm"/>
                             <constraint firstAttribute="bottom" secondItem="vCP-gz-2FE" secondAttribute="bottom" id="BlL-PN-PEi"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="CsP-0N-8ID"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="top" secondItem="upD-46-TsP" secondAttribute="top" id="Ek8-Hy-4n2"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="i36-HY-Cc6" secondAttribute="centerX" id="FUh-1i-Tqk"/>
-                            <constraint firstItem="lLw-uE-Fjz" firstAttribute="top" secondItem="GH4-Le-Wbi" secondAttribute="bottom" constant="28" id="IfD-hT-4Dy"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="JPh-g3-I0P"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="JVc-Vx-auZ"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="Xqf-kQ-3Kr" secondAttribute="bottom" constant="20" id="Jvv-Dy-zx2"/>
@@ -473,36 +476,24 @@ Position Estimation</string>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="upD-46-TsP" secondAttribute="centerX" id="Kch-4b-Mbj"/>
                             <constraint firstItem="Xqf-kQ-3Kr" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="LVz-Mw-soY"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="NLd-1I-yRm"/>
+                            <constraint firstItem="x8Q-Vn-AQt" firstAttribute="bottom" secondItem="7gw-KV-U42" secondAttribute="bottom" constant="-75" id="ODt-od-dbN"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="hwd-Yi-01f" secondAttribute="trailing" constant="40" id="Ofl-Pc-H2n"/>
-                            <constraint firstItem="i36-HY-Cc6" firstAttribute="top" secondItem="B2C-u9-RfT" secondAttribute="bottom" constant="8" id="PJd-wj-yAt"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="upD-46-TsP" secondAttribute="centerX" id="PoH-w2-cDO"/>
-                            <constraint firstItem="6lx-3G-xsc" firstAttribute="top" secondItem="lLw-uE-Fjz" secondAttribute="bottom" constant="8" id="Sgx-Ck-1bf"/>
                             <constraint firstItem="mk8-Sa-145" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="T7C-yN-JYN"/>
-                            <constraint firstItem="Bdv-oH-pCP" firstAttribute="centerX" secondItem="i36-HY-Cc6" secondAttribute="centerX" id="Xuc-f9-djc"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="Xqf-kQ-3Kr" secondAttribute="trailing" constant="40" id="Yze-9n-aAH"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="mk8-Sa-145" secondAttribute="bottom" constant="20" id="a8R-UX-SM1"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="GH4-Le-Wbi" secondAttribute="centerX" id="cr8-Jc-0WZ"/>
-                            <constraint firstItem="lLw-uE-Fjz" firstAttribute="centerX" secondItem="GH4-Le-Wbi" secondAttribute="centerX" id="dne-oF-L7J"/>
-                            <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="lLw-uE-Fjz" secondAttribute="bottom" constant="50" id="eEM-Dj-Yg9"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="TCC-mo-wG1" secondAttribute="trailing" constant="20" id="fgY-pd-cZI"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="lLw-uE-Fjz" secondAttribute="centerX" id="gIF-Zl-DPD"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="7gw-KV-U42" secondAttribute="trailing" id="gdY-VG-3cL"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="width" secondItem="NeR-3c-RI2" secondAttribute="height" id="h0u-4i-DAp"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="bottom" secondItem="xVo-BW-bCQ" secondAttribute="bottom" id="h1H-sC-E4V"/>
-                            <constraint firstItem="lLw-uE-Fjz" firstAttribute="centerX" secondItem="i36-HY-Cc6" secondAttribute="centerX" id="ihO-G0-yPk"/>
                             <constraint firstItem="mk8-Sa-145" firstAttribute="leading" secondItem="7gw-KV-U42" secondAttribute="leading" constant="40" id="jYB-5l-eVN"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="centerX" secondItem="xVo-BW-bCQ" secondAttribute="centerX" id="lfE-Ym-PKI"/>
-                            <constraint firstItem="6lx-3G-xsc" firstAttribute="leading" secondItem="GH4-Le-Wbi" secondAttribute="leading" id="lgf-lC-14a"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="9bF-ps-mOb" secondAttribute="height" multiplier="1:1" id="mbg-6K-Nwe"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="bottom" secondItem="7gw-KV-U42" secondAttribute="bottom" id="n6m-bf-1g0"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="top" secondItem="7gw-KV-U42" secondAttribute="top" constant="40" id="p4x-eE-ZUp"/>
-                            <constraint firstItem="Bdv-oH-pCP" firstAttribute="centerX" secondItem="GH4-Le-Wbi" secondAttribute="centerX" id="qJR-AJ-h3X"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" constant="20" id="qQ5-jg-WHu"/>
-                            <constraint firstItem="lLw-uE-Fjz" firstAttribute="centerX" secondItem="6lx-3G-xsc" secondAttribute="centerX" id="r4M-uY-KCe"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="centerY" secondItem="xVo-BW-bCQ" secondAttribute="centerY" id="vNj-m7-laT"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="leading" secondItem="upD-46-TsP" secondAttribute="leading" id="xiO-tN-ykW"/>
-                            <constraint firstItem="B2C-u9-RfT" firstAttribute="centerX" secondItem="Bdv-oH-pCP" secondAttribute="centerX" id="xx8-MO-QbQ"/>
-                            <constraint firstItem="Bdv-oH-pCP" firstAttribute="centerX" secondItem="6lx-3G-xsc" secondAttribute="centerX" id="zTh-XE-Rw6"/>
                         </constraints>
                     </view>
                     <connections>
@@ -514,8 +505,12 @@ Position Estimation</string>
                         <outlet property="lookAtPositionYLabel" destination="LW8-Fb-0lN" id="CoS-Cg-66Z"/>
                         <outlet property="lowerLeftCorner" destination="mk8-Sa-145" id="YBa-z5-d6q"/>
                         <outlet property="lowerRightCorner" destination="Xqf-kQ-3Kr" id="Gvr-Ut-3n0"/>
+                        <outlet property="mySliderDistance" destination="6lx-3G-xsc" id="59n-b8-UV2"/>
+                        <outlet property="mySliderLeye" destination="i36-HY-Cc6" id="sFj-S5-B1d"/>
+                        <outlet property="mySliderReye" destination="GH4-Le-Wbi" id="cG9-7b-x4S"/>
                         <outlet property="recordButton" destination="gv8-FZ-Pfp" id="flZ-QG-nBl"/>
                         <outlet property="sceneView" destination="7gw-KV-U42" id="MbV-O3-y44"/>
+                        <outlet property="sliderView" destination="x8Q-Vn-AQt" id="Uto-0F-uyZ"/>
                         <outlet property="stackView" destination="TCC-mo-wG1" id="ns8-AM-qSC"/>
                         <outlet property="upperLeftCorner" destination="9bF-ps-mOb" id="PA2-KY-Lqs"/>
                         <outlet property="upperRightCorner" destination="hwd-Yi-01f" id="6jR-T4-NFX"/>
