@@ -34,6 +34,15 @@
                                 <rect key="frame" x="40" y="58.5" width="102.5" height="113"/>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UhQ-Qa-jbK">
+                                <rect key="frame" x="70" y="184" width="0.0" height="0.0"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" adjustable="YES"/>
+                                </accessibility>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mk8-Sa-145">
                                 <rect key="frame" x="40" y="1183.5" width="102.5" height="113"/>
                                 <constraints>
@@ -41,6 +50,15 @@
                                 </constraints>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AgR-BI-dT6">
+                                <rect key="frame" x="70" y="1176" width="0.0" height="0.0"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" adjustable="YES"/>
+                                </accessibility>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Xqf-kQ-3Kr">
                                 <rect key="frame" x="881.5" y="1183.5" width="102.5" height="113"/>
                                 <constraints>
@@ -48,6 +66,15 @@
                                 </constraints>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSP-6x-cfa">
+                                <rect key="frame" x="954" y="184" width="0.0" height="0.0"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" adjustable="YES"/>
+                                </accessibility>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hwd-Yi-01f">
                                 <rect key="frame" x="881.5" y="58.5" width="102.5" height="113"/>
                                 <constraints>
@@ -55,6 +82,15 @@
                                 </constraints>
                                 <imageReference key="image" image="teddybear.fill" catalog="system" symbolScale="large"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OMM-8i-Mt1">
+                                <rect key="frame" x="954" y="1176" width="0.0" height="0.0"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" adjustable="YES"/>
+                                </accessibility>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="x8Q-Vn-AQt">
                                 <rect key="frame" x="391" y="1069" width="242" height="202"/>
                                 <subviews>
@@ -246,11 +282,15 @@
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" constant="40" id="1me-Ik-wRM"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="trailing" secondItem="upD-46-TsP" secondAttribute="trailing" id="3qr-cs-R1m"/>
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="4VC-J5-Os5"/>
+                            <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="SSP-6x-cfa" secondAttribute="trailing" constant="70" id="4nf-rN-bRK"/>
                             <constraint firstItem="x8Q-Vn-AQt" firstAttribute="centerX" secondItem="7gw-KV-U42" secondAttribute="centerX" id="7UU-5g-qVr"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="8l8-61-cTu"/>
+                            <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="OMM-8i-Mt1" secondAttribute="trailing" constant="70" id="8w8-FK-O7d"/>
+                            <constraint firstItem="UhQ-Qa-jbK" firstAttribute="top" secondItem="9bF-ps-mOb" secondAttribute="top" constant="120" id="AII-d3-evj"/>
                             <constraint firstAttribute="bottom" secondItem="vCP-gz-2FE" secondAttribute="bottom" id="BlL-PN-PEi"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="CsP-0N-8ID"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="top" secondItem="upD-46-TsP" secondAttribute="top" id="Ek8-Hy-4n2"/>
+                            <constraint firstItem="OMM-8i-Mt1" firstAttribute="bottom" secondItem="TCC-mo-wG1" secondAttribute="bottom" constant="-170" id="HD1-0u-v7Y"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="JPh-g3-I0P"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="top" secondItem="xVo-BW-bCQ" secondAttribute="top" id="JVc-Vx-auZ"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="Xqf-kQ-3Kr" secondAttribute="bottom" constant="20" id="Jvv-Dy-zx2"/>
@@ -258,6 +298,7 @@
                             <constraint firstItem="9bF-ps-mOb" firstAttribute="leading" secondItem="7gw-KV-U42" secondAttribute="leading" constant="40" id="KU2-Uj-RTb"/>
                             <constraint firstItem="gv8-FZ-Pfp" firstAttribute="centerX" secondItem="upD-46-TsP" secondAttribute="centerX" id="Kch-4b-Mbj"/>
                             <constraint firstItem="Xqf-kQ-3Kr" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="LVz-Mw-soY"/>
+                            <constraint firstItem="AgR-BI-dT6" firstAttribute="bottom" secondItem="TCC-mo-wG1" secondAttribute="bottom" constant="-170" id="Lxd-ZI-6lj"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="width" secondItem="upD-46-TsP" secondAttribute="width" id="NLd-1I-yRm"/>
                             <constraint firstItem="x8Q-Vn-AQt" firstAttribute="bottom" secondItem="7gw-KV-U42" secondAttribute="bottom" constant="-75" id="ODt-od-dbN"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="hwd-Yi-01f" secondAttribute="trailing" constant="40" id="Ofl-Pc-H2n"/>
@@ -265,6 +306,7 @@
                             <constraint firstItem="mk8-Sa-145" firstAttribute="width" secondItem="7gw-KV-U42" secondAttribute="width" multiplier="0.1" id="T7C-yN-JYN"/>
                             <constraint firstItem="7gw-KV-U42" firstAttribute="trailing" secondItem="Xqf-kQ-3Kr" secondAttribute="trailing" constant="40" id="Yze-9n-aAH"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="top" secondItem="mk8-Sa-145" secondAttribute="bottom" constant="20" id="a8R-UX-SM1"/>
+                            <constraint firstItem="AgR-BI-dT6" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" constant="70" id="dTv-y6-Qi0"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="TCC-mo-wG1" secondAttribute="trailing" constant="20" id="fgY-pd-cZI"/>
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="trailing" secondItem="7gw-KV-U42" secondAttribute="trailing" id="gdY-VG-3cL"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="width" secondItem="NeR-3c-RI2" secondAttribute="height" id="h0u-4i-DAp"/>
@@ -275,7 +317,9 @@
                             <constraint firstItem="xVo-BW-bCQ" firstAttribute="bottom" secondItem="7gw-KV-U42" secondAttribute="bottom" id="n6m-bf-1g0"/>
                             <constraint firstItem="hwd-Yi-01f" firstAttribute="top" secondItem="7gw-KV-U42" secondAttribute="top" constant="40" id="p4x-eE-ZUp"/>
                             <constraint firstItem="TCC-mo-wG1" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" constant="20" id="qQ5-jg-WHu"/>
+                            <constraint firstItem="UhQ-Qa-jbK" firstAttribute="leading" secondItem="xVo-BW-bCQ" secondAttribute="leading" constant="70" id="usk-s6-T7L"/>
                             <constraint firstItem="NeR-3c-RI2" firstAttribute="centerY" secondItem="xVo-BW-bCQ" secondAttribute="centerY" id="vNj-m7-laT"/>
+                            <constraint firstItem="SSP-6x-cfa" firstAttribute="top" secondItem="7gw-KV-U42" secondAttribute="top" constant="160" id="wkn-4D-m0r"/>
                             <constraint firstItem="vCP-gz-2FE" firstAttribute="leading" secondItem="upD-46-TsP" secondAttribute="leading" id="xiO-tN-ykW"/>
                         </constraints>
                     </view>
@@ -287,7 +331,9 @@
                         <outlet property="lookAtPositionXLabel" destination="FNv-h0-DLz" id="p75-rQ-94l"/>
                         <outlet property="lookAtPositionYLabel" destination="LW8-Fb-0lN" id="CoS-Cg-66Z"/>
                         <outlet property="lowerLeftCornerBear" destination="mk8-Sa-145" id="44T-pq-AyI"/>
+                        <outlet property="lowerLeftCornerBearLabel" destination="AgR-BI-dT6" id="YRa-Fe-l0M"/>
                         <outlet property="lowerRightCornerBear" destination="Xqf-kQ-3Kr" id="Vvp-gd-TPK"/>
+                        <outlet property="lowerRightCornerBearLabel" destination="OMM-8i-Mt1" id="4Lh-wx-2m5"/>
                         <outlet property="mySliderBrightness" destination="HTS-kw-M3a" id="gVy-kE-HVp"/>
                         <outlet property="mySliderDistance" destination="6lx-3G-xsc" id="59n-b8-UV2"/>
                         <outlet property="mySliderLeye" destination="i36-HY-Cc6" id="sFj-S5-B1d"/>
@@ -297,7 +343,9 @@
                         <outlet property="sliderView" destination="x8Q-Vn-AQt" id="Uto-0F-uyZ"/>
                         <outlet property="stackView" destination="TCC-mo-wG1" id="ns8-AM-qSC"/>
                         <outlet property="upperLeftCornerBear" destination="9bF-ps-mOb" id="Clg-lO-Dov"/>
+                        <outlet property="upperLeftCornerBearLabel" destination="UhQ-Qa-jbK" id="Msb-6M-Eu6"/>
                         <outlet property="upperRightCornerBear" destination="hwd-Yi-01f" id="hgN-09-kfw"/>
+                        <outlet property="upperRightCornerBearLabel" destination="SSP-6x-cfa" id="HOM-Cm-xs5"/>
                         <outlet property="webView" destination="vCP-gz-2FE" id="blW-FK-Al8"/>
                     </connections>
                 </viewController>

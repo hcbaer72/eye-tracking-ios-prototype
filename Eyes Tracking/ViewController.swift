@@ -110,6 +110,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     @IBOutlet var lowerLeftCornerBear: UIView!
     @IBOutlet var lowerRightCornerBear: UIView!
     
+    @IBOutlet var upperLeftCornerBearLabel: UILabel!
+    @IBOutlet var upperRightCornerBearLabel: UILabel!
+    @IBOutlet var lowerLeftCornerBearLabel: UILabel!
+    @IBOutlet var lowerRightCornerBearLabel: UILabel!
+    
+
     var calibrationManager: CalibrationManager?
     
     //button horizontal stack view
@@ -288,8 +294,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         mySliderLeye.addTarget(self, action: #selector(mySliderLeyeValueChanged(_:)), for: .valueChanged)
         mySliderReye.addTarget(self, action: #selector(mySliderReyeValueChanged(_:)), for: .valueChanged)
         setupBrightnessSlider()
-        
-        
+ 
         // Bring the web view to the front
         view.bringSubviewToFront(webView)
         // Bring the recording button to the front
