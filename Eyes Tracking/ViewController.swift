@@ -105,29 +105,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     
     
     //bears
-    @IBOutlet var upperLeftCorner: UIView!
-    @IBOutlet var upperRightCorner: UIView!
-    @IBOutlet var lowerLeftCorner: UIView!
-    @IBOutlet var lowerRightCorner: UIView!
+    @IBOutlet var upperLeftCornerBear: UIView!
+    @IBOutlet var upperRightCornerBear: UIView!
+    @IBOutlet var lowerLeftCornerBear: UIView!
+    @IBOutlet var lowerRightCornerBear: UIView!
+    
+    var calibrationManager: CalibrationManager?
     
     //button horizontal stack view
     @IBOutlet weak var stackView: UIStackView!
     
     @IBAction func buttonPressed(_ sender: UIButton) {
-        let dotViews = [upperLeftCorner, upperRightCorner, lowerRightCorner, lowerLeftCorner]
-            
-            // Toggle visibility of dotViews
-        let isHidden = !dotViews[0]!.isHidden
-            for dotView in dotViews {
-                dotView?.isHidden = isHidden
-                if !isHidden {
-                    view.bringSubviewToFront(dotView!)
-                } else {
-                    view.sendSubviewToBack(dotView!)
-                }
-            }
+        if calibrationManager?.calibrationPhase == .notStarted {
+            // Start the calibration
+            calibrationManager?.startCalibration()
+        } else {
+            // Toggle the visibility of calibration views
+            calibrationManager?.buttonPressed()
         }
-    
+    }
+
 
     @IBAction func showDeviceList() {
         let deviceList = DeviceList()
@@ -308,7 +305,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
-
+        
+        calibrationManager = CalibrationManager(viewController: self)
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
     }
@@ -445,7 +443,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
             let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
 
-            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+           // self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+            
+            if let adjustedEyePosition = self.calibrationManager?.getAdjustedEyePosition(rawEyePosition: CGPoint(x: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)) {
+                self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: adjustedEyePosition.x, y: adjustedEyePosition.y)
+            }
             
             // update eye look at labels values
             self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2)))"
