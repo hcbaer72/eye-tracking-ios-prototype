@@ -96,13 +96,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     @IBOutlet weak var mySliderLeye: UISlider!
     @IBOutlet weak var mySliderReye: UISlider!
     @IBOutlet weak var mySliderDistance: UISlider!
-    @IBOutlet weak var mySliderBrightness: UISlider!
     @IBOutlet weak var sliderView: UIStackView!
     
     let minZ: Float = 0.1
     let maxZ: Float = 3.0
     let defaultZ: Float = 2.0
     
+    var eyeTrackingCameraController: EyeTrackingCameraController?
     
     //bears
     @IBOutlet var upperLeftCornerBear: UIView!
@@ -155,31 +155,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         present(navigationController, animated: true, completion: nil)
     }
     
-    @IBAction func brightnessSliderValueChanged(_ sender: UISlider) {
-        let brightness = sender.value
-        print("Brightness changed to \(brightness)")
-        
-        // Adjust the material properties of eyeLNode
-        if let eyeLMaterial = eyeLNode.geometry?.firstMaterial {
-            eyeLMaterial.lightingModel = .physicallyBased
-            eyeLMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(1.0, 1.0, 0.0)
-            eyeLMaterial.diffuse.intensity = CGFloat(brightness)
-        }
-        
-        // Adjust the material properties of eyeRNode
-        if let eyeRMaterial = eyeRNode.geometry?.firstMaterial {
-            eyeRMaterial.lightingModel = .physicallyBased
-            eyeRMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(1.0, 1.0, 0.0)
-            eyeRMaterial.diffuse.intensity = CGFloat(brightness)
-        }
-    }
-    func setupBrightnessSlider() {
-        mySliderBrightness.minimumValue = 0.0
-        mySliderBrightness.maximumValue = 1.0
-        mySliderBrightness.value = 0.5 // Set an initial brightness value
-
-        mySliderBrightness.addTarget(self, action: #selector(brightnessSliderValueChanged(_:)), for: .valueChanged)
-    }
+    
     
     var faceNode: SCNNode = SCNNode()
     
@@ -293,7 +269,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
 
         mySliderLeye.addTarget(self, action: #selector(mySliderLeyeValueChanged(_:)), for: .valueChanged)
         mySliderReye.addTarget(self, action: #selector(mySliderReyeValueChanged(_:)), for: .valueChanged)
-        setupBrightnessSlider()
  
         // Bring the web view to the front
         view.bringSubviewToFront(webView)
@@ -311,7 +286,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
         
-        calibrationManager = CalibrationManager(viewController: self)
+        //calibrationManager = CalibrationManager(viewController: self)
+        setupEyeTracking()
         // Hide the eyePositionIndicatorView
         //eyePositionIndicatorView.isHidden = true
     }
@@ -448,11 +424,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
             let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
 
-           // self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
             
-            if let adjustedEyePosition = self.calibrationManager?.getAdjustedEyePosition(rawEyePosition: CGPoint(x: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)) {
+           /* if let adjustedEyePosition = self.calibrationManager?.getAdjustedEyePosition(rawEyePosition: CGPoint(x: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)) {
                 self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: adjustedEyePosition.x, y: adjustedEyePosition.y)
             }
+            */
             
             // update eye look at labels values
             self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.device.phoneScreenPointSize.width / 2)))"
@@ -573,6 +550,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                 print("Error loading eye tracking data: \(error)")
                 return nil
             }
+        }
+    func setupEyeTracking() {
+            eyeTrackingCameraController = EyeTrackingCameraController()
+            eyeTrackingCameraController?.captureSession?.startRunning()
+            eyeTrackingCameraController?.captureSession?.beginConfiguration()
+
+            guard let videoOutput = eyeTrackingCameraController?.captureSession?.outputs.first as? AVCaptureVideoDataOutput else { return }
+            let videoOutputQueue = DispatchQueue(label: "videoOutputQueue")
+            videoOutput.setSampleBufferDelegate(eyeTrackingCameraController, queue: videoOutputQueue)
+
+            eyeTrackingCameraController?.captureSession?.commitConfiguration()
         }
         
     }
