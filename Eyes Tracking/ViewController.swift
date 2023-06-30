@@ -176,9 +176,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     
     
     var virtualPhoneNode: SCNNode = SCNNode()
+    /*
     var virtualScreenNode: SCNNode = {
         
         let screenGeometry = SCNPlane(width: 1, height: 1)
+        screenGeometry.firstMaterial?.isDoubleSided = true
+        screenGeometry.firstMaterial?.diffuse.contents = UIColor.green
+        
+        return SCNNode(geometry: screenGeometry)
+    }()
+    */
+    
+    lazy var virtualScreenNode: SCNNode = {
+        
+        let screenGeometry = SCNPlane(width: device.widthInPoints, height: device.heightInPoints)
         screenGeometry.firstMaterial?.isDoubleSided = true
         screenGeometry.firstMaterial?.diffuse.contents = UIColor.green
         
@@ -214,7 +225,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             self.saveEyeTrackingData()
             self.performEyeTrackingOverlay()
             self.saveEyeTrackingFixations()
-            self.performEyeTrackingDataAnalysis()
                 // Perform additional actions after processing is complete
             
         }
@@ -338,7 +348,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 8
+            let smoothThresholdNumber: Int = 15
             self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
             self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
             self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
@@ -372,10 +382,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             
         }
 
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
-            
-        }
+       func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+           virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+       }
+       
+       func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+           faceNode.transform = node.transform
+           guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+           update(withFaceAnchor: faceAnchor)
+       }
         
         func getDocumentsDirectory() -> URL {
             let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -438,24 +453,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                 }
             }
         }
-    func performEyeTrackingDataAnalysis() {
-        // Generate the screen recording video URL
-        let videoURL = self.generateScreenRecordingURL()
-        
-        let objectManager = ObjectManager(videoURL: videoURL, eyeTrackingData: self.eyeTrackingData)
-        Task{
-            await objectManager.processEyeTrackingDataWithImageAnalysis { result in
-                switch result {
-                case .success(let outputURL):
-                    // Handle the successful completion
-                    print("Video analysis completed. Output URL: \(outputURL)")
-                case .failure(let error):
-                    // Handle the failure
-                    print("Video analysis failed with error: \(error)")
-                }
-            }
-        }
-    }
    
       
         //load eye tracking data
