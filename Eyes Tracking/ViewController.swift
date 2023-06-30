@@ -171,6 +171,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         return parentNode
     }()
     
+    var leftPupilNode: SCNNode = {
+        let geometry = SCNSphere(radius: 0.005)  // adjust radius as needed
+        geometry.firstMaterial?.diffuse.contents = UIColor.red
+        let node = SCNNode()
+        node.geometry = geometry
+        return node
+    }()
+
+    var rightPupilNode: SCNNode = {
+        let geometry = SCNSphere(radius: 0.005)  // adjust radius as needed
+        geometry.firstMaterial?.diffuse.contents = UIColor.red
+        let node = SCNNode()
+        node.geometry = geometry
+        return node
+    }()
+    
     var lookAtTargetEyeLNode: SCNNode = SCNNode()
     var lookAtTargetEyeRNode: SCNNode = SCNNode()
     
@@ -256,6 +272,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         eyeLNode.addChildNode(lookAtTargetEyeLNode)
         eyeRNode.addChildNode(lookAtTargetEyeRNode)
         
+        eyeLNode.addChildNode(leftPupilNode)
+        eyeRNode.addChildNode(rightPupilNode)
+        
         // Set LookAtTargetEye at 2 meters away from the center of eyeballs to create segment vector
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
@@ -267,11 +286,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         view.bringSubviewToFront(recordButton)
         
         // Bring the eye tracking cursor to the front
-        view.bringSubviewToFront(eyePositionIndicatorView)
+        //view.bringSubviewToFront(eyePositionIndicatorView)
         // Bring the device button to the front
         view.bringSubviewToFront(deviceButton)
         
         view.bringSubviewToFront(stackView) //horizontal buttons
+        
+        view.bringSubviewToFront(sceneView)
+        // Bring the eye tracking cursor to the front
+        view.bringSubviewToFront(eyePositionIndicatorView)
 
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
@@ -315,6 +338,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         eyeRNode.simdTransform = anchor.rightEyeTransform
         eyeLNode.simdTransform = anchor.leftEyeTransform
         
+        // Calculate new pupil positions in the world coordinates system
+        let (leftPupilPosition, rightPupilPosition) = calculatePupilPositions(leftEyeNode: eyeLNode, rightEyeNode: eyeRNode)
+            
+        // Convert the world coordinates to the local coordinates of the eye nodes
+        let localLeftPupilPosition = eyeLNode.convertPosition(leftPupilPosition, from: nil)
+        let localRightPupilPosition = eyeRNode.convertPosition(rightPupilPosition, from: nil)
+            
+        // Update the positions of the pupil nodes
+        leftPupilNode.position = localLeftPupilPosition
+        rightPupilNode.position = localRightPupilPosition
+        
+        // Print eye positions and orientations
+        //print("Left Eye Position: \(eyeLNode.position), Orientation: \(eyeLNode.orientation)")
+        //print("Right Eye Position: \(eyeRNode.position), Orientation: \(eyeRNode.orientation)")
+        
         // Inside the update method
         let leftPupilSize = anchor.blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
         let rightPupilSize = anchor.blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
@@ -329,13 +367,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         ///////*********
         //let heightCompensation = CGFloat(device.heightCompensation)
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [self] in
             let currentTimestamp = CACurrentMediaTime()
 
             // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
             
             let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
             let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+            /*
+            // For example, when you're performing the hit test:
+            let phoneScreenEyeRHitTestResults = virtualPhoneNode.hitTestWithSegment(from: lookAtTargetEyeRNode.worldPosition, to: rightPupilPosition, options: nil)
+            let phoneScreenEyeLHitTestResults = virtualPhoneNode.hitTestWithSegment(from: lookAtTargetEyeLNode.worldPosition, to: leftPupilPosition, options: nil)
+            */
             
             for result in phoneScreenEyeRHitTestResults {
                 eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.device.phoneScreenSize.width / 2) * self.device.phoneScreenPointSize.width
@@ -381,6 +424,60 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             }
             
         }
+    
+    func calculatePupilPositions(leftEyeNode: SCNNode, rightEyeNode: SCNNode, pupilOffset: Float = 0.01) -> (leftPupilPosition: SCNVector3, rightPupilPosition: SCNVector3) {
+        let leftEyePosition = leftEyeNode.worldPosition
+        let rightEyePosition = rightEyeNode.worldPosition
+
+        let leftEyeForward = SCNVector3(leftEyeNode.worldTransform.m31, leftEyeNode.worldTransform.m32, leftEyeNode.worldTransform.m33).normalized()
+        let rightEyeForward = SCNVector3(rightEyeNode.worldTransform.m31, rightEyeNode.worldTransform.m32, rightEyeNode.worldTransform.m33).normalized()
+
+        let leftPupilPosition = SCNVector3(x: leftEyePosition.x + leftEyeForward.x * pupilOffset,
+                                           y: leftEyePosition.y + leftEyeForward.y * pupilOffset,
+                                           z: leftEyePosition.z + leftEyeForward.z * pupilOffset)
+
+        let rightPupilPosition = SCNVector3(x: rightEyePosition.x + rightEyeForward.x * pupilOffset,
+                                            y: rightEyePosition.y + rightEyeForward.y * pupilOffset,
+                                            z: rightEyePosition.z + rightEyeForward.z * pupilOffset)
+                                            
+        return (leftPupilPosition, rightPupilPosition)
+    }
+
+    
+    /*
+    //ADDED 6/30
+    // This function takes the face node, eye name, and blink amount as inputs,
+    // and returns the eye position and orientation.
+    func extractEyeData(from faceNode: SCNNode, eyeName: String, blinkAmount: Float) -> (position: SCNVector3, orientation: SCNVector4)? {
+        guard blinkAmount < 0.5, let eyeNode = faceNode.childNode(withName: eyeName, recursively: true) else {
+            return nil
+        }
+
+        let eyePosition = eyeNode.position
+        let eyeOrientation = eyeNode.orientation
+        return (eyePosition, eyeOrientation)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        faceNode.transform = node.transform
+        
+        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+        update(withFaceAnchor: faceAnchor)
+        
+        let blendShapes = faceAnchor.blendShapes
+        let leftEyeBlink = blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
+        let rightEyeBlink = blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
+
+        if let leftEyeData = extractEyeData(from: node, eyeName: "eyeLeftNode", blinkAmount: leftEyeBlink) {
+            print("Left Eye Position: \(leftEyeData.position), Orientation: \(leftEyeData.orientation)")
+        }
+
+        if let rightEyeData = extractEyeData(from: node, eyeName: "eyeRightNode", blinkAmount: rightEyeBlink) {
+            print("Right Eye Position: \(rightEyeData.position), Orientation: \(rightEyeData.orientation)")
+        }
+    }
+    //ADDED 6/30
+     */
 
        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
@@ -391,6 +488,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
            guard let faceAnchor = anchor as? ARFaceAnchor else { return }
            update(withFaceAnchor: faceAnchor)
        }
+        
         
         func getDocumentsDirectory() -> URL {
             let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -469,67 +567,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         
     }
 
-//When the screen recording is finished, read the saved eye tracking data from the file.
-//Parse the eye tracking data and map it to the time codes of the screen recording frames.
-//Create a custom UIView subclass that draws the eye tracking data on top of the WKWebView. You can use Core Graphics to draw lines, circles, or any other shapes you want to show the eye movements.
-//Use AVFoundation to create a video composition that combines the screen recording with the eye tracking data overlay. You can use the AVMutableVideoComposition class to create a composition, and AVMutableVideoCompositionLayerInstruction to add the overlay on top of the screen recording.
-//Export the composition to a video file using AVAssetExportSession.
 
-/*
-extension ViewController {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let webViewContentWidth: CGFloat = webView.scrollView.contentSize.width
-        let viewWidth: CGFloat = view.frame.width
-        var scale: CGFloat = 0.8
-        print(webViewContentWidth)
-        print(viewWidth)
-               
-        scale = viewWidth / webViewContentWidth
-        
-        let script = """
-        var style = document.createElement('style');
-        style.innerHTML = 'body { min-width: 0px; max-width: 100%; transform: scale(\(scale)); transform-origin: 0 0; position: absolute; left: 0; }';
-        document.head.appendChild(style);
-        """
-        
-        webView.evaluateJavaScript(script) { result, error in
-            if let error = error {
-                print("JavaScript execution error:", error.localizedDescription)
-            } else {
-                print("JavaScript execution successful")
-            }
-        }
-    }
-}
- */
-/*
-extension ViewController {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let script = """
-            function getMinWidth() {
-                var bodyStyle = window.getComputedStyle(document.body);
-                var bodyMinWidth = bodyStyle.getPropertyValue('min-width');
-                
-                // Try getting the scrollWidth of the document
-                var documentScrollWidth = document.documentElement.scrollWidth;
-                
-                return {bodyMinWidth: bodyMinWidth, documentScrollWidth: documentScrollWidth};
-            }
-        
-            getMinWidth();
-        """
-        
-        webView.evaluateJavaScript(script) { result, error in
-            if let error = error {
-                print("JavaScript execution error:", error.localizedDescription)
-            } else if let dictionary = result as? [String: Any] {
-                print("Body min-width:", dictionary["bodyMinWidth"] ?? "unknown")
-                print("Document scrollWidth:", dictionary["documentScrollWidth"] ?? "unknown")
-            }
-        }
-    }
-}
- */
 
 
 

@@ -18,6 +18,14 @@ func - (l: SCNVector3, r: SCNVector3) -> SCNVector3 {
     return SCNVector3Make(l.x - r.x, l.y - r.y, l.z - r.z)
 }
 
+//ADDED 6/30
+extension SCNVector3 {
+    func normalized() -> SCNVector3 {
+        let length = self.length()
+        return SCNVector3(x: self.x / length, y: self.y / length, z: self.z / length)
+    }
+}
+
 extension Collection where Element == CGFloat, Index == Int {
     /// Return the mean of a list of CGFloat. Used with `recentVirtualObjectDistances`.
     var average: CGFloat? {
