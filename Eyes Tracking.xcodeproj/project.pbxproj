@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		273215A42A36439A00971669 /* YOLOv3Tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */; };
 		2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2756968E2A228D0B00BA4270 /* ScreenRecording.swift */; };
 		276270972A141AB50032CD18 /* OverlayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276270962A141AB50032CD18 /* OverlayManager.swift */; };
-		276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */; };
 		27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C8BF1229E0C234000E8D9E /* DeviceList.swift */; };
 		27CCA0552A053F23003BAA9B /* EyeTrackingDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCA0542A053F23003BAA9B /* EyeTrackingDataManager.swift */; };
 		27D24A1B2A27936800FEA637 /* EyeTrackingDataAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D24A1A2A27936800FEA637 /* EyeTrackingDataAnalysis.swift */; };
@@ -25,10 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = YOLOv3Tiny.mlmodel; path = ../../../Downloads/YOLOv3Tiny.mlmodel; sourceTree = "<group>"; };
 		2756968E2A228D0B00BA4270 /* ScreenRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecording.swift; sourceTree = "<group>"; };
 		276270962A141AB50032CD18 /* OverlayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayManager.swift; sourceTree = "<group>"; };
-		276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingAnalysis.swift; sourceTree = "<group>"; };
 		27C8BF1229E0C234000E8D9E /* DeviceList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceList.swift; sourceTree = "<group>"; };
 		27CCA0542A053F23003BAA9B /* EyeTrackingDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeTrackingDataManager.swift; sourceTree = "<group>"; };
 		27D24A1A2A27936800FEA637 /* EyeTrackingDataAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeTrackingDataAnalysis.swift; sourceTree = "<group>"; };
@@ -74,13 +70,11 @@
 		D0E5847820C806050052967A /* Eyes Tracking */ = {
 			isa = PBXGroup;
 			children = (
-				273215A32A36439900971669 /* YOLOv3Tiny.mlmodel */,
 				D0E5847920C806050052967A /* AppDelegate.swift */,
 				2756968E2A228D0B00BA4270 /* ScreenRecording.swift */,
 				D0E5847D20C806050052967A /* ViewController.swift */,
 				D0D25B8820C80F5500A25627 /* Extensions.swift */,
 				276270962A141AB50032CD18 /* OverlayManager.swift */,
-				276849522A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift */,
 				9CD4803E29B4477000D22746 /* Device.swift */,
 				27D24A1A2A27936800FEA637 /* EyeTrackingDataAnalysis.swift */,
 				27CCA0542A053F23003BAA9B /* EyeTrackingDataManager.swift */,
@@ -174,8 +168,6 @@
 				27C8BF1329E0C234000E8D9E /* DeviceList.swift in Sources */,
 				9CD4803F29B4477000D22746 /* Device.swift in Sources */,
 				27CCA0552A053F23003BAA9B /* EyeTrackingDataManager.swift in Sources */,
-				273215A42A36439A00971669 /* YOLOv3Tiny.mlmodel in Sources */,
-				276849532A27FD6900D4E2C2 /* ScreenRecordingAnalysis.swift in Sources */,
 				276270972A141AB50032CD18 /* OverlayManager.swift in Sources */,
 				2756968F2A228D0B00BA4270 /* ScreenRecording.swift in Sources */,
 				9CD4804129B447A000D22746 /* Device+UIKit.swift in Sources */,

@@ -92,17 +92,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     //set device measures:
     var device: Device = .iPadPro11
     
-    //sliders
-    @IBOutlet weak var mySliderLeye: UISlider!
-    @IBOutlet weak var mySliderReye: UISlider!
-    @IBOutlet weak var mySliderDistance: UISlider!
-    @IBOutlet weak var mySliderBrightness: UISlider!
-    @IBOutlet weak var sliderView: UIStackView!
-    
-    let minZ: Float = 0.1
-    let maxZ: Float = 3.0
-    let defaultZ: Float = 2.0
-    
     
     //bears
     @IBOutlet var upperLeftCorner: UIView!
@@ -152,31 +141,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         present(navigationController, animated: true, completion: nil)
     }
     
-    @IBAction func brightnessSliderValueChanged(_ sender: UISlider) {
-        let brightness = sender.value
-        print("Brightness changed to \(brightness)")
-        
-        // Adjust the material properties of eyeLNode
-        if let eyeLMaterial = eyeLNode.geometry?.firstMaterial {
-            eyeLMaterial.lightingModel = .physicallyBased
-            eyeLMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(1.0, 1.0, 0.0)
-            eyeLMaterial.diffuse.intensity = CGFloat(brightness)
-        }
-        
-        // Adjust the material properties of eyeRNode
-        if let eyeRMaterial = eyeRNode.geometry?.firstMaterial {
-            eyeRMaterial.lightingModel = .physicallyBased
-            eyeRMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(1.0, 1.0, 0.0)
-            eyeRMaterial.diffuse.intensity = CGFloat(brightness)
-        }
-    }
-    func setupBrightnessSlider() {
-        mySliderBrightness.minimumValue = 0.0
-        mySliderBrightness.maximumValue = 1.0
-        mySliderBrightness.value = 0.5 // Set an initial brightness value
 
-        mySliderBrightness.addTarget(self, action: #selector(brightnessSliderValueChanged(_:)), for: .valueChanged)
-    }
     
     var faceNode: SCNNode = SCNNode()
     
@@ -285,13 +250,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         lookAtTargetEyeLNode.position.z = 2
         lookAtTargetEyeRNode.position.z = 2
         
-        mySliderLeye.value = normalZ(defaultZ)
-        mySliderReye.value = normalZ(defaultZ)
-
-        mySliderLeye.addTarget(self, action: #selector(mySliderLeyeValueChanged(_:)), for: .valueChanged)
-        mySliderReye.addTarget(self, action: #selector(mySliderReyeValueChanged(_:)), for: .valueChanged)
-        setupBrightnessSlider()
-        
         
         // Bring the web view to the front
         view.bringSubviewToFront(webView)
@@ -304,8 +262,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         view.bringSubviewToFront(deviceButton)
         
         view.bringSubviewToFront(stackView) //horizontal buttons
-        view.bringSubviewToFront(sliderView) //sliders
-        
+
         // Set up the device button to show the device list
         deviceButton.addTarget(self, action: #selector(showDeviceList), for: .touchUpInside)
 
@@ -313,90 +270,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         //eyePositionIndicatorView.isHidden = true
     }
     
-    
-    @objc func mySliderLeyeValueChanged(_ sender: UISlider) {
-    lookAtTargetEyeLNode.position.z = zFromNormal(sender.value)
-    //print("Slider value changed to \(sender.value)")
-}
-    @objc func mySliderReyeValueChanged(_ sender: UISlider) {
-    lookAtTargetEyeRNode.position.z = zFromNormal(sender.value)
-}
-    
-    func normalZ(_ value: Float) -> Float {
-    let offset = minZ
-    let adjustedValue = value - offset
-    let domainWidth = maxZ - minZ
-    return adjustedValue / domainWidth
-}
-    func zFromNormal(_ value: Float) -> Float {
-    let domainWidth = maxZ - minZ
-    let adjustedValue = value * domainWidth
-    return adjustedValue + minZ
-}
-    
-
-    
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        guard ARFaceTrackingConfiguration.isSupported else { return }
-        let configuration = ARFaceTrackingConfiguration()
-        configuration.isLightEstimationEnabled = true
-        
-        // Run the view's session
-        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        
-        // Pause the view's session
-        sceneView.session.pause()
-    }
-    
-    // MARK: - ARSCNViewDelegate
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        
-        update(withFaceAnchor: faceAnchor)
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        guard let faceAnchor = anchor as? ARFaceAnchor, let device = renderer.device else { return nil}
-        let faceGeometry = ARSCNFaceGeometry(device: device)
-        let node = SCNNode(geometry: faceGeometry)
-        node.geometry?.firstMaterial?.fillMode = .lines
-        return node
-        
-    }
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let faceAnchor = anchor as? ARFaceAnchor, let faceGeometry = node.geometry as? ARSCNFaceGeometry else {
-            return }
-        faceNode.transform = node.transform
-        
-        update(withFaceAnchor: faceAnchor)
-        
-        
-        var leftEyeTransform: simd_float4x4 { get {
-            return faceAnchor.leftEyeTransform }
-            
-            
-        }
-        //print("Left Eye: \(faceAnchor.leftEyeTransform)")
-        
-        for x in 0..<1220 {
-            let child = node.childNode(withName: "\(x)", recursively: false)
-            child?.position = SCNVector3(faceAnchor.geometry.vertices[x])
-        }
-        
-        faceGeometry.update(from: faceAnchor.geometry)
-    }
-    
-    // MARK: - update(ARFaceAnchor)
+          super.viewWillAppear(animated)
+          
+          // Create a session configuration
+          guard ARFaceTrackingConfiguration.isSupported else { return }
+          let configuration = ARFaceTrackingConfiguration()
+          configuration.isLightEstimationEnabled = true
+          
+          // Run the view's session
+          sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+      }
+      
+      override func viewWillDisappear(_ animated: Bool) {
+          super.viewWillDisappear(animated)
+          
+          // Pause the view's session
+          sceneView.session.pause()
+      }
+
+      // MARK: - ARSCNViewDelegate
+      
+      func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+          
+          faceNode.transform = node.transform
+          guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+          
+          update(withFaceAnchor: faceAnchor)
+      }
+      
     
     func update(withFaceAnchor anchor: ARFaceAnchor) {
         
