@@ -90,7 +90,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     var eyeTrackingStartTime: Date?
     
     //set device measures:
-    var device: Device = .iPadPro11
+    var device: Device = .iPad10_2
     
     
     //bears
@@ -157,7 +157,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         parentNode.addChildNode(node)
         return parentNode
     }()
-    
+    //lasers
     var eyeRNode: SCNNode = {
         let geometry = SCNCone(topRadius: 0.005, bottomRadius: 0, height: 0.2)
         geometry.radialSegmentCount = 3
@@ -170,7 +170,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         parentNode.addChildNode(node)
         return parentNode
     }()
-    
+    //spheres
     var leftPupilNode: SCNNode = {
         let geometry = SCNSphere(radius: 0.005)  // adjust radius as needed
         geometry.firstMaterial?.diffuse.contents = UIColor.red
@@ -439,6 +439,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         let rightPupilPosition = SCNVector3(x: rightEyePosition.x + rightEyeForward.x * pupilOffset,
                                             y: rightEyePosition.y + rightEyeForward.y * pupilOffset,
                                             z: rightEyePosition.z + rightEyeForward.z * pupilOffset)
+        
+        print("Right Pupil Position: \(rightPupilPosition)")
+        print("Left Pupil Position: \(leftPupilPosition)")
                                             
         return (leftPupilPosition, rightPupilPosition)
     }
