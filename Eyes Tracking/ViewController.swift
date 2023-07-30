@@ -203,9 +203,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
     }()
     */
     
+
     lazy var virtualScreenNode: SCNNode = {
         
-        let screenGeometry = SCNPlane(width: device.widthInPoints, height: device.heightInPoints)
+        let screenGeometry = SCNPlane(width: device.phoneScreenPointSize.width, height: device.phoneScreenPointSize.height)
         screenGeometry.firstMaterial?.isDoubleSided = true
         screenGeometry.firstMaterial?.diffuse.contents = UIColor.green
         
@@ -368,12 +369,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         //let heightCompensation = CGFloat(device.heightCompensation)
         
         DispatchQueue.main.async { [self] in
-            let currentTimestamp = CACurrentMediaTime()
+           // let currentTimestamp = CACurrentMediaTime()
 
             // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
             
-            let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-            let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+            let phoneScreenEyeRHitTestResults = self.virtualScreenNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
+            let phoneScreenEyeLHitTestResults = self.virtualScreenNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+           
             /*
             // For example, when you're performing the hit test:
             let phoneScreenEyeRHitTestResults = virtualPhoneNode.hitTestWithSegment(from: lookAtTargetEyeRNode.worldPosition, to: rightPupilPosition, options: nil)
@@ -391,7 +393,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
             }
             
             // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 15
+            let smoothThresholdNumber: Int = 10
             self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
             self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
             self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
@@ -442,42 +444,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
                                             
         return (leftPupilPosition, rightPupilPosition)
     }
-
-    
-    /*
-    //ADDED 6/30
-    // This function takes the face node, eye name, and blink amount as inputs,
-    // and returns the eye position and orientation.
-    func extractEyeData(from faceNode: SCNNode, eyeName: String, blinkAmount: Float) -> (position: SCNVector3, orientation: SCNVector4)? {
-        guard blinkAmount < 0.5, let eyeNode = faceNode.childNode(withName: eyeName, recursively: true) else {
-            return nil
-        }
-
-        let eyePosition = eyeNode.position
-        let eyeOrientation = eyeNode.orientation
-        return (eyePosition, eyeOrientation)
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        faceNode.transform = node.transform
-        
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        update(withFaceAnchor: faceAnchor)
-        
-        let blendShapes = faceAnchor.blendShapes
-        let leftEyeBlink = blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
-        let rightEyeBlink = blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
-
-        if let leftEyeData = extractEyeData(from: node, eyeName: "eyeLeftNode", blinkAmount: leftEyeBlink) {
-            print("Left Eye Position: \(leftEyeData.position), Orientation: \(leftEyeData.orientation)")
-        }
-
-        if let rightEyeData = extractEyeData(from: node, eyeName: "eyeRightNode", blinkAmount: rightEyeBlink) {
-            print("Right Eye Position: \(rightEyeData.position), Orientation: \(rightEyeData.orientation)")
-        }
-    }
-    //ADDED 6/30
-     */
 
        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
@@ -566,6 +532,41 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, WK
         }
         
     }
+
+/*
+//ADDED 6/30
+// This function takes the face node, eye name, and blink amount as inputs,
+// and returns the eye position and orientation.
+func extractEyeData(from faceNode: SCNNode, eyeName: String, blinkAmount: Float) -> (position: SCNVector3, orientation: SCNVector4)? {
+    guard blinkAmount < 0.5, let eyeNode = faceNode.childNode(withName: eyeName, recursively: true) else {
+        return nil
+    }
+
+    let eyePosition = eyeNode.position
+    let eyeOrientation = eyeNode.orientation
+    return (eyePosition, eyeOrientation)
+}
+
+func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+    faceNode.transform = node.transform
+    
+    guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+    update(withFaceAnchor: faceAnchor)
+    
+    let blendShapes = faceAnchor.blendShapes
+    let leftEyeBlink = blendShapes[.eyeBlinkLeft]?.floatValue ?? 0.0
+    let rightEyeBlink = blendShapes[.eyeBlinkRight]?.floatValue ?? 0.0
+
+    if let leftEyeData = extractEyeData(from: node, eyeName: "eyeLeftNode", blinkAmount: leftEyeBlink) {
+        print("Left Eye Position: \(leftEyeData.position), Orientation: \(leftEyeData.orientation)")
+    }
+
+    if let rightEyeData = extractEyeData(from: node, eyeName: "eyeRightNode", blinkAmount: rightEyeBlink) {
+        print("Right Eye Position: \(rightEyeData.position), Orientation: \(rightEyeData.orientation)")
+    }
+}
+//ADDED 6/30
+ */
 
 
 
